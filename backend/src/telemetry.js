@@ -9,6 +9,7 @@
 import config from './config.js';
 import { store } from './db.js';
 import { uuid } from './seed.js';
+import { broadcastTelemetryUpdate } from './socket.js';
 
 let timer = null;
 
@@ -41,6 +42,9 @@ function tick() {
       );
     }
     device.last_seen = now;
+
+    // Broadcast live telemetry via Socket.io
+    broadcastTelemetryUpdate(device);
   }
 
   // Occasionally append a message.

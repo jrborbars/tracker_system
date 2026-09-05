@@ -2207,6 +2207,113 @@
   transform: scale(1.05);
 }
 
+/* 5.3 WebSocket Real-Time Badges & Typing Indicator */
+.ws-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  margin-left: 6px;
+  transition: all var(--transition-fast);
+}
+
+.ws-live-badge.connected {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.ws-live-badge.connecting {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.ws-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.ws-live-badge.connected .ws-dot {
+  background-color: #10B981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+  animation: pulse 2s infinite;
+}
+
+.ws-live-badge.connecting .ws-dot {
+  background-color: #F59E0B;
+  animation: pulse 1s infinite;
+}
+
+.online-indicator.online {
+  background-color: #10B981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+}
+
+.online-indicator.offline {
+  background-color: #94A3B8;
+}
+
+.chat-typing-bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.typing-dots-animation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.typing-dots-animation span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  display: inline-block;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots-animation span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-dots-animation span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.typing-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
+  font-style: italic;
+}
+
+@keyframes typingBounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* Modal de Criar Grupo de Cuidado */
 .chat-modal-overlay {
   position: fixed;
@@ -4003,6 +4110,11 @@
 
 [data-theme="dark"] .chat-system-card.alert {
   background: linear-gradient(to right, #1E293B, #450A0A);
+}
+
+[data-theme="dark"] .chat-typing-bubble {
+  background-color: #1E293B;
+  border-color: #334155;
 }
 
 [data-theme="dark"] .chat-quick-actions-bar {

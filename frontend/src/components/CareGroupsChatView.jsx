@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import useCareSocket from '../hooks/useCareSocket';
 
 // Dados iniciais pré-configurados de grupos de cuidado inspirados no caso de uso Eisenmenger
 const INITIAL_CARE_GROUPS = [
@@ -11,7 +12,7 @@ const INITIAL_CARE_GROUPS = [
     avatarColor: '#00897B',
     avatarIcon: 'fa-solid fa-people-roof',
     members: ['Você (Cuidador)', 'Mariana (Paciente)', 'Carlos Silva (Irmão)', 'Clara (Enfermeira)'],
-    unreadCount: 2,
+    unreadCount: 0,
     messages: [
       {
         id: 'm1',
@@ -78,7 +79,7 @@ const INITIAL_CARE_GROUPS = [
     avatarColor: '#7E57C2',
     avatarIcon: 'fa-solid fa-user-doctor',
     members: ['Dr. Roberto (Cardio InCor)', 'Dra. Helena (Pneumo)', 'Você (Cuidador)'],
-    unreadCount: 1,
+    unreadCount: 0,
     messages: [
       {
         id: 'm201',
@@ -190,7 +191,17 @@ export default function CareGroupsChatView({
   showToast,
   onQuickLocate,
 }) {
-  const [groups, setGroups] = useState(INITIAL_CARE_GROUPS);
+  const {
+    isConnected,
+    groups,
+    setGroups,
+    typingUsers,
+    joinGroup,
+    sendMessage,
+    sendTypingStatus,
+    triggerSos,
+  } = useCareSocket(INITIAL_CARE_GROUPS);
+
   const [selectedGroupId, setSelectedGroupId] = useState(INITIAL_CARE_GROUPS[0].id);
   const [categoryFilter, setCategoryFilter] = useState('all'); // 'all' | 'family' | 'medical' | 'alerts'
   const [searchQuery, setSearchQuery] = useState('');
@@ -206,8 +217,16 @@ export default function CareGroupsChatView({
   const [newGroupMembers, setNewGroupMembers] = useState('Você (Cuidador), Carlos, Dra. Helena');
 
   const chatMessagesEndRef = useRef(null);
+  const typingTimerRef = useRef(null);
 
   const selectedGroup = groups.find((g) => g.id === selectedGroupId) || groups[0];
+
+  // Conectar na sala do grupo selecionado no WebSocket
+  useEffect(() => {
+    if (selectedGroupId) {
+      joinGroup(selectedGroupId);
+    }
+  }, [selectedGroupId, joinGroup]);
 
   // Auto-scroll ao receber ou enviar mensagens
   const scrollToBottom = () => {
@@ -216,7 +235,7 @@ export default function CareGroupsChatView({
 
   useEffect(() => {
     scrollToBottom();
-  }, [selectedGroupId, selectedGroup?.messages?.length]);
+  }, [selectedGroupId, selectedGroup?.messages?.length, typingUsers[selectedGroupId]]);
 
   // Filtragem de grupos
   const filteredGroups = groups.filter((g) => {
@@ -227,48 +246,52 @@ export default function CareGroupsChatView({
     return matchesCategory && matchesSearch;
   });
 
-  // Enviar Mensagem
+  // Mudança no texto do input com disparo de typing status via WebSocket
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    setInputText(val);
+
+    // Emitir typing status
+    sendTypingStatus(selectedGroupId, 'Você', true);
+
+    if (typingTimerRef.current) clearTimeout(typingTimerRef.current);
+    typingTimerRef.current = setTimeout(() => {
+      sendTypingStatus(selectedGroupId, 'Você', false);
+    }, 1500);
+  };
+
+  // Enviar Mensagem via Socket.io
   const handleSendMessage = (e) => {
     if (e) e.preventDefault();
     if (!inputText.trim()) return;
 
-    const newMsg = {
-      id: `msg-${Date.now()}`,
-      sender: 'Você',
-      senderRole: 'Cuidador Principal',
-      avatar: 'DU',
-      text: inputText.trim(),
-      timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      isMe: true,
-      status: 'sent',
-    };
-
-    const updatedGroups = groups.map((grp) => {
-      if (grp.id === selectedGroupId) {
-        return {
-          ...grp,
-          messages: [...grp.messages, newMsg],
-        };
-      }
-      return grp;
-    });
-
-    setGroups(updatedGroups);
+    const messageText = inputText.trim();
     setInputText('');
+    sendTypingStatus(selectedGroupId, 'Você', false);
 
-    if (showToast) {
-      showToast('Mensagem enviada para o grupo de cuidado!');
-    }
+    // Envio com WebSocket
+    sendMessage(
+      {
+        groupId: selectedGroupId,
+        text: messageText,
+        sender: 'Você',
+        senderRole: 'Cuidador Principal',
+        avatar: 'DU',
+        isMe: true,
+      },
+      (ack) => {
+        if (showToast && ack?.success) {
+          showToast('Mensagem transmitida em tempo real via WebSocket!');
+        }
+      }
+    );
   };
 
   // Envio de Ação Rápida no Chat (ex: Compartilhar GPS ou Notificar Medicação)
   const handleQuickAction = (actionType) => {
-    let newMsg = null;
-    const timeNow = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
     if (actionType === 'gps') {
-      newMsg = {
-        id: `msg-${Date.now()}`,
+      sendMessage({
+        groupId: selectedGroupId,
         sender: 'Você',
         senderRole: 'Telemetria Compartilhada',
         isSystem: true,
@@ -276,37 +299,27 @@ export default function CareGroupsChatView({
         locationName: 'Localização Atual da Mariana (Via Satélite)',
         coordinates: '-23.5614, -46.6560',
         battery: devices[0]?.battery_level ? `${devices[0].battery_level}%` : '85%',
-        timestamp: timeNow,
-      };
+      });
+      if (showToast) showToast('Localização GPS compartilhada no grupo!');
     } else if (actionType === 'meds') {
-      newMsg = {
-        id: `msg-${Date.now()}`,
+      sendMessage({
+        groupId: selectedGroupId,
         sender: 'Você',
         senderRole: 'Cuidador Principal',
         avatar: 'DU',
         text: '💊 Dose de medicação e checagem de oximetria confirmada e registrada no prontuário.',
-        timestamp: timeNow,
         isMe: true,
-        status: 'read',
-      };
+      });
+      if (showToast) showToast('Confirmação de medicação enviada!');
     } else if (actionType === 'sos') {
       if (onQuickLocate) onQuickLocate();
-      newMsg = {
-        id: `msg-${Date.now()}`,
-        sender: 'Alerta de Emergência SOS',
-        senderRole: 'Ação Imediata',
-        isSystem: true,
-        type: 'alert_card',
-        title: '🚨 Disparo de Localização Rápida Acionado',
-        detail: 'Protocolo de resgate satelital iniciado pelo cuidador.',
-        timestamp: timeNow,
-      };
-    }
-
-    if (newMsg) {
-      setGroups((prev) =>
-        prev.map((grp) => (grp.id === selectedGroupId ? { ...grp, messages: [...grp.messages, newMsg] } : grp))
-      );
+      triggerSos({
+        patient: selectedGroup.patientName || 'Mariana Silva',
+        location: '-23.5614, -46.6560',
+        sender: 'Cuidador Principal',
+        details: 'Protocolo de resgate satelital iniciado via chat de cuidado.',
+      });
+      if (showToast) showToast('🚨 Alerta SOS emitido via WebSocket para toda a rede de cuidado!');
     }
   };
 
@@ -356,6 +369,13 @@ export default function CareGroupsChatView({
           <div className="chat-sidebar-title">
             <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i>
             <h2>Grupos de Cuidado</h2>
+            <span
+              className={`ws-live-badge ${isConnected ? 'connected' : 'connecting'}`}
+              title={isConnected ? 'Conectado em tempo real via WebSocket' : 'Tentando conectar ao servidor WebSocket...'}
+            >
+              <span className="ws-dot"></span>
+              {isConnected ? 'Ao Vivo' : 'Conectando'}
+            </span>
           </div>
           <button
             type="button"
@@ -452,7 +472,11 @@ export default function CareGroupsChatView({
 
                     <div className="chat-group-bottom">
                       <p className="chat-group-preview">
-                        {lastMsg ? (
+                        {typingUsers[grp.id] ? (
+                          <span style={{ color: 'var(--color-primary)', fontStyle: 'italic', fontWeight: 600 }}>
+                            <i className="fa-solid fa-ellipsis fa-fade"></i> {typingUsers[grp.id]} está digitando...
+                          </span>
+                        ) : lastMsg ? (
                           lastMsg.type === 'gps_card' ? (
                             <span><i className="fa-solid fa-location-dot" style={{ color: 'var(--color-primary)' }}></i> Compartilhou localização</span>
                           ) : lastMsg.type === 'alert_card' ? (
@@ -501,8 +525,12 @@ export default function CareGroupsChatView({
           <div className="chat-conv-info">
             <h3 className="chat-conv-title">{selectedGroup.name}</h3>
             <p className="chat-conv-members">
-              <span className="online-indicator"></span>
-              {selectedGroup.members.join(', ')}
+              <span className={`online-indicator ${isConnected ? 'online' : 'offline'}`}></span>
+              {typingUsers[selectedGroupId] ? (
+                <strong style={{ color: 'var(--color-primary)' }}>{typingUsers[selectedGroupId]} está digitando...</strong>
+              ) : (
+                selectedGroup.members.join(', ')
+              )}
             </p>
           </div>
 
@@ -529,7 +557,7 @@ export default function CareGroupsChatView({
         {/* Feed de Mensagens com Balões */}
         <div className="chat-messages-body">
           <div className="chat-date-divider">
-            <span>Hoje • Monitoramento Ativo</span>
+            <span>Hoje • Monitoramento Ativo em Tempo Real</span>
           </div>
 
           {selectedGroup.messages.map((msg) => {
@@ -594,7 +622,7 @@ export default function CareGroupsChatView({
                   <div className="bubble-footer">
                     <span className="bubble-time">{msg.timestamp}</span>
                     {msg.isMe && (
-                      <span className="bubble-check" title="Lido por todos">
+                      <span className="bubble-check" title="Transmitido via WebSocket">
                         <i className="fa-solid fa-check-double" style={{ color: '#0284C7' }}></i>
                       </span>
                     )}
@@ -603,6 +631,21 @@ export default function CareGroupsChatView({
               </div>
             );
           })}
+
+          {/* Balão animado de Digitação */}
+          {typingUsers[selectedGroupId] && (
+            <div className="chat-bubble-row incoming typing-bubble-row">
+              <div className="chat-typing-bubble">
+                <div className="typing-dots-animation">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <span className="typing-text">{typingUsers[selectedGroupId]} está digitando...</span>
+              </div>
+            </div>
+          )}
+
           <div ref={chatMessagesEndRef} />
         </div>
 
@@ -650,7 +693,7 @@ export default function CareGroupsChatView({
             className="chat-text-input"
             placeholder="Digite uma mensagem para o grupo de cuidado..."
             value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
+            onChange={handleInputChange}
           />
 
           <button

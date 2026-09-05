@@ -16,6 +16,7 @@ import {
   createDevice,
   deleteDevice,
 } from '../api/client.js';
+import socketService from '../services/socketService.js';
 import '../styles/MainApp.css';
 
 export default function MainApp({ token, onLogout }) {
@@ -65,9 +66,44 @@ export default function MainApp({ token, onLogout }) {
 
   useEffect(() => {
     loadData();
-    // Polling a cada 6 segundos para simular telemetria em tempo real
-    const interval = setInterval(loadData, 6000);
-    return () => clearInterval(interval);
+
+    // Conectar WebSocket para atualizações em tempo real instantâneas
+    const socket = socketService.connect();
+
+    const handleTelemetryPulse = (data) => {
+      setDevices((prevDevices) =>
+        prevDevices.map((dev) => {
+          if (dev.device_id === data.deviceId) {
+            return {
+              ...dev,
+              lat: data.lat ?? dev.lat,
+              lng: data.lng ?? dev.lng,
+              battery_level: data.battery ?? dev.battery_level,
+              last_seen: data.timestamp ?? dev.last_seen,
+            };
+          }
+          return dev;
+        })
+      );
+    };
+
+    const handleSosAlert = (sosData) => {
+      setSosActive(true);
+      showToast(`🚨 ALERTA SOS RECEBIDO: ${sosData.patient || 'Paciente'} (${sosData.location})`);
+      setTimeout(() => setSosActive(false), 8000);
+    };
+
+    socket.on('telemetry_pulse', handleTelemetryPulse);
+    socket.on('sos_alert', handleSosAlert);
+
+    // Polling de fallback a cada 15 segundos
+    const interval = setInterval(loadData, 15000);
+
+    return () => {
+      socket.off('telemetry_pulse', handleTelemetryPulse);
+      socket.off('sos_alert', handleSosAlert);
+      clearInterval(interval);
+    };
   }, [token]);
 
   const showToast = (msg) => {
