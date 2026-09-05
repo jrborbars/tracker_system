@@ -1,6 +1,6 @@
 /* ==========================================================================
    MAIN APP & DASHBOARD — EISENMENGER CARE TRACKER (MVP 1)
-   CSS Grid • Flexbox • Desktop Sidebar & Mobile Bottom Navigation
+   CSS Grid • Flexbox • Desktop Sidebar (Expansível / Compacta) & Mobile Nav
    ========================================================================== */
 
 /* Layout Raiz do App */
@@ -10,6 +10,11 @@
   min-height: 100vh;
   background-color: var(--bg-canvas);
   font-family: 'Roboto', sans-serif;
+  transition: grid-template-columns 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.app-container.sidebar-collapsed {
+  grid-template-columns: 78px 1fr;
 }
 
 /* ==========================================================================
@@ -23,30 +28,76 @@
   height: 100vh;
   position: sticky;
   top: 0;
-  padding: 24px 18px;
+  padding: 20px 16px;
   box-shadow: var(--shadow-sm);
   z-index: 20;
+  transition: width 0.25s ease, padding 0.25s ease;
+  overflow-x: hidden;
+}
+
+.sidebar.collapsed {
+  padding: 20px 8px;
+  width: 78px;
 }
 
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-bottom: 24px;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 18px;
   border-bottom: 1px solid var(--border-light);
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+}
+
+.sidebar.collapsed .sidebar-brand {
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding-bottom: 14px;
+}
+
+.brand-logo-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
 }
 
 .sidebar-logo-icon {
-  height: 44px;
+  height: 40px;
   width: auto;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .sidebar-logo-text {
-  height: 32px;
+  height: 28px;
   width: auto;
   object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+/* Botão de Alternância de Abrir / Fechar Menu */
+.btn-toggle-sidebar {
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.btn-toggle-sidebar:hover {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary-subtle);
 }
 
 .sidebar-nav {
@@ -60,28 +111,52 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 12px 16px;
+  padding: 12px 14px;
   border-radius: var(--radius-md);
   border: none;
   background: transparent;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: left;
   width: 100%;
+  position: relative;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 14px 0;
+  gap: 0;
+}
+
+.nav-item-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-item i {
   font-size: 18px;
   width: 22px;
   text-align: center;
+  transition: transform var(--transition-fast);
+}
+
+.sidebar.collapsed .nav-item i {
+  font-size: 20px;
+  width: auto;
 }
 
 .nav-item:hover {
   background-color: var(--bg-surface-subtle);
   color: var(--color-primary-dark);
+}
+
+.nav-item:hover i {
+  transform: scale(1.1);
 }
 
 .nav-item.active {
@@ -91,8 +166,20 @@
   border-left: 4px solid var(--color-primary);
 }
 
+.sidebar.collapsed .nav-item.active {
+  border-left: none;
+  background-color: var(--color-primary-light);
+  border-radius: var(--radius-md);
+}
+
 .nav-item.active i {
   color: var(--color-primary);
+}
+
+.nav-item-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Badge de contagem de mensagens */
@@ -106,13 +193,24 @@
   border-radius: var(--radius-full);
 }
 
+.nav-badge-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-danger);
+  border: 1.5px solid #FFFFFF;
+}
+
 /* Rodapé da Sidebar */
 .sidebar-footer {
   border-top: 1px solid var(--border-light);
-  padding-top: 18px;
+  padding-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .satellite-status {
@@ -126,6 +224,12 @@
   align-items: center;
   gap: 8px;
   border: 1px solid var(--color-primary-subtle);
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .satellite-status {
+  justify-content: center;
+  padding: 10px 0;
 }
 
 .btn-sidebar-logout {
@@ -141,12 +245,19 @@
   font-weight: 700;
   cursor: pointer;
   transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .btn-sidebar-logout {
+  justify-content: center;
+  padding: 10px 0;
 }
 
 .btn-sidebar-logout:hover {
   background-color: var(--color-danger);
   color: #FFFFFF;
 }
+
 
 /* ==========================================================================
    2. ÁREA DE CONTEÚDO PRINCIPAL

@@ -27,6 +27,7 @@ export default function MainApp({ token, onLogout }) {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [sosActive, setSosActive] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Carrega todos os dados da API ao iniciar
   const loadData = async () => {
@@ -87,14 +88,17 @@ export default function MainApp({ token, onLogout }) {
     : 0;
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       {/* 1. SIDEBAR DESKTOP (Menu à esquerda) */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         unreadCount={messages.filter((m) => m.active).length}
         onLogout={onLogout}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
       />
+
 
       {/* 2. ÁREA PRINCIPAL */}
       <div className="main-content">
