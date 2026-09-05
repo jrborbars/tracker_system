@@ -586,7 +586,7 @@ export default function MainApp({ token, onLogout }) {
                   </ul>
                 </div>
 
-                <div style={{ marginTop: '28px', display: 'flex', gap: '14px' }}>
+                <div style={{ marginTop: '28px', display: 'flex', gap: '14px', alignItems: 'center' }}>
                   <button
                     type="button"
                     className="btn btn-outline"
@@ -596,8 +596,7 @@ export default function MainApp({ token, onLogout }) {
                   </button>
                   <button
                     type="button"
-                    className="btn-card-action danger"
-                    style={{ padding: '10px 18px', flex: 0 }}
+                    className="btn btn-danger"
                     onClick={onLogout}
                   >
                     <i className="fa-solid fa-right-from-bracket"></i> Encerrar Sessão
