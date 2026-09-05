@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Ambientes monitorados (Residência / Clínica / Suíte Hospitalar)
 const DEFAULT_ROOMS = [
@@ -74,6 +74,10 @@ export default function IndoorMonitoringView({ showToast }) {
   const [facilityType, setFacilityType] = useState('residence'); // 'residence' | 'clinic' | 'hospital'
   const [audioActive, setAudioActive] = useState(false);
 
+  // Controle de visibilidade dos cards dispensáveis (movíveis/fecháveis)
+  const [isStatusCardDismissed, setIsStatusCardDismissed] = useState(false);
+  const [isAlertCardDismissed, setIsAlertCardDismissed] = useState(false);
+
   // Histórico recente de movimentação pelos cômodos
   const [roomHistory, setRoomHistory] = useState([
     { roomId: 'bedroom', duration: '1h 45m', timeRange: '08:30 - 10:15', date: 'Hoje' },
@@ -104,7 +108,16 @@ export default function IndoorMonitoringView({ showToast }) {
   const minutesInCurrentRoom = Math.floor(secondsInRoom / 60);
   const isTimeExceeded = minutesInCurrentRoom >= currentRoom.maxSafeMinutes;
 
-  // Trocar de cômodo (simulação de transição)
+  // Reabre o alerta do cuidador sempre que o limite de tempo seguro é ultrapassado (nova ação exigida)
+  const prevExceededRef = useRef(false);
+  useEffect(() => {
+    if (!prevExceededRef.current && isTimeExceeded) {
+      setIsAlertCardDismissed(false);
+    }
+    prevExceededRef.current = isTimeExceeded;
+  }, [isTimeExceeded]);
+
+  // Trocar de cômodo (simulação de transição de cômodo/peça da casa)
   const handleChangeRoom = (newRoomId) => {
     if (newRoomId === currentRoomId) return;
 
@@ -125,6 +138,10 @@ export default function IndoorMonitoringView({ showToast }) {
     setCurrentRoomId(newRoomId);
     setSecondsInRoom(0);
     setIsCameraActive(false);
+
+    // Sempre reabre o card de presença ao mudar para uma peça diferente da casa!
+    setIsStatusCardDismissed(false);
+    setIsAlertCardDismissed(false);
 
     const targetRoom = DEFAULT_ROOMS.find((r) => r.id === newRoomId);
     if (showToast) {
@@ -173,44 +190,66 @@ export default function IndoorMonitoringView({ showToast }) {
       </div>
 
       <div className="tab-content-wrapper">
-        {/* 2. Banner de Status Imediato do Paciente */}
-        <div className={`indoor-status-card ${isTimeExceeded ? 'alert-warning' : 'status-normal'}`}>
-          <div className="status-main-info">
-            <div className="status-sensor-pulse">
-              <div className="sensor-beacon-ring"></div>
-              <i className={currentRoom.icon}></i>
-            </div>
+        {/* 2. Banner de Status Imediato do Paciente (Fechável via 'X' e reaparece ao trocar de cômodo) */}
+        {!isStatusCardDismissed && (
+          <div className={`indoor-status-card ${isTimeExceeded ? 'alert-warning' : 'status-normal'}`}>
+            <button
+              type="button"
+              className="btn-card-dismiss"
+              onClick={() => setIsStatusCardDismissed(true)}
+              title="Fechar card (Reaparecerá ao mudar de cômodo)"
+              aria-label="Fechar card de presença"
+            >
+              <i className="fa-solid fa-xmark"></i>
+            </button>
 
-            <div className="status-text-block">
-              <div className="patient-location-badge">
-                <span className="live-dot"></span>
-                <span>PRESENÇA DETECTADA VIA SENSOR</span>
+            <div className="status-main-info">
+              <div className="status-sensor-pulse">
+                <div className="sensor-beacon-ring"></div>
+                <i className={currentRoom.icon}></i>
               </div>
-              <h2 className="current-room-heading">
-                Paciente está no(a) <strong>{currentRoom.name}</strong>
-              </h2>
-              <p className="sensor-tech-desc">
-                <i className="fa-solid fa-microchip" style={{ color: 'var(--color-primary)' }}></i>
-                Dispositivo: <code>{currentRoom.sensorModel}</code> &bull; Tecnologia: {currentRoom.sensorType}
-              </p>
+
+              <div className="status-text-block">
+                <div className="patient-location-badge">
+                  <span className="live-dot"></span>
+                  <span>PRESENÇA DETECTADA VIA SENSOR</span>
+                </div>
+                <h2 className="current-room-heading">
+                  Paciente está no(a) <strong>{currentRoom.name}</strong>
+                </h2>
+                <p className="sensor-tech-desc">
+                  <i className="fa-solid fa-microchip" style={{ color: 'var(--color-primary)' }}></i>
+                  Dispositivo: <code>{currentRoom.sensorModel}</code> &bull; Tecnologia: {currentRoom.sensorType}
+                </p>
+              </div>
+            </div>
+
+            <div className="dwell-timer-box">
+              <span className="timer-label">TEMPO DE PERMANÊNCIA:</span>
+              <div className="timer-display">
+                <i className="fa-solid fa-stopwatch" style={{ color: isTimeExceeded ? 'var(--color-danger)' : 'var(--color-primary)' }}></i>
+                <span>{formatDwellTime(secondsInRoom)}</span>
+              </div>
+              <span className="timer-threshold">
+                Limite seguro sugerido: <strong>{currentRoom.maxSafeMinutes} min</strong>
+              </span>
             </div>
           </div>
+        )}
 
-          <div className="dwell-timer-box">
-            <span className="timer-label">TEMPO DE PERMANÊNCIA:</span>
-            <div className="timer-display">
-              <i className="fa-solid fa-stopwatch" style={{ color: isTimeExceeded ? 'var(--color-danger)' : 'var(--color-primary)' }}></i>
-              <span>{formatDwellTime(secondsInRoom)}</span>
-            </div>
-            <span className="timer-threshold">
-              Limite seguro sugerido: <strong>{currentRoom.maxSafeMinutes} min</strong>
-            </span>
-          </div>
-        </div>
-
-        {/* Alerta de Tempo Prolongado (Especialmente no Banheiro) */}
-        {isTimeExceeded && (
+        {/* Alerta de Tempo Prolongado / Ação do Cuidador (Fechável via 'X' e reaparece quando nova ação for exigida) */}
+        {isTimeExceeded && !isAlertCardDismissed && (
           <div className="indoor-critical-alert">
+            <button
+              type="button"
+              className="btn-card-dismiss alert-dismiss"
+              onClick={() => setIsAlertCardDismissed(true)}
+              title="Fechar alerta do cuidador"
+              aria-label="Fechar alerta do cuidador"
+            >
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+
             <i className="fa-solid fa-triangle-exclamation"></i>
             <div className="alert-content">
               <strong>Atenção do Cuidador: Tempo Elevado no {currentRoom.name}!</strong>
@@ -222,7 +261,10 @@ export default function IndoorMonitoringView({ showToast }) {
             <button
               type="button"
               className="btn-alert-ack"
-              onClick={() => showToast && showToast('Alerta confirmado pelo cuidador.')}
+              onClick={() => {
+                setIsAlertCardDismissed(true);
+                if (showToast) showToast('Ação do cuidador confirmada.');
+              }}
             >
               Verificar Paciente
             </button>

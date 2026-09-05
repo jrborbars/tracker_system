@@ -2944,10 +2944,12 @@
 
 /* Banner de Status de Presença Imediato */
 .indoor-status-card {
+  position: relative;
   background-color: var(--bg-surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   padding: 24px;
+  padding-right: 48px;
   box-shadow: var(--shadow-sm);
   display: flex;
   justify-content: space-between;
@@ -2965,6 +2967,46 @@
 .indoor-status-card.alert-warning {
   border-left: 6px solid var(--color-warning);
   background-color: #FFFDF5;
+}
+
+/* Botão Dispensar / Fechar Card ('X') */
+.btn-card-dismiss {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  z-index: 10;
+}
+
+.btn-card-dismiss:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+  color: var(--text-main);
+  transform: scale(1.1);
+}
+
+.btn-card-dismiss.alert-dismiss {
+  color: var(--color-danger-dark);
+}
+
+.btn-card-dismiss.alert-dismiss:hover {
+  background-color: rgba(229, 57, 53, 0.15);
+  color: var(--color-danger);
+}
+
+[data-theme="dark"] .btn-card-dismiss:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
 }
 
 .status-main-info {
@@ -3084,11 +3126,13 @@
 
 /* Alerta Crítico de Tempo Prolongado */
 .indoor-critical-alert {
+  position: relative;
   background-color: var(--color-danger-light);
   border: 1px solid var(--color-danger-subtle);
   border-left: 6px solid var(--color-danger);
   border-radius: var(--radius-md);
   padding: 16px 20px;
+  padding-right: 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
