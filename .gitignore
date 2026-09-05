@@ -145,3 +145,8 @@ vite.config.ts.timestamp-*
 # Express mock runtime artifacts
 uploads/
 *.session
+
+.DS_Store
+frontend/dist
+frontend/node_modules
+backend/node_modules

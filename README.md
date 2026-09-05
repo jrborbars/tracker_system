@@ -1,175 +1,107 @@
-# tracker_system — BetterDays Backend Mock
+# 🛰️ Eisenmenger Care Tracker — Sistema de Monitoramento Satelital
 
-A self-contained **Node + Express** mock of the
-[`betterdays_tracker`](https://github.com/jrborbars/tracker_system) FastAPI backend
-(`/srv/http/py/betterdays_tracker/backend`). It serves the **same REST endpoints,
-JSON shapes, and status codes** as the real backend so a frontend can be developed
-and tested without PostgreSQL, MQTT, Argon2, or OpenTelemetry.
+Sistema completo para **monitoramento satelital e apoio a familiares de pessoas com Síndrome de Eisenmenger**. O projeto possui arquitetura desacoplada e organizada em duas frentes:
 
-> ⚠️ **Security note:** this mock never reads or uses any real backend secret —
-> no production `JWT_SECRET_KEY`, no certs, no `.env` values. It signs its own
-> tokens with a fake, mock-only secret. All credentials/keys here are demo values.
+1. 📂 **`backend/` (Node.js + Express):** Mock completo da API REST (`betterdays_tracker`), com autenticação JWT, rastreamento de dispositivos GPS, cercas virtuais (*geofences*), telemetria simulada e upload de arquivos.
+2. 📂 **`frontend/` (React + Vite):** Aplicação web construída em **Material Design limpo**, **CSS Grid e Flexbox puros**, ícones **FontAwesome 6**, tipografia **Roboto** e paleta de cores em **tons pastéis**.
+
+> ⚠️ **Nota de Segurança:** O backend mock utiliza credenciais e segredos exclusivamente locais para testes e desenvolvimento, sem dependências de ambientes de produção.
 
 ---
 
-## Quick start
+## 🚀 Como Executar o Projeto
 
-Prerequisites: Node.js `>= 20`.
+Pré-requisito: **Node.js `>= 20`**.
 
-```bash
-npm install
-npm start          # listens on http://localhost:8000 (PORT override via env)
-```
-
-Then open the demo account:
+### Executar a partir da raiz (Atalhos):
 
 ```bash
-curl -s -X POST http://localhost:8000/login \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"demo@betterdays.com","password":"password123"}'
-```
+# Iniciar o Back-end (http://localhost:8000)
+npm start
 
-**Demo account**
+# Iniciar o Front-end (http://localhost:5173)
+npm run dev
 
-| email | password |
-| --- | --- |
-| `demo@betterdays.com` | `password123` |
-
-**Static demo JWT** (already signed with the mock secret, valid ~1 year):
-
-```
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZW1vQGJldHRlcmRheXMuY29tIiwiaWF0IjoxNzg4MzAzMjU1LCJleHAiOjE4MTk4MzkyNTV9.nQNwHkvo7zU500joaCy1l5jw_zlf-qYxcbpojjsvEZg
-```
-
-Use it with any protected endpoint:
-
-```bash
-curl http://localhost:8000/devices/ \
-  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkZW1vQGJldHRlcmRheXMuY29tIiwiaWF0IjoxNzg4MzAzMjU1LCJleHAiOjE4MTk4MzkyNTV9.nQNwHkvo7zU500joaCy1l5jw_zlf-qYxcbpojjsvEZg"
-```
-
-Mint a fresh token for any registered email with `npm run token [-- -e you@x.com]`.
-
----
-
-## Running the tests
-
-```bash
+# Executar a suíte de testes unitários do backend
 npm test
 ```
 
-`test/mock.test.js` (Node's built-in test runner + `supertest`) verifies parity:
-login/register, CRUD, status codes (400/401/403/404), ownership isolation, uploads,
-and geofencing.
+---
+
+### Executar entrando em cada pasta:
+
+#### 1. Back-end (`backend/`)
+```bash
+cd backend
+npm install
+npm start          # Inicia na porta http://localhost:8000
+# ou 'npm run dev' para modo auto-reload
+```
+- **Health check:** `http://localhost:8000/health`
+- **Root API banner:** `http://localhost:8000/`
+
+#### 2. Front-end (`frontend/`)
+```bash
+cd frontend
+npm install
+npm run dev        # Inicia a interface web em http://localhost:5173
+```
 
 ---
 
-## API reference
+## 🎨 Design System & Identidade Visual
 
-All responses are JSON; errors use FastAPI's `{"detail": "..."}` shape.
+O projeto conta com documentação e showcase visual dedicados:
+* 📄 **Documentação de Decisões:** [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md)
+* 🌐 **Showcase Visual Interativo (HTML):** [`design_system.html`](./design_system.html) *(abra diretamente no navegador)*
 
-### Meta
-
-| Method | Path | Description |
-| --- | --- | --- |
-| GET | `/` | `{"message":"GPS Tracking API (mock)"}` |
-| GET | `/health` | `{"status":"healthy","mqtt":{"status":"connected",...}}` |
-| GET | `/metrics` | Minimal fake Prometheus text |
-| POST | `/reset` | Reseed the in-memory store with demo data |
-
-### Authentication
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| POST | `/register` | — | Create user `{email,password,name,phone}` → user. Duplicate email ⇒ **400** |
-| POST | `/login` | — | `{email,password}` → `{access_token, token_type}`. Bad creds ⇒ **401** |
-
-### Devices (soft delete)
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/devices/` | Bearer | List user's active devices |
-| POST | `/devices/` | Bearer | Create `{name,description,device_id,type,avatar?}`. Duplicate `device_id` ⇒ **400** |
-| PUT | `/devices/:id` | Bearer | Update `{name,description,type,avatar}`. Missing ⇒ **404** |
-| DELETE | `/devices/:id` | Bearer | Soft delete (`deleted=1`). Missing ⇒ **404** |
-
-### Areas (secure geofences)
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/areas/` | Bearer | All areas for the user |
-| GET | `/areas/device/:deviceId` | Bearer | Areas for one device |
-| POST | `/areas/:deviceId` | Bearer | Create `{name, points}` for an owned device. Not owned ⇒ **404** |
-| PUT | `/areas/:deviceId/:areaId` | Bearer | Update area. Missing ⇒ **404** |
-| DELETE | `/areas/:deviceId/:areaId` | Bearer | Delete area. Missing ⇒ **404** |
-
-`points` is an array of `[lng, lat]` pairs (GeoJSON ring).
-
-### Messages
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/messages/` | Bearer | Messages for the user's devices, newest first |
-| POST | `/messages/` | Bearer | Create for an owned device `{device_id,message,severity,source,active}`. Not owned ⇒ **404** |
-| PUT | `/messages/:id` | Bearer | Update (e.g. `{active:false}`). Missing ⇒ **404**; not owned ⇒ **403** |
-| DELETE | `/messages/:id` | Bearer | Delete. Missing ⇒ **404**; not owned ⇒ **403** |
-
-### Upload
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| POST | `/upload/` | Bearer | Multipart `file` (image/jpeg,png,gif,webp; ≤2&nbsp;MB) → `{filename, url}` |
-
-Uploaded files are served from `/uploads/<userId>/<filename>`.
-
-### Geofencing (service-to-service)
-
-| Method | Path | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/geofencing/data` | `X-API-Key` | All active devices + areas → `{devices:[{id,device_id,name,areas}]}` |
-
-Demo key: `geofencing-service-key-2024` (mock-only value).
-
-### Parity notes
-
-- Missing `Authorization` header ⇒ **403**; invalid/unknown token ⇒ **401** (matches the
-  backend's `HTTPBearer` + `get_current_user`).
-- Every query is scoped to the authenticated user's id; devices are soft-deleted.
-- Passwords are stored in plaintext **only** for this mock (the real backend uses Argon2).
+### Princípios do Front-end:
+* **Paleta em Tons Pastéis:**
+  * 🌿 **Menta Suave / Teal Saúde (`#00897B`, `#E0F2F1`):** Calma e estabilidade clínica.
+  * 💜 **Lavanda Acolhedora (`#7E57C2`, `#EDE7F6`):** Apoio e cuidado familiar.
+  * 🚨 **Coral Emergência / SOS (`#E53935`, `#FFEBEE`):** Localização rápida e alertas críticos.
+  * ☀️ **Âmbar Atenção (`#FB8C00`, `#FFF3E0`):** Bateria baixa e avisos de sinal.
+* **Tipografia:** Fonte **Roboto** (Google Fonts).
+* **Ícones:** **FontAwesome 6 Free** (`@fortawesome/fontawesome-free`).
+* **Layout Puro:** 100% **CSS Grid** para macro-estrutura e **Flexbox** para micro-alinhamentos.
 
 ---
 
-## Configuration
+## 👤 Credenciais e Demonstração
 
-Copy `.env.example` → `.env` and adjust (all mock-only values):
-
-| Var | Default | Purpose |
-| --- | --- | --- |
-| `PORT` | `8000` | Listen port |
-| `MOCK_JWT_SECRET` | `change-me-mock-dev-secret` | Mock-only JWT signing secret |
-| `MOCK_TELEMETRY` | `0` | `1` = simulate live GPS telemetry (moves devices, appends messages) |
-| `MOCK_TELEMETRY_INTERVAL_MS` | `8000` | Telemetry tick interval |
-| `MAX_UPLOAD_BYTES` | `2 MB` | Upload size cap |
-| `UPLOAD_FOLDER` | `./uploads` | Where uploads are stored/served |
-| `MOCK_GEOFENCING_API_KEY` | `geofencing-service-key-2024` | Key for `/geofencing/data` |
-| `CORS_ORIGINS` | dev defaults | Comma-separated allowed origins |
+| Campo | Valor |
+| --- | --- |
+| **E-mail de Teste** | `demo@betterdays.com` |
+| **Senha** | `password123` |
+| **Rastreadores Demo** | `Delivery Van 01` (`TRCK-10001`), `Tractor Fleet Unit` (`TRCK-20002`) |
 
 ---
 
-## Project layout
+## 📁 Estrutura Organizada do Repositório
 
 ```
-src/
-  server.js      # entry point (starts listener)
-  app.js         # builds the Express app (no listener) — testable
-  config.js      # env config + mock-only secrets
-  db.js          # in-memory store + lookups
-  seed.js        # demo user / devices / areas / messages
-  auth.js        # JWT sign/verify + requireAuth middleware
-  telemetry.js   # optional simulated MQTT telemetry
-  routes/        # one file per endpoint group
-scripts/
-  mint-token.mjs # mint a demo JWT
-test/
-  mock.test.js   # parity tests
+tracker_system/
+├── backend/                   # Back-end Mock Express
+│   ├── src/                   # Código-fonte da API
+│   │   ├── server.js          # Entry point do servidor
+│   │   ├── app.js             # Middlewares e configuração Express
+│   │   ├── config.js          # Configurações e segredos mock
+│   │   ├── db.js              # In-memory store
+│   │   ├── seed.js            # Seed inicial com demo user
+│   │   ├── auth.js            # JWT e requireAuth
+│   │   ├── telemetry.js       # Simulação MQTT/GPS
+│   │   └── routes/            # Rotas (auth, devices, areas, etc.)
+│   ├── test/                  # 33 testes com node:test e supertest
+│   ├── scripts/               # Scripts auxiliares (mint-token)
+│   ├── uploads/               # Armazenamento de mídia
+│   └── package.json           # Dependências do backend
+├── frontend/                  # Front-end React + Vite
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   └── src/
+├── DESIGN_SYSTEM.md           # Definição e decisões do Design System
+├── design_system.html         # Showcase visual interativo dos componentes
+├── package.json               # Scripts raiz para orquestração
+└── README.md                  # Documentação principal
 ```
