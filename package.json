@@ -2,7 +2,7 @@
   "name": "tracker-system",
   "version": "1.0.0",
   "private": true,
-  "description": "Sistema de Monitoramento Satelital Eisenmenger Care Tracker (Backend Mock + Frontend React/Vite)",
+  "description": "Sistema de Monitoramento Satelital e Apoio Familiar Betterdays (Backend Mock + Frontend React/Vite)",
   "scripts": {
     "start": "npm --prefix backend start",
     "dev": "npm --prefix frontend run dev",

@@ -48,6 +48,7 @@ export default function LeafletMapView({
   onSelectDevice,
   onEmergencyAlert,
   showToast,
+  theme = 'light',
 }) {
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
@@ -79,8 +80,12 @@ export default function LeafletMapView({
       // Controle de zoom no canto superior direito
       L.control.zoom({ position: 'topright' }).addTo(map);
 
-      // Layer de Tiles CartoDB Positron (Padrão Pastel Clean)
-      const cartoTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      // Layer de Tiles CartoDB (Dark Matter no dark mode ou Positron no light mode)
+      const cartoTileUrl = theme === 'dark'
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+      const cartoTileLayer = L.tileLayer(cartoTileUrl, {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
         subdomains: 'abcd',
         maxZoom: 19,
@@ -115,7 +120,7 @@ export default function LeafletMapView({
     };
   }, []);
 
-  // 2. Alternância de Camadas de Tiles
+  // 2. Alternância de Camadas de Tiles com base no tipo e no tema (Dark / Light)
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !tileLayerRef.current) return;
@@ -140,19 +145,21 @@ export default function LeafletMapView({
         }
       );
     } else {
-      newTileLayer = L.tileLayer(
-        'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-        {
-          attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-          subdomains: 'abcd',
-          maxZoom: 19,
-        }
-      );
+      // CartoDB Positron (Light) ou Dark Matter (Dark)
+      const cartoTileUrl = theme === 'dark'
+        ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+        : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+
+      newTileLayer = L.tileLayer(cartoTileUrl, {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 19,
+      });
     }
 
     newTileLayer.addTo(map);
     tileLayerRef.current = newTileLayer;
-  }, [currentLayerType]);
+  }, [currentLayerType, theme]);
 
   // 3. Renderização das Cercas Virtuais (Geofences)
   useEffect(() => {

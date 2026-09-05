@@ -4,6 +4,7 @@ import BottomNav from './BottomNav.jsx';
 import AddDeviceModal from './AddDeviceModal.jsx';
 import LeafletMapView from './LeafletMapView.jsx';
 import IndoorMonitoringView from './IndoorMonitoringView.jsx';
+import CareGroupsChatView from './CareGroupsChatView.jsx';
 import UserAvatarMenu from './UserAvatarMenu.jsx';
 import logoIconSvg from '../assets/logo-icon.svg';
 import logoTextSvg from '../assets/logo-text.svg';
@@ -28,6 +29,21 @@ export default function MainApp({ token, onLogout }) {
   const [sosActive, setSosActive] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('betterdays_theme') || 'light');
+
+  // Sincronizar tema com atributo data-theme no HTML
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('betterdays_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      showToast(`Tema alterado para ${next === 'dark' ? 'Modo Escuro 🌙' : 'Modo Claro ☀️'}`);
+      return next;
+    });
+  };
 
   // Carrega todos os dados da API ao iniciar
   const loadData = async () => {
@@ -97,6 +113,8 @@ export default function MainApp({ token, onLogout }) {
         onLogout={onLogout}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
 
 
@@ -117,6 +135,11 @@ export default function MainApp({ token, onLogout }) {
             token={token}
             showToast={showToast}
             isMobile={true}
+            devicesCount={devices.length}
+            areasCount={areas.length || 3}
+            onEmergencySOS={handleQuickLocate}
+            theme={theme}
+            onToggleTheme={toggleTheme}
           />
         </header>
 
@@ -173,6 +196,11 @@ export default function MainApp({ token, onLogout }) {
                   onProfileUpdated={setProfile}
                   token={token}
                   showToast={showToast}
+                  devicesCount={devices.length}
+                  areasCount={areas.length || 3}
+                  onEmergencySOS={handleQuickLocate}
+                  theme={theme}
+                  onToggleTheme={toggleTheme}
                 />
               </div>
             </div>
@@ -187,7 +215,7 @@ export default function MainApp({ token, onLogout }) {
                   <div className="sos-text">
                     <h3>Localização Rápida de Emergência (SOS)</h3>
                     <p>
-                      Em caso de dispneia, hipóxia ou síncope, clique para rastrear a posição imediata do familiar.
+                      Rastreio e socorro imediato via satélite em caso de emergência.
                     </p>
                   </div>
                 </div>
@@ -330,7 +358,7 @@ export default function MainApp({ token, onLogout }) {
            ------------------------------------------------------------- */}
         {activeTab === 'map' && (
           <>
-            <div className="page-header">
+            <div className="page-header map-page-header">
               <div className="page-title">
                 <h1>
                   <i className="fa-solid fa-map-location-dot" style={{ color: 'var(--color-primary)' }}></i>
@@ -353,11 +381,16 @@ export default function MainApp({ token, onLogout }) {
                   onProfileUpdated={setProfile}
                   token={token}
                   showToast={showToast}
+                  devicesCount={devices.length}
+                  areasCount={areas.length || 3}
+                  onEmergencySOS={handleQuickLocate}
+                  theme={theme}
+                  onToggleTheme={toggleTheme}
                 />
               </div>
             </div>
 
-            <main className="tab-content-wrapper">
+            <main className="tab-content-wrapper map-tab-wrapper">
               <div className="map-container-card">
                 <div className="map-header-bar">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 700, color: 'var(--color-primary-dark)' }}>
@@ -380,6 +413,7 @@ export default function MainApp({ token, onLogout }) {
                     areas={areas}
                     onEmergencyAlert={handleQuickLocate}
                     showToast={showToast}
+                    theme={theme}
                   />
                 </div>
 
@@ -400,15 +434,18 @@ export default function MainApp({ token, onLogout }) {
             ABA 3: MENSAGENS E ALERTAS
            ------------------------------------------------------------- */}
 
+        {/* -------------------------------------------------------------
+            ABA 4: MENSAGENS & GRUPOS DE CUIDADO (ESTILO WHATSAPP)
+           ------------------------------------------------------------- */}
         {activeTab === 'messages' && (
           <>
-            <div className="page-header">
+            <div className="page-header messages-page-header">
               <div className="page-title">
                 <h1>
-                  <i className="fa-solid fa-bell" style={{ color: 'var(--color-primary)' }}></i>
-                  Central de Notificações & Alertas
+                  <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i>
+                  Grupos de Cuidado & Mensagens
                 </h1>
-                <p>Histórico de avisos de telemetria, bateria e perímetro de segurança</p>
+                <p>Comunicação em tempo real entre familiares, médicos e cuidadores</p>
               </div>
               <div className="page-actions">
                 <UserAvatarMenu
@@ -418,46 +455,23 @@ export default function MainApp({ token, onLogout }) {
                   onProfileUpdated={setProfile}
                   token={token}
                   showToast={showToast}
+                  devicesCount={devices.length}
+                  areasCount={areas.length || 3}
+                  onEmergencySOS={handleQuickLocate}
+                  theme={theme}
+                  onToggleTheme={toggleTheme}
                 />
               </div>
             </div>
 
-            <main className="tab-content-wrapper">
-              <div className="messages-feed">
-                {messages.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)' }}>
-                    <i className="fa-solid fa-circle-check" style={{ fontSize: '36px', color: 'var(--color-success)', marginBottom: '12px' }}></i>
-                    <h3>Nenhum alerta recente</h3>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Todos os familiares estão seguros em suas zonas.</p>
-                  </div>
-                ) : (
-                  messages.map((msg) => (
-                    <div
-                      key={msg.id}
-                      className={`message-card ${msg.severity === 'error' ? 'error' : msg.severity === 'warning' ? 'warning' : 'info'}`}
-                    >
-                      <div className="message-icon">
-                        {msg.severity === 'error' ? (
-                          <i className="fa-solid fa-triangle-exclamation"></i>
-                        ) : msg.severity === 'warning' ? (
-                          <i className="fa-solid fa-battery-quarter"></i>
-                        ) : (
-                          <i className="fa-solid fa-circle-info"></i>
-                        )}
-                      </div>
-                      <div className="message-body">
-                        <strong>{msg.message}</strong>
-                        <p>Rastreador vinculado: <code>{msg.device_id}</code></p>
-                        <div className="message-meta">
-                          <span><i className="fa-solid fa-clock"></i> {new Date(msg.timestamp).toLocaleTimeString('pt-BR')}</span>
-                          <span>&bull;</span>
-                          <span>Origem: {msg.source.toUpperCase()}</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+            <main className="tab-content-wrapper messages-tab-wrapper">
+              <CareGroupsChatView
+                profile={profile}
+                devices={devices}
+                onNavigateTab={setActiveTab}
+                showToast={showToast}
+                onQuickLocate={handleQuickLocate}
+              />
             </main>
           </>
         )}

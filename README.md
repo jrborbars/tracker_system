@@ -1,4 +1,4 @@
-# 🛰️ Eisenmenger Care Tracker — Sistema de Monitoramento Satelital
+# 🛰️ Betterdays — Sistema de Monitoramento Satelital e Apoio Familiar
 
 Sistema completo para **monitoramento satelital e apoio a familiares de pessoas com Síndrome de Eisenmenger**. O projeto possui arquitetura desacoplada e organizada em duas frentes:
 

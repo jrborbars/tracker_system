@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design System — Eisenmenger Care Tracker</title>
+  <title>Design System — Betterdays</title>
   
   <!-- Tipografia Roboto (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   
   <!-- FontAwesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <style>
     /* ==========================================================================
-       1. TOKENS DO DESIGN SYSTEM — TONS PASTÉIS & MATERIAL DESIGN LIMPO
+       1. TOKENS DO DESIGN SYSTEM — LIGHT & DARK MODE DUAL PALETTES
        ========================================================================== */
     :root {
       /* Cores Primárias (Saúde / Menta Suave) */
@@ -30,7 +30,7 @@
       --color-secondary-subtle: #D1C4E9;
       --color-secondary-dark: #4527A0;
 
-      /* Cores de Emergência / SOS (Coral Suave / Alerta Humanizado) */
+      /* Cores de Emergência / SOS (Coral Suave) */
       --color-danger: #E53935;
       --color-danger-light: #FFEBEE;
       --color-danger-subtle: #FFCDD2;
@@ -67,14 +67,63 @@
       --shadow-pulse: 0 0 0 0 rgba(229, 57, 53, 0.4);
 
       /* Raios de Borda */
-      --radius-sm: 6px;
+      --radius-sm: 8px;
       --radius-md: 12px;
-      --radius-lg: 16px;
+      --radius-lg: 18px;
       --radius-full: 9999px;
 
       /* Transições */
       --transition-fast: 0.15s ease;
-      --transition-normal: 0.25s ease;
+      --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="dark"] {
+      /* Cores Primárias Dark (Teal Luminoso / Calma Noturna) */
+      --color-primary: #14B8A6;
+      --color-primary-light: #134E4A;
+      --color-primary-subtle: #115E59;
+      --color-primary-dark: #5EEAD4;
+
+      /* Cores Secundárias Dark (Lavanda Noturna) */
+      --color-secondary: #A78BFA;
+      --color-secondary-light: #2E1065;
+      --color-secondary-subtle: #4C1D95;
+      --color-secondary-dark: #DDD6FE;
+
+      /* Cores de Emergência / SOS Dark (Coral Luminoso) */
+      --color-danger: #F87171;
+      --color-danger-light: #450A0A;
+      --color-danger-subtle: #7F1D1D;
+      --color-danger-dark: #FECACA;
+
+      /* Cores de Advertência Dark (Âmbar Suave) */
+      --color-warning: #FBBF24;
+      --color-warning-light: #451A03;
+      --color-warning-subtle: #78350F;
+      --color-warning-dark: #FEF08A;
+
+      /* Cores de Sucesso Dark (Verde Esmeralda) */
+      --color-success: #4ADE80;
+      --color-success-light: #064E3B;
+      --color-success-subtle: #065F46;
+      --color-success-dark: #BBF7D0;
+
+      /* Superfícies e Neutros Dark (Deep Slate) */
+      --bg-canvas: #0B0F17;
+      --bg-surface: #151D2A;
+      --bg-surface-subtle: #1E293B;
+      --border-color: #273549;
+      --border-light: #1E293B;
+
+      /* Tipografia Neutra Dark */
+      --text-main: #F1F5F9;
+      --text-muted: #94A3B8;
+      --text-light: #64748B;
+
+      /* Sombras de Elevação Dark */
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.4);
     }
 
     /* ==========================================================================
@@ -93,16 +142,17 @@
       line-height: 1.5;
       padding: 32px 24px;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
-    /* ==========================================================================
-       3. ESTRUTURA & GRID DO GUIA
-       ========================================================================== */
     .container {
       max-width: 1280px;
       margin: 0 auto;
     }
 
+    /* ==========================================================================
+       3. CABEÇALHO & SEÇÕES
+       ========================================================================== */
     .header {
       background-color: var(--bg-surface);
       border-radius: var(--radius-lg);
@@ -115,6 +165,9 @@
       align-items: center;
       gap: 20px;
       border-left: 6px solid var(--color-primary);
+      border-top: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
     }
 
     .header-info h1 {
@@ -130,6 +183,33 @@
       color: var(--text-muted);
       font-size: 15px;
       margin-top: 6px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-toggle-theme {
+      background-color: var(--bg-surface-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-toggle-theme:hover {
+      background-color: var(--color-primary-light);
+      border-color: var(--color-primary-subtle);
+      color: var(--color-primary-dark);
     }
 
     .header-badge {
@@ -152,7 +232,7 @@
       padding: 28px 32px;
       box-shadow: var(--shadow-sm);
       margin-bottom: 32px;
-      border: 1px solid var(--border-light);
+      border: 1px solid var(--border-color);
     }
 
     .section-title {
@@ -186,10 +266,13 @@
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
       transition: transform var(--transition-fast);
+      cursor: pointer;
+      background: var(--bg-surface);
     }
 
     .color-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
     }
 
     .color-preview {
@@ -231,6 +314,7 @@
     .typography-table {
       width: 100%;
       border-collapse: collapse;
+      margin-bottom: 28px;
     }
 
     .typography-table th, .typography-table td {
@@ -265,6 +349,7 @@
     .icon-box:hover {
       background-color: var(--color-primary-light);
       border-color: var(--color-primary-subtle);
+      transform: translateY(-2px);
     }
 
     .icon-box i {
@@ -281,17 +366,16 @@
     }
 
     /* ==========================================================================
-       6. COMPONENTES VITAIS — EISENMENGER CARE
+       6. COMPONENTES VITAIS — BETTERDAYS
        ========================================================================== */
     .components-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
       gap: 24px;
     }
 
-    /* Card de Emergência Rápida (SOS Quick Locate) */
     .emergency-card {
-      background: linear-gradient(135deg, #FFFFFF 0%, var(--color-danger-light) 100%);
+      background: linear-gradient(135deg, var(--bg-surface) 0%, var(--color-danger-light) 100%);
       border: 1px solid var(--color-danger-subtle);
       border-radius: var(--radius-lg);
       padding: 24px;
@@ -340,18 +424,9 @@
     }
 
     @keyframes pulse-ring {
-      0% {
-        transform: scale(0.95);
-        opacity: 0.9;
-      }
-      70% {
-        transform: scale(3.5);
-        opacity: 0;
-      }
-      100% {
-        transform: scale(3.5);
-        opacity: 0;
-      }
+      0% { transform: scale(0.95); opacity: 0.9; }
+      70% { transform: scale(3.5); opacity: 0; }
+      100% { transform: scale(3.5); opacity: 0; }
     }
 
     .btn-sos {
@@ -359,7 +434,7 @@
       background-color: var(--color-danger);
       color: #FFFFFF;
       border: none;
-      border-radius: var(--radius-md);
+      border-radius: var(--radius-sm);
       padding: 14px 20px;
       font-size: 15px;
       font-weight: 700;
@@ -375,10 +450,8 @@
     .btn-sos:hover {
       background-color: var(--color-danger-dark);
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(229, 57, 53, 0.4);
     }
 
-    /* Card do Paciente / Rastreador Satelital */
     .patient-card {
       background-color: var(--bg-surface);
       border: 1px solid var(--border-color);
@@ -418,7 +491,6 @@
       color: var(--text-muted);
     }
 
-    /* Grade de Telemetria */
     .telemetry-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -436,14 +508,9 @@
       border: 1px solid var(--border-light);
     }
 
-    .telemetry-icon {
-      font-size: 18px;
-    }
-
+    .telemetry-icon { font-size: 18px; }
     .telemetry-icon.battery-ok { color: var(--color-success); }
     .telemetry-icon.satellite { color: var(--color-primary); }
-    .telemetry-icon.geofence { color: var(--color-secondary); }
-    .telemetry-icon.pulse { color: var(--color-danger); }
 
     .telemetry-data .label {
       font-size: 11px;
@@ -456,14 +523,6 @@
       font-size: 14px;
       font-weight: 700;
       color: var(--text-main);
-    }
-
-    /* Badges & Chips */
-    .badge-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 16px 0;
     }
 
     .chip {
@@ -482,144 +541,45 @@
     .chip-warning { background: var(--color-warning-light); color: var(--color-warning-dark); }
     .chip-danger { background: var(--color-danger-light); color: var(--color-danger-dark); }
 
-    /* Botões Padrão Material */
-    .btn-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 16px;
-    }
-
-    .btn {
-      padding: 10px 18px;
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      border: 1px solid transparent;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all var(--transition-fast);
-    }
-
-    .btn-primary {
-      background-color: var(--color-primary);
-      color: #FFFFFF;
-    }
-    .btn-primary:hover { background-color: var(--color-primary-dark); }
-
-    .btn-secondary {
-      background-color: var(--color-secondary-light);
-      color: var(--color-secondary-dark);
-      border-color: var(--color-secondary-subtle);
-    }
-    .btn-secondary:hover { background-color: var(--color-secondary-subtle); }
-
-    .btn-outline {
-      background-color: transparent;
-      border-color: var(--border-color);
-      color: var(--text-main);
-    }
-    .btn-outline:hover { background-color: var(--bg-canvas); }
-
-    /* Inputs de Formulário Material */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-main);
-      margin-bottom: 6px;
-    }
-
-    .form-input {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-color);
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--text-main);
-      background-color: var(--bg-surface);
-      transition: border-color var(--transition-fast);
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px var(--color-primary-light);
-    }
-
-    /* Alertas e Notificações */
-    .alert-box {
-      padding: 14px 18px;
-      border-radius: var(--radius-md);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 14px;
-    }
-
-    .alert-info {
-      background-color: var(--color-primary-light);
-      color: var(--color-primary-dark);
-      border-left: 4px solid var(--color-primary);
-    }
-
-    .alert-warning {
-      background-color: var(--color-warning-light);
-      color: var(--color-warning-dark);
-      border-left: 4px solid var(--color-warning);
-    }
-
-    .alert-danger {
-      background-color: var(--color-danger-light);
-      color: var(--color-danger-dark);
-      border-left: 4px solid var(--color-danger);
-    }
-
     /* ==========================================================================
-       7. DEMONSTRAÇÃO DO LAYOUT EM GRID (APP SHELL SIMULATION)
+       7. DEMONSTRAÇÃO DO CHAT DE CUIDADO ESTILO WHATSAPP
        ========================================================================== */
-    .layout-demo {
-      display: grid;
-      grid-template-columns: 280px 1fr 280px;
-      gap: 16px;
-      background-color: var(--bg-canvas);
-      padding: 16px;
-      border-radius: var(--radius-lg);
-      border: 1px dashed var(--border-color);
-      min-height: 220px;
+    .chat-preview-box {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--bg-canvas);
     }
 
-    .layout-col {
-      background-color: var(--bg-surface);
-      border-radius: var(--radius-md);
-      padding: 16px;
+    .chat-bubble-demo {
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      border: 1px solid var(--border-light);
-      font-size: 13px;
-      color: var(--text-muted);
+      gap: 10px;
+      padding: 16px;
     }
 
-    .layout-col strong {
-      color: var(--color-primary-dark);
-      margin-bottom: 4px;
+    .demo-bubble {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+    }
+
+    .demo-bubble.other {
+      align-self: flex-start;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .demo-bubble.me {
+      align-self: flex-end;
+      background: var(--color-primary-light);
+      border: 1px solid var(--color-primary-subtle);
+      color: var(--text-main);
     }
 
     @media (max-width: 900px) {
-      .layout-demo {
-        grid-template-columns: 1fr;
-      }
       .components-grid {
         grid-template-columns: 1fr;
       }
@@ -630,104 +590,129 @@
 
   <div class="container">
     
-    <!-- CABEÇALHO DO DESIGN SYSTEM -->
+    <!-- CABEÇALHO DO DESIGN SYSTEM COM ALTERNADOR DE TEMA -->
     <header class="header">
       <div class="header-info">
         <h1>
           <i class="fa-solid fa-heart-pulse" style="color: var(--color-danger);"></i>
-          Eisenmenger Care Tracker
+          Betterdays
         </h1>
-        <p>Design System & Guia de Estilos — Tons Pastéis, Material Design Limpo & Rastreamento Satelital</p>
+        <p>Design System Oficial — Material Design Limpo, Dual Palettes (Light & Dark) & Grupos de Cuidado</p>
       </div>
-      <div class="header-badge">
-        <i class="fa-solid fa-satellite-dish"></i>
-        Foco em Saúde & Apoio Familiar
+      <div class="header-controls">
+        <button type="button" class="btn-toggle-theme" id="themeBtn" onclick="toggleThemeDoc()">
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+          <span id="themeLabel">Modo Escuro</span>
+        </button>
+        <div class="header-badge">
+          <i class="fa-solid fa-satellite-dish"></i>
+          Versão 2.0 • Dual Theme
+        </div>
       </div>
     </header>
 
-    <!-- 1. PALETA DE CORES EM TONS PASTÉIS -->
+    <!-- 1. PALETA DE CORES (LIGHT & DARK DUAL TOKENS) -->
     <section class="section">
       <h2 class="section-title">
         <i class="fa-solid fa-palette" style="color: var(--color-primary);"></i>
-        1. Paleta de Cores (Pastel Healthcare Palette)
+        1. Paleta de Cores e Tokens Duais (Light & Dark)
       </h2>
-      <p class="section-subtitle">Tons suaves selecionados para acolher a família, reduzir ansiedade e destacar dados médicos com clareza.</p>
+      <p class="section-subtitle">Tons suaves com contraste médico adequado para uso diurno e vigília noturna de cuidadores.</p>
       
       <div class="color-grid">
         <!-- Primária -->
         <div class="color-card">
-          <div class="color-preview" style="background-color: #00897B; color: #fff;">Primary Teal</div>
+          <div class="color-preview" style="background-color: var(--color-primary); color: #fff;">Primary Teal</div>
           <div class="color-details">
-            <div class="color-name">Teal Saúde</div>
-            <div class="color-hex">#00897B</div>
-            <div class="color-usage">Ações principais e ênfase</div>
+            <div class="color-name">Teal Saúde / Luminoso</div>
+            <div class="color-hex">--color-primary</div>
+            <div class="color-usage">Ações principais e seleção</div>
           </div>
         </div>
 
         <div class="color-card">
-          <div class="color-preview" style="background-color: #E0F2F1; color: #004D40;">Pastel Teal Light</div>
+          <div class="color-preview" style="background-color: var(--color-primary-light); color: var(--color-primary-dark);">Pastel Teal Light</div>
           <div class="color-details">
-            <div class="color-name">Menta Suave</div>
-            <div class="color-hex">#E0F2F1</div>
+            <div class="color-name">Menta / Dark Container</div>
+            <div class="color-hex">--color-primary-light</div>
             <div class="color-usage">Fundos de status e badges</div>
           </div>
         </div>
 
         <!-- Secundária -->
         <div class="color-card">
-          <div class="color-preview" style="background-color: #7E57C2; color: #fff;">Secondary Purple</div>
+          <div class="color-preview" style="background-color: var(--color-secondary); color: #fff;">Secondary Purple</div>
           <div class="color-details">
             <div class="color-name">Lavanda Apoio</div>
-            <div class="color-hex">#7E57C2</div>
-            <div class="color-usage">Recursos de apoio familiar</div>
+            <div class="color-hex">--color-secondary</div>
+            <div class="color-usage">Recursos familiares e cuidadores</div>
           </div>
         </div>
 
         <div class="color-card">
-          <div class="color-preview" style="background-color: #EDE7F6; color: #4527A0;">Pastel Lavender</div>
+          <div class="color-preview" style="background-color: var(--color-secondary-light); color: var(--color-secondary-dark);">Pastel Lavender</div>
           <div class="color-details">
             <div class="color-name">Lilás Acolhedor</div>
-            <div class="color-hex">#EDE7F6</div>
+            <div class="color-hex">--color-secondary-light</div>
             <div class="color-usage">Superfícies secundárias</div>
           </div>
         </div>
 
         <!-- Emergência SOS -->
         <div class="color-card">
-          <div class="color-preview" style="background-color: #E53935; color: #fff;">Emergency Coral</div>
+          <div class="color-preview" style="background-color: var(--color-danger); color: #fff;">Emergency Coral</div>
           <div class="color-details">
             <div class="color-name">Coral Emergência</div>
-            <div class="color-hex">#E53935</div>
+            <div class="color-hex">--color-danger</div>
             <div class="color-usage">Botão SOS e alertas críticos</div>
           </div>
         </div>
 
         <div class="color-card">
-          <div class="color-preview" style="background-color: #FFEBEE; color: #B71C1C;">Pastel Rose Light</div>
+          <div class="color-preview" style="background-color: var(--color-danger-light); color: var(--color-danger-dark);">Pastel Rose Light</div>
           <div class="color-details">
-            <div class="color-name">Rosa Suave</div>
-            <div class="color-hex">#FFEBEE</div>
+            <div class="color-name">Rosa / Dark Red Container</div>
+            <div class="color-hex">--color-danger-light</div>
             <div class="color-usage">Fundo de alertas SOS</div>
           </div>
         </div>
 
         <!-- Advertência -->
         <div class="color-card">
-          <div class="color-preview" style="background-color: #FB8C00; color: #fff;">Warning Amber</div>
+          <div class="color-preview" style="background-color: var(--color-warning); color: #fff;">Warning Amber</div>
           <div class="color-details">
             <div class="color-name">Âmbar Atenção</div>
-            <div class="color-hex">#FB8C00</div>
+            <div class="color-hex">--color-warning</div>
             <div class="color-usage">Bateria fraca e avisos</div>
+          </div>
+        </div>
+
+        <!-- Sucesso -->
+        <div class="color-card">
+          <div class="color-preview" style="background-color: var(--color-success); color: #fff;">Success Green</div>
+          <div class="color-details">
+            <div class="color-name">Verde Segurança</div>
+            <div class="color-hex">--color-success</div>
+            <div class="color-usage">Dentro da zona segura</div>
           </div>
         </div>
 
         <!-- Superfície -->
         <div class="color-card">
-          <div class="color-preview" style="background-color: #F8FAFC; color: #1E293B; border-bottom: 1px solid #E2E8F0;">Canvas BG</div>
+          <div class="color-preview" style="background-color: var(--bg-canvas); color: var(--text-main); border-bottom: 1px solid var(--border-color);">Canvas BG</div>
           <div class="color-details">
             <div class="color-name">Fundo Canvas</div>
-            <div class="color-hex">#F8FAFC</div>
+            <div class="color-hex">--bg-canvas</div>
             <div class="color-usage">Fundo geral da aplicação</div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-preview" style="background-color: var(--bg-surface); color: var(--text-main); border-bottom: 1px solid var(--border-color);">Surface White/Slate</div>
+          <div class="color-details">
+            <div class="color-name">Superfície Elevada</div>
+            <div class="color-hex">--bg-surface</div>
+            <div class="color-usage">Cards, modais e menus</div>
           </div>
         </div>
       </div>
@@ -737,14 +722,14 @@
     <section class="section">
       <h2 class="section-title">
         <i class="fa-solid fa-font" style="color: var(--color-primary);"></i>
-        2. Tipografia Roboto & Ícones FontAwesome
+        2. Tipografia Roboto & Ícones
       </h2>
-      <p class="section-subtitle">Hierarquia precisa para leitura rápida em situações de emergência.</p>
+      <p class="section-subtitle">Hierarquia precisa para leitura rápida e sem esforço visual em emergências.</p>
 
-      <table class="typography-table" style="margin-bottom: 28px;">
+      <table class="typography-table">
         <thead>
           <tr>
-            <th>Elemento</th>
+            <th>Nível</th>
             <th>Tamanho / Peso</th>
             <th>Exemplo Visual</th>
           </tr>
@@ -752,67 +737,43 @@
         <tbody>
           <tr>
             <td><strong>Display H1</strong></td>
-            <td>28px / 700 Bold</td>
+            <td>26px / 700 Bold</td>
             <td style="font-size: 24px; font-weight: 700; color: var(--color-primary-dark);">Localizador Satelital de Emergência</td>
           </tr>
           <tr>
             <td><strong>Heading H2</strong></td>
-            <td>20px / 500 Medium</td>
-            <td style="font-size: 18px; font-weight: 500;">Monitoramento de Zonas Seguras</td>
+            <td>20px / 700 Bold</td>
+            <td style="font-size: 18px; font-weight: 700;">Monitoramento de Zonas Seguras</td>
+          </tr>
+          <tr>
+            <td><strong>Subheading H3</strong></td>
+            <td>16px / 500 Medium</td>
+            <td style="font-size: 16px; font-weight: 500;">Mariana Silva — Pulseira TRCK-10001</td>
           </tr>
           <tr>
             <td><strong>Body Regular</strong></td>
-            <td>15px / 400 Regular</td>
-            <td style="font-size: 15px; color: var(--text-main);">O rastreador reportou sinal estável via constelação GPS há 2 minutos.</td>
+            <td>14px / 400 Regular</td>
+            <td style="font-size: 14px; color: var(--text-main);">O dispositivo reportou satélite estável via GPS/Galileo há 2 minutos.</td>
           </tr>
           <tr>
-            <td><strong>Caption & Badges</strong></td>
-            <td>12px / 700 Bold</td>
+            <td><strong>Badges & Chips</strong></td>
+            <td>11px / 700 Bold</td>
             <td><span class="chip chip-primary"><i class="fa-solid fa-check"></i> SINAL SATELITAL NOMINAL</span></td>
           </tr>
         </tbody>
       </table>
-
-      <h3 style="font-size: 16px; margin-bottom: 14px; font-weight: 500;">Ícones Essenciais de Monitoramento:</h3>
-      <div class="icons-grid">
-        <div class="icon-box">
-          <i class="fa-solid fa-satellite-dish"></i>
-          <span>Rastreamento GPS</span>
-        </div>
-        <div class="icon-box">
-          <i class="fa-solid fa-heart-pulse"></i>
-          <span>Sinais Vitais</span>
-        </div>
-        <div class="icon-box">
-          <i class="fa-solid fa-crosshairs"></i>
-          <span>Localizar Agora</span>
-        </div>
-        <div class="icon-box">
-          <i class="fa-solid fa-draw-polygon"></i>
-          <span>Zona Segura</span>
-        </div>
-        <div class="icon-box">
-          <i class="fa-solid fa-battery-three-quarters"></i>
-          <span>Bateria</span>
-        </div>
-        <div class="icon-box">
-          <i class="fa-solid fa-phone-volume"></i>
-          <span>Socorro Médico</span>
-        </div>
-      </div>
     </section>
 
-    <!-- 3. COMPONENTES INTERATIVOS DE SAÚDE -->
+    <!-- 3. COMPONENTES VITAIS DE EMERGÊNCIA & TELEMETRIA -->
     <section class="section">
       <h2 class="section-title">
         <i class="fa-solid fa-cubes" style="color: var(--color-primary);"></i>
         3. Componentes Clínicos & de Emergência
       </h2>
-      <p class="section-subtitle">Elementos criados especificamente para o caso de uso da Síndrome de Eisenmenger.</p>
+      <p class="section-subtitle">Elementos concebidos especificamente para a segurança do paciente com Síndrome de Eisenmenger.</p>
 
       <div class="components-grid">
-        
-        <!-- CARD 1: LOCALIZAÇÃO RÁPIDA DE EMERGÊNCIA -->
+        <!-- CARD SOS -->
         <div class="emergency-card">
           <div class="emergency-header">
             <span class="emergency-badge">
@@ -827,22 +788,17 @@
           <h3 style="font-size: 18px; font-weight: 700; color: var(--color-danger-dark); margin-bottom: 6px;">
             Localizar Paciente Agora
           </h3>
-          <p style="font-size: 13px; color: #5F2120; margin-bottom: 16px;">
-            Disparo instantâneo: centraliza as coordenadas de satélite no mapa e aciona o protocolo de resgate.
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Disparo instantâneo: centraliza o mapa e aciona o protocolo de apoio médico imediato.
           </p>
 
-          <div style="background: rgba(255,255,255,0.85); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px; border: 1px solid var(--color-danger-subtle);">
-            <div style="font-size: 12px; font-weight: 700; color: var(--text-main);"><i class="fa-solid fa-user-doctor"></i> Dr. Cardiologista: (11) 98765-4321</div>
-            <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Protocolo: Paciente com Eisenmenger (Oxigênio sob demanda)</div>
-          </div>
-
-          <button class="btn-sos" onclick="alert('Localizando satélite e traçando rota de emergência...')">
+          <button class="btn-sos" onclick="alert('Disparo de Localização de Emergência acionado com sucesso!')">
             <i class="fa-solid fa-crosshairs"></i>
             LOCALIZAR ENTE QUERIDO AGORA
           </button>
         </div>
 
-        <!-- CARD 2: STATUS DO ENTE QUERIDO / DISPOSITIVO -->
+        <!-- CARD STATUS PACIENTE -->
         <div class="patient-card">
           <div class="patient-header">
             <div class="patient-avatar">
@@ -854,9 +810,9 @@
             </div>
           </div>
 
-          <div class="badge-group">
-            <span class="chip chip-success"><i class="fa-solid fa-shield-halved"></i> Dentro da Zona Segura (Casa)</span>
-            <span class="chip chip-secondary"><i class="fa-solid fa-satellite"></i> Satélite Conectado</span>
+          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+            <span class="chip chip-success"><i class="fa-solid fa-shield-halved"></i> Zona Segura Ativa</span>
+            <span class="chip chip-secondary"><i class="fa-solid fa-satellite"></i> Satélite OK</span>
           </div>
 
           <div class="telemetry-grid">
@@ -875,74 +831,59 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
 
-          <div class="btn-group">
-            <button class="btn btn-primary"><i class="fa-solid fa-map-location-dot"></i> Ver no Mapa</button>
-            <button class="btn btn-secondary"><i class="fa-solid fa-draw-polygon"></i> Gerenciar Zonas</button>
+    <!-- 4. CHAT DE GRUPOS DE CUIDADO (ESTILO WHATSAPP) -->
+    <section class="section">
+      <h2 class="section-title">
+        <i class="fa-solid fa-comments" style="color: var(--color-primary);"></i>
+        4. Grupos de Cuidado e Comunicação Familiar (Estilo WhatsApp)
+      </h2>
+      <p class="section-subtitle">Canais dedicados para familiares e médicos com balões de conversa e telemetria integrada.</p>
+
+      <div class="chat-preview-box">
+        <div style="padding: 10px 16px; background: var(--bg-surface); border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px;">
+          <i class="fa-solid fa-people-roof" style="color: var(--color-primary);"></i>
+          <span>👨‍👩‍👧‍👦 Família Mariana — Cuidado Geral</span>
+        </div>
+        <div class="chat-bubble-demo">
+          <div class="demo-bubble other">
+            <strong style="color: var(--color-secondary); font-size: 11px;">Carlos Silva (Familiar)</strong>
+            <p style="margin-top: 2px;">A saturação da Mariana acordou em 89% (dentro do habitual dela).</p>
           </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 4. FEED DE ALERTAS & NOTIFICAÇÕES -->
-    <section class="section">
-      <h2 class="section-title">
-        <i class="fa-solid fa-bell" style="color: var(--color-primary);"></i>
-        4. Central de Notificações & Alertas
-      </h2>
-      <p class="section-subtitle">Padrão visual para os eventos gerados pela telemetria e cercas virtuais.</p>
-
-      <div class="alert-box alert-danger">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size: 20px;"></i>
-        <div>
-          <strong>Alerta de Emergência:</strong> O paciente se afastou do perímetro da <em>Zona Segura (Clínica Cardiológica)</em>.
-          <span style="display:block; font-size: 12px; opacity: 0.85; margin-top: 2px;">Hoje às 10:14 • Alerta automático via Satélite</span>
-        </div>
-      </div>
-
-      <div class="alert-box alert-warning">
-        <i class="fa-solid fa-battery-quarter" style="font-size: 20px;"></i>
-        <div>
-          <strong>Aviso de Bateria:</strong> A carga do rastreador portátil está em 18%. Conecte à base de carregamento.
-          <span style="display:block; font-size: 12px; opacity: 0.85; margin-top: 2px;">Hoje às 09:30 • Telemetria MQTT</span>
-        </div>
-      </div>
-
-      <div class="alert-box alert-info">
-        <i class="fa-solid fa-circle-check" style="font-size: 20px;"></i>
-        <div>
-          <strong>Status Normal:</strong> Paciente retornou à <em>Zona Segura Residencial</em> com sinal GPS forte.
-          <span style="display:block; font-size: 12px; opacity: 0.85; margin-top: 2px;">Ontem às 18:45 • Geofencing</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- 5. ESTRUTURA DO DASHBOARD (CSS GRID LAYOUT) -->
-    <section class="section">
-      <h2 class="section-title">
-        <i class="fa-solid fa-table-cells" style="color: var(--color-primary);"></i>
-        5. Demonstração da Macro-Estrutura (CSS Grid)
-      </h2>
-      <p class="section-subtitle">Arquitetura de layout do Dashboard com 3 colunas responsivas sem bibliotecas visuais.</p>
-
-      <div class="layout-demo">
-        <div class="layout-col">
-          <strong><i class="fa-solid fa-users"></i> Coluna Esquerda</strong>
-          Lista de Familiares, Perfil Clínico e Botão SOS Rápido
-        </div>
-        <div class="layout-col" style="background-color: var(--color-primary-light); border-color: var(--color-primary-subtle);">
-          <strong style="color: var(--color-primary-dark);"><i class="fa-solid fa-map"></i> Área Central (Mapa)</strong>
-          Visualização Satélite / Ruas em Tempo Real com Geofences
-        </div>
-        <div class="layout-col">
-          <strong><i class="fa-solid fa-bell"></i> Coluna Direita</strong>
-          Feed de Alertas, Histórico de Telemetria e Contatos Médicos
+          <div class="demo-bubble me">
+            <p>Perfeito! Já administrei a dose da manhã de Sildenafila 20mg.</p>
+          </div>
         </div>
       </div>
     </section>
 
   </div>
+
+  <script>
+    function toggleThemeDoc() {
+      const htmlEl = document.documentElement;
+      const currentTheme = htmlEl.getAttribute('data-theme') || 'light';
+      const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      htmlEl.setAttribute('data-theme', nextTheme);
+      
+      const themeLabel = document.getElementById('themeLabel');
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (nextTheme === 'dark') {
+        themeLabel.textContent = 'Modo Claro';
+        themeIcon.className = 'fa-solid fa-sun';
+        themeIcon.style.color = '#FBBF24';
+      } else {
+        themeLabel.textContent = 'Modo Escuro';
+        themeIcon.className = 'fa-solid fa-moon';
+        themeIcon.style.color = '';
+      }
+    }
+  </script>
 
 </body>
 </html>

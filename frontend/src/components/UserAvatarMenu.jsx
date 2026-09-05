@@ -9,13 +9,18 @@ export default function UserAvatarMenu({
   token,
   showToast,
   isMobile = false,
+  devicesCount = 2,
+  areasCount = 3,
+  onEmergencySOS,
+  theme = 'light',
+  onToggleTheme,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const menuRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // Calcula as iniciais do nome quando não houver foto (ex: "Roberto Silva" -> "RS", "Carlos" -> "CA")
+  // Calcula as iniciais do nome quando não houver foto
   const getInitials = (name) => {
     if (!name) return 'U';
     const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -24,11 +29,11 @@ export default function UserAvatarMenu({
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
-  const userName = profile?.name || 'Cuidador Familiar';
+  const userName = profile?.name || 'Demo User';
   const userEmail = profile?.email || 'familiar@betterdays.com';
   const initials = getInitials(userName);
 
-  // URL absoluta da foto caso seja caminho relativo do backend
+  // URL absoluta da foto
   const avatarUrl = profile?.photo_url
     ? profile.photo_url.startsWith('http') || profile.photo_url.startsWith('data:')
       ? profile.photo_url
@@ -150,10 +155,67 @@ export default function UserAvatarMenu({
             </div>
           </div>
 
+          {/* Botão de Emergência Rápida SOS dentro do Menu */}
+          {onEmergencySOS && (
+            <div className="dropdown-sos-container">
+              <button
+                type="button"
+                className="dropdown-sos-action-btn"
+                onClick={() => {
+                  onEmergencySOS();
+                  setIsOpen(false);
+                }}
+              >
+                <i className="fa-solid fa-crosshairs"></i>
+                <span>Disparar Protocolo SOS</span>
+              </button>
+            </div>
+          )}
+
+          {/* Seção de Status do Sistema & Satélite (Visível no Mobile e Desktop) */}
+          <div className="dropdown-telemetry-box">
+            <div className="dropdown-telemetry-title">
+              <i className="fa-solid fa-satellite-dish" style={{ color: 'var(--color-primary)' }}></i>
+              <span>Status do Satélite & Cercas</span>
+            </div>
+            <div className="dropdown-telemetry-tags">
+              <div className="dropdown-tag gps-ok">
+                <i className="fa-solid fa-circle-check"></i> GPS: Conectado (Leaflet)
+              </div>
+              <div className="dropdown-tag geofences">
+                <i className="fa-solid fa-draw-polygon"></i> {areasCount} Cercas Ativas (InCor, Casa, Parque)
+              </div>
+              <div className="dropdown-tag trackers">
+                <i className="fa-solid fa-user-check"></i> {devicesCount} Rastreadores no Radar
+              </div>
+            </div>
+          </div>
+
           <div className="dropdown-divider"></div>
 
           {/* Opções do Menu */}
           <div className="dropdown-actions-list">
+            {/* Opção Tema: Alternar Modo Escuro / Claro */}
+            {onToggleTheme && (
+              <button
+                type="button"
+                className="dropdown-action-item"
+                onClick={() => {
+                  onToggleTheme();
+                }}
+              >
+                <div className="action-icon-circle theme" style={{ backgroundColor: theme === 'dark' ? '#3B2D05' : '#FFF3E0', color: theme === 'dark' ? '#FBBF24' : '#E65100' }}>
+                  <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+                </div>
+                <div className="action-text">
+                  <span className="action-title">
+                    {theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}
+                  </span>
+                  <span className="action-subtitle">Alternar tema visual</span>
+                </div>
+              </button>
+            )}
+
             {/* Opção 1: Foto do Usuário */}
             <button
               type="button"

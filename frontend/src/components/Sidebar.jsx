@@ -9,12 +9,14 @@ export default function Sidebar({
   onLogout,
   isCollapsed = false,
   onToggleCollapse,
+  theme = 'light',
+  onToggleTheme,
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fa-solid fa-table-columns' },
     { id: 'map', label: 'Mapa Satelital', icon: 'fa-solid fa-map-location-dot' },
     { id: 'indoor', label: 'Monitoramento Interno', icon: 'fa-solid fa-house-signal' },
-    { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-bell', badge: unreadCount },
+    { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-comments', badge: unreadCount },
     { id: 'profile', label: 'Perfil Familiar', icon: 'fa-solid fa-user-shield' },
   ];
 
@@ -68,6 +70,17 @@ export default function Sidebar({
 
       {/* Rodapé da Sidebar */}
       <div className="sidebar-footer">
+        {/* Alternador de Modo Escuro / Claro */}
+        <button
+          type="button"
+          className="btn-sidebar-theme-toggle"
+          onClick={onToggleTheme}
+          title={theme === 'dark' ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
+        >
+          <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`} style={{ color: theme === 'dark' ? '#FBBF24' : 'var(--color-primary)' }}></i>
+          {!isCollapsed && <span>{theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>}
+        </button>
+
         <div className="satellite-status" title="GPS Satélite Ativo">
           <i className="fa-solid fa-satellite-dish" style={{ color: 'var(--color-primary)' }}></i>
           {!isCollapsed && <span>GPS Satélite Ativo</span>}
