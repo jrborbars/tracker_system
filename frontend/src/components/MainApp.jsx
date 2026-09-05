@@ -159,6 +159,7 @@ export default function MainApp({ token, onLogout }) {
         
         {/* Topbar Mobile (Visível apenas em telas menores) */}
         <header className="mobile-topbar">
+          <div className="mobile-topbar-spacer" aria-hidden="true"></div>
           <div className="mobile-brand">
             <img src={logoIconSvg} alt="Betterdays" className="mobile-logo-icon" />
             <img src={logoTextSvg} alt="Betterdays" className="mobile-logo-text" />

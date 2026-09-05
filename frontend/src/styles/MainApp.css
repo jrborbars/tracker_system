@@ -301,28 +301,34 @@
   display: none;
   background-color: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
-  padding: 12px 18px;
-  justify-content: space-between;
-  align-items: center;
+  padding: 10px 16px;
   position: sticky;
   top: 0;
   z-index: 2000;
   box-shadow: var(--shadow-sm);
 }
 
+.mobile-topbar-spacer {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
 .mobile-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 auto;
 }
 
 .mobile-logo-icon {
-  height: 36px;
+  height: 32px;
   width: auto;
 }
 
 .mobile-logo-text {
-  height: 26px;
+  height: 22px;
   width: auto;
 }
 
@@ -2651,12 +2657,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  color: #FFFFFF;
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
   font-weight: 700;
   font-size: 13px;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(0, 137, 123, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 137, 123, 0.1);
+  transition: all var(--transition-fast);
+}
+
+.avatar-circle:hover {
+  background-color: var(--color-primary-light);
 }
 
 .avatar-img {
@@ -2669,19 +2681,19 @@
 .avatar-initials {
   font-weight: 700;
   font-size: 13px;
-  color: #FFFFFF;
+  color: var(--color-primary);
   letter-spacing: 0.5px;
 }
 
 .avatar-online-dot {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: -1px;
+  right: -1px;
   width: 9px;
   height: 9px;
   border-radius: 50%;
   background-color: var(--color-success);
-  border: 1.5px solid #FFFFFF;
+  border: 1.5px solid var(--bg-surface);
 }
 
 .avatar-text-details {
@@ -2759,17 +2771,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  color: #FFFFFF;
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
   flex-shrink: 0;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .avatar-initials-large {
   font-size: 16px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: var(--color-primary);
 }
 
 .dropdown-user-info {
@@ -3772,7 +3785,14 @@
   }
 
   .mobile-topbar {
-    display: flex;
+    display: grid;
+    grid-template-columns: 40px 1fr 40px;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .user-avatar-menu-wrapper.mobile {
+    justify-self: end;
   }
 
   .mobile-bottom-nav {
