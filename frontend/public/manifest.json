@@ -15,8 +15,8 @@
     "browser"
   ],
   "orientation": "portrait-primary",
-  "background_color": "#F8FAFC",
-  "theme_color": "#0D9488",
+  "background_color": "#064E3B",
+  "theme_color": "#064E3B",
   "categories": [
     "health",
     "medical",
