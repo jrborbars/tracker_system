@@ -70,6 +70,9 @@ export default function LeafletMapView({
     if (!mapContainerRef.current) return;
 
     if (!mapInstanceRef.current) {
+      if (mapContainerRef.current && mapContainerRef.current._leaflet_id) {
+        delete mapContainerRef.current._leaflet_id;
+      }
       const map = L.map(mapContainerRef.current, {
         center: DEFAULT_CENTER,
         zoom: 14,
