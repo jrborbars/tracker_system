@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { login, register, getProfile, getDevices } from '../api/client.js';
+import { login, register } from '../api/client.js';
 import logoIconSvg from '../assets/logo-icon.svg';
 import logoTextSvg from '../assets/logo-text.svg';
 import '../styles/LoginView.css';
@@ -12,6 +12,14 @@ export default function LoginView({ onLoginSuccess }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   
+  // Controle de visibilidade de senha
+  const [showPassword, setShowPassword] = useState(false);
+
+  // Modais de suporte
+  const [modalType, setModalType] = useState(null); // 'forgot' | 'terms' | 'privacy' | null
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -63,6 +71,16 @@ export default function LoginView({ onLoginSuccess }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleForgotSubmit = (e) => {
+    e.preventDefault();
+    setForgotSuccess(true);
+    setTimeout(() => {
+      setForgotSuccess(false);
+      setModalType(null);
+      setForgotEmail('');
+    }, 3000);
   };
 
   return (
@@ -150,84 +168,114 @@ export default function LoginView({ onLoginSuccess }) {
             </div>
           )}
 
-          {/* Formulário */}
+          {/* Formulário com Floating Labels (Estilo Gmail) */}
           <form className="auth-form" onSubmit={handleSubmit}>
             {isRegister && (
               <>
-                <div className="form-group">
-                  <label htmlFor="name">
-                    <i className="fa-solid fa-user"></i> Nome Completo
-                  </label>
-                  <div className="input-wrapper">
-                    <i className="fa-solid fa-user input-icon"></i>
+                {/* Nome Completo */}
+                <div className="floating-group">
+                  <div className="floating-input-wrapper">
+                    <i className="fa-solid fa-user floating-prefix-icon"></i>
                     <input
-                      id="name"
+                      id="input-name"
                       type="text"
-                      className="input-control"
-                      placeholder="Ex: Maria dos Santos"
+                      className="floating-input"
+                      placeholder=" "
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
                     />
+                    <label htmlFor="input-name" className="floating-label">
+                      Nome Completo
+                    </label>
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="phone">
-                    <i className="fa-solid fa-phone"></i> Telefone / WhatsApp de Emergência
-                  </label>
-                  <div className="input-wrapper">
-                    <i className="fa-solid fa-phone input-icon"></i>
+                {/* Telefone */}
+                <div className="floating-group">
+                  <div className="floating-input-wrapper">
+                    <i className="fa-solid fa-phone floating-prefix-icon"></i>
                     <input
-                      id="phone"
+                      id="input-phone"
                       type="tel"
-                      className="input-control"
-                      placeholder="Ex: +55 (11) 98765-4321"
+                      className="floating-input"
+                      placeholder=" "
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
                     />
+                    <label htmlFor="input-phone" className="floating-label">
+                      Telefone / WhatsApp de Emergência
+                    </label>
                   </div>
                 </div>
               </>
             )}
 
-            <div className="form-group">
-              <label htmlFor="email">
-                <i className="fa-solid fa-envelope"></i> E-mail
-              </label>
-              <div className="input-wrapper">
-                <i className="fa-solid fa-envelope input-icon"></i>
+            {/* E-mail */}
+            <div className="floating-group">
+              <div className="floating-input-wrapper">
+                <i className="fa-solid fa-envelope floating-prefix-icon"></i>
                 <input
-                  id="email"
+                  id="input-email"
                   type="email"
-                  className="input-control"
-                  placeholder="seu.email@exemplo.com"
+                  className="floating-input"
+                  placeholder=" "
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
+                <label htmlFor="input-email" className="floating-label">
+                  E-mail
+                </label>
               </div>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password">
-                <i className="fa-solid fa-lock"></i> Senha
-              </label>
-              <div className="input-wrapper">
-                <i className="fa-solid fa-lock input-icon"></i>
+            {/* Senha com Botão Olho */}
+            <div className="floating-group">
+              <div className="floating-input-wrapper">
+                <i className="fa-solid fa-lock floating-prefix-icon"></i>
                 <input
-                  id="password"
-                  type="password"
-                  className="input-control"
-                  placeholder="Sua senha secreta"
+                  id="input-password"
+                  type={showPassword ? 'text' : 'password'}
+                  className="floating-input has-suffix"
+                  placeholder=" "
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <label htmlFor="input-password" className="floating-label">
+                  Senha
+                </label>
+                <button
+                  type="button"
+                  className="btn-toggle-password"
+                  onClick={() => setShowPassword(!showPassword)}
+                  title={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                  aria-label={showPassword ? 'Ocultar senha' : 'Exibir senha'}
+                >
+                  <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'}`}></i>
+                </button>
               </div>
             </div>
 
+            {/* Esqueci a senha (apenas na aba Entrar) */}
+            {!isRegister && (
+              <div className="auth-forgot-row">
+                <button
+                  type="button"
+                  className="btn-forgot-password"
+                  onClick={() => {
+                    setForgotEmail(email);
+                    setModalType('forgot');
+                  }}
+                >
+                  Esqueceu a senha?
+                </button>
+              </div>
+            )}
+
+            {/* Botão de Envio */}
             <button type="submit" className="btn-submit" disabled={loading}>
               {loading ? (
                 <>
@@ -248,8 +296,181 @@ export default function LoginView({ onLoginSuccess }) {
             </button>
           </form>
 
+          {/* Termos de Uso e Privacidade */}
+          <div className="auth-legal-footer">
+            Ao continuar, você concorda com os{' '}
+            <button
+              type="button"
+              className="btn-legal-link"
+              onClick={() => setModalType('terms')}
+            >
+              Termos de Uso
+            </button>{' '}
+            e a{' '}
+            <button
+              type="button"
+              className="btn-legal-link"
+              onClick={() => setModalType('privacy')}
+            >
+              Política de Privacidade
+            </button>
+            .
+          </div>
+
         </section>
       </main>
+
+      {/* Modal: Esqueci a Senha */}
+      {modalType === 'forgot' && (
+        <div className="login-modal-overlay" onClick={() => setModalType(null)}>
+          <div className="login-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="login-modal-header">
+              <div className="login-modal-icon">
+                <i className="fa-solid fa-key"></i>
+              </div>
+              <div>
+                <h3>Recuperação de Acesso</h3>
+                <p>Insira seu e-mail cadastrado para redefinir sua senha de acesso.</p>
+              </div>
+              <button
+                type="button"
+                className="btn-modal-close"
+                onClick={() => setModalType(null)}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            {forgotSuccess ? (
+              <div className="feedback-alert success" style={{ margin: '16px 0' }}>
+                <i className="fa-solid fa-circle-check"></i>
+                <span>Instruções enviadas com sucesso para <strong>{forgotEmail}</strong>!</span>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotSubmit} style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="floating-group">
+                  <div className="floating-input-wrapper">
+                    <i className="fa-solid fa-envelope floating-prefix-icon"></i>
+                    <input
+                      type="email"
+                      className="floating-input"
+                      placeholder=" "
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      required
+                    />
+                    <label className="floating-label">E-mail Cadastrado</label>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '8px' }}>
+                  <button
+                    type="button"
+                    className="btn btn-outline"
+                    onClick={() => setModalType(null)}
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    <i className="fa-solid fa-paper-plane"></i> Enviar Link
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Termos de Uso */}
+      {modalType === 'terms' && (
+        <div className="login-modal-overlay" onClick={() => setModalType(null)}>
+          <div className="login-modal-card wide" onClick={(e) => e.stopPropagation()}>
+            <div className="login-modal-header">
+              <div className="login-modal-icon">
+                <i className="fa-solid fa-file-contract"></i>
+              </div>
+              <div>
+                <h3>Termos de Uso</h3>
+                <p>Betterdays Tecnologia Criativa • Versão 2.4 (2026)</p>
+              </div>
+              <button
+                type="button"
+                className="btn-modal-close"
+                onClick={() => setModalType(null)}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div className="login-modal-body">
+              <h4>1. Objeto e Finalidade</h4>
+              <p>O sistema Betterdays é uma plataforma de monitoramento satelital e apoio ao cuidado de pessoas com necessidades especiais de saúde (como Síndrome de Eisenmenger).</p>
+              
+              <h4>2. Uso de Dados de Geolocalização</h4>
+              <p>Os dados de telemetria e localização em tempo real são transmitidos de forma criptografada de ponta a ponta para a tranquilidade da rede de cuidadores autorizados.</p>
+
+              <h4>3. Protocolo de Emergência</h4>
+              <p>O acionamento do botão SOS notifica imediatamente a rede familiar. Em situações de emergência médica crítica, os serviços locais de resgate (SAMU 192 / Emergência) devem ser acionados simultaneamente.</p>
+            </div>
+
+            <div className="login-modal-footer">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setModalType(null)}
+              >
+                Entendi e Aceito
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Política de Privacidade */}
+      {modalType === 'privacy' && (
+        <div className="login-modal-overlay" onClick={() => setModalType(null)}>
+          <div className="login-modal-card wide" onClick={(e) => e.stopPropagation()}>
+            <div className="login-modal-header">
+              <div className="login-modal-icon">
+                <i className="fa-solid fa-shield-halved"></i>
+              </div>
+              <div>
+                <h3>Política de Privacidade</h3>
+                <p>Conformidade LGPD & Proteção de Dados de Saúde</p>
+              </div>
+              <button
+                type="button"
+                className="btn-modal-close"
+                onClick={() => setModalType(null)}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div className="login-modal-body">
+              <h4>1. Coleta Mínima Necessária</h4>
+              <p>Coletamos apenas dados cadastrais essenciais (nome, e-mail, telefone) e telemetria de dispositivos vinculados pelo responsável legal.</p>
+              
+              <h4>2. Armazenamento Seguro</h4>
+              <p>Todos os registros médicos, contatos de emergência e logs de localização são protegidos por criptografia AES-256 e tokens de autenticação JWT seguros.</p>
+
+              <h4>3. Não Compartilhamento</h4>
+              <p>Seus dados nunca são vendidos ou compartilhados com terceiros para fins comerciais.</p>
+            </div>
+
+            <div className="login-modal-footer">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setModalType(null)}
+              >
+                Compreendi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -1,6 +1,6 @@
 /* ==========================================================================
    TELA DE LOGIN — EISENMENGER CARE TRACKER (CLEAN & CENTERED)
-   Logo Embutido no Card • Top Right Theme Toggle • Dark/Light Mode
+   Floating Labels (Estilo Gmail) • Olho na Senha • Esqueci Senha & Termos
    ========================================================================== */
 
 .login-screen-wrapper {
@@ -75,7 +75,7 @@
 .login-card {
   background-color: var(--bg-surface);
   border-radius: var(--radius-xl);
-  padding: 36px 32px;
+  padding: 36px 32px 28px;
   box-shadow: var(--shadow-xl);
   border: 1px solid var(--border-color);
   width: 100%;
@@ -176,7 +176,7 @@
   border: 1px dashed var(--color-primary-subtle);
   border-radius: var(--radius-md);
   padding: 12px 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -221,58 +221,148 @@
   background-color: var(--color-primary-dark);
 }
 
-/* Formulário e Inputs */
+/* Formulário e Floating Labels (Estilo Material Design / Gmail) */
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.floating-group {
+  position: relative;
+  width: 100%;
 }
 
-.form-group label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-main);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.input-wrapper {
+.floating-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
-.input-icon {
+.floating-prefix-icon {
   position: absolute;
   left: 14px;
   color: var(--text-light);
   font-size: 14px;
+  pointer-events: none;
+  transition: color var(--transition-fast);
+  z-index: 2;
 }
 
-.input-control {
+.floating-input {
   width: 100%;
-  padding: 12px 14px 12px 40px;
+  height: 52px;
+  padding: 14px 14px 14px 42px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   font-size: 14px;
   font-family: inherit;
   color: var(--text-main);
-  background-color: var(--bg-surface);
+  background-color: transparent;
   transition: all var(--transition-fast);
   box-sizing: border-box;
 }
 
-.input-control:focus {
+.floating-input.has-suffix {
+  padding-right: 46px;
+}
+
+/* Label Flutuante */
+.floating-label {
+  position: absolute;
+  left: 42px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--bg-surface);
+  padding: 0 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  max-width: calc(100% - 60px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 1;
+}
+
+/* Quando focado ou com texto: sobe para a borda superior */
+.floating-input:focus ~ .floating-label,
+.floating-input:not(:placeholder-shown) ~ .floating-label {
+  top: 0;
+  left: 14px;
+  transform: translateY(-50%) scale(0.85);
+  transform-origin: left center;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--bg-surface);
+  z-index: 3;
+}
+
+.floating-input:not(:focus):not(:placeholder-shown) ~ .floating-label {
+  color: var(--text-muted);
+}
+
+.floating-input:focus {
   outline: none;
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.floating-input:focus ~ .floating-prefix-icon {
+  color: var(--color-primary);
+}
+
+/* Botão Olho de Visibilidade da Senha */
+.btn-toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  font-size: 15px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+  z-index: 2;
+}
+
+.btn-toggle-password:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+/* Linha "Esqueceu a senha?" */
+.auth-forgot-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -6px;
+  margin-bottom: 4px;
+}
+
+.btn-forgot-password {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.btn-forgot-password:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
 }
 
 /* Alertas de Erro / Sucesso */
@@ -314,7 +404,7 @@
   gap: 8px;
   box-shadow: 0 4px 12px rgba(0, 137, 123, 0.25);
   transition: all var(--transition-fast);
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .btn-submit:hover:not(:disabled) {
@@ -328,6 +418,170 @@
   cursor: not-allowed;
 }
 
+/* Rodapé Legal (Termos de Uso e Política de Privacidade) */
+.auth-legal-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+.btn-legal-link {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.btn-legal-link:hover {
+  color: var(--color-primary-dark);
+}
+
+/* ==========================================================================
+   MODAIS DE SUPORTE (ESQUECI SENHA, TERMOS, PRIVACIDADE)
+   ========================================================================== */
+.login-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeInModal 0.2s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.login-modal-card {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-xl);
+  max-width: 440px;
+  width: 100%;
+  padding: 28px;
+  box-sizing: border-box;
+  animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.login-modal-card.wide {
+  max-width: 580px;
+}
+
+@keyframes slideUpModal {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  position: relative;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.login-modal-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.login-modal-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.login-modal-header p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.btn-modal-close {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.btn-modal-close:hover {
+  color: var(--color-danger);
+  background-color: var(--color-danger-light);
+}
+
+.login-modal-body {
+  margin: 18px 0;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.login-modal-body h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+.login-modal-body h4:first-child {
+  margin-top: 0;
+}
+
+.login-modal-body p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.login-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-light);
+}
+
 /* Responsividade Mobile */
 @media (max-width: 480px) {
   .login-screen-wrapper {
@@ -335,7 +589,7 @@
   }
 
   .login-card {
-    padding: 28px 20px;
+    padding: 24px 18px 20px;
     border-radius: var(--radius-lg);
   }
 
@@ -357,5 +611,10 @@
   .login-logo-text {
     height: 30px;
   }
+
+  .login-modal-card {
+    padding: 20px 16px;
+  }
 }
+
 
