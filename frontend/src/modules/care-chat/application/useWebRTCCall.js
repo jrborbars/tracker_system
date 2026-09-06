@@ -17,6 +17,7 @@ export function useWebRTCCall({ currentGroupId, currentUser, showToast }) {
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
   const timerRef = useRef(null);
+  const dialingTimerRef = useRef(null);
 
   // 1. Iniciar chamada (Oferta)
   const startCall = useCallback(async (type = CALL_TYPES.VIDEO) => {
@@ -26,6 +27,8 @@ export function useWebRTCCall({ currentGroupId, currentUser, showToast }) {
     setIsMuted(false);
     setIsVideoDisabled(false);
     setDuration(0);
+
+    if (dialingTimerRef.current) clearTimeout(dialingTimerRef.current);
 
     try {
       const { localStream } = await webrtcService.initiateCall(
@@ -42,15 +45,15 @@ export function useWebRTCCall({ currentGroupId, currentUser, showToast }) {
         showToast(`Iniciando chamada de ${type === 'video' ? 'vídeo' : 'voz'} P2P segura...`);
       }
 
-      // Simulação de atendimento automático após 2.5s se estiver em modo teste/demo
-      setTimeout(() => {
+      // Simulação de atendimento automático após 2.0s se estiver em modo teste/demo
+      dialingTimerRef.current = setTimeout(() => {
         setCallState((prev) => {
           if (prev === CALL_STATES.DIALING) {
             return CALL_STATES.CONNECTED;
           }
           return prev;
         });
-      }, 2500);
+      }, 2000);
 
     } catch (err) {
       console.error('[useWebRTCCall] Erro ao iniciar chamada:', err);
@@ -62,6 +65,7 @@ export function useWebRTCCall({ currentGroupId, currentUser, showToast }) {
   // 2. Atender chamada recebida
   const answerCall = useCallback(async () => {
     if (!callerInfo || !currentGroupId) return;
+    if (dialingTimerRef.current) clearTimeout(dialingTimerRef.current);
     setCallState(CALL_STATES.CONNECTED);
     setDuration(0);
 
@@ -82,17 +86,27 @@ export function useWebRTCCall({ currentGroupId, currentUser, showToast }) {
     }
   }, [callerInfo, currentGroupId, currentUser]);
 
-  // 3. Encerrar chamada
+  // 3. Encerrar chamada imediatamente
   const endCall = useCallback((reason = 'user_hangup') => {
-    webrtcService.hangupCall(currentGroupId, reason);
-    setCallState(CALL_STATES.ENDED);
-    setCallerInfo(null);
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (dialingTimerRef.current) {
+      clearTimeout(dialingTimerRef.current);
+      dialingTimerRef.current = null;
+    }
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
 
-    setTimeout(() => {
-      setCallState(CALL_STATES.IDLE);
-      setDuration(0);
-    }, 1200);
+    webrtcService.hangupCall(currentGroupId, reason);
+
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+
+    setCallState(CALL_STATES.IDLE);
+    setCallerInfo(null);
+    setDuration(0);
+    setIsMuted(false);
+    setIsVideoDisabled(false);
   }, [currentGroupId]);
 
   // 4. Alternar Mudo (Áudio)

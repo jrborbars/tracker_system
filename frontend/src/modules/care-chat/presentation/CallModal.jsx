@@ -35,12 +35,33 @@ export default function CallModal({
             <i className="fa-solid fa-lock"></i>
             <span>P2P WebRTC E2EE • Zero Nuvem</span>
           </div>
-          <span className="call-status-tag">
-            {isDialing && 'Discando...'}
-            {isIncoming && 'Chamada Recebida'}
-            {isConnected && `Conectado (${formatCallDuration(duration)})`}
-            {isEnded && 'Chamada Encerrada'}
-          </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span className="call-status-tag">
+              {isDialing && 'Discando...'}
+              {isIncoming && 'Chamada Recebida'}
+              {isConnected && `Conectado (${formatCallDuration(duration)})`}
+              {isEnded && 'Encerrada'}
+            </span>
+            <button
+              type="button"
+              className="btn-modal-close"
+              onClick={() => onEndCall('user_hangup')}
+              title="Fechar Chamada"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--text-muted)',
+                cursor: 'pointer',
+                fontSize: '16px',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <i className="fa-solid fa-xmark"></i>
+            </button>
+          </div>
         </div>
 
         {/* Corpo Visual da Chamada */}
