@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import profileRepository from '../../modules/profile/infrastructure/profileRepository.js';
 import { getUserInitials, getAbsolutePhotoUrl } from '../../modules/profile/domain/profileModel.js';
 
 export default function UserAvatarMenu({
@@ -17,11 +16,9 @@ export default function UserAvatarMenu({
   onToggleTheme,
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const menuRef = useRef(null);
-  const fileInputRef = useRef(null);
 
   // Detectar se já está instalado ou rodando como PWA standalone
   useEffect(() => {
@@ -84,56 +81,8 @@ export default function UserAvatarMenu({
     };
   }, [isOpen]);
 
-  // Manipular upload de foto de perfil
-  const handleFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      if (showToast) showToast('Por favor, selecione um arquivo de imagem válido (PNG, JPG, WEBP).');
-      return;
-    }
-
-    try {
-      setIsUploading(true);
-      if (showToast) showToast('Enviando nova foto de perfil...');
-
-      const uploadRes = await profileRepository.uploadPhoto(token, file);
-      const newPhotoUrl = uploadRes.url;
-
-      const updated = await profileRepository.updateProfile(token, {
-        name: profile?.name,
-        email: profile?.email,
-        phone: profile?.phone,
-        emergency_contact: profile?.emergency_contact,
-        patient_diagnosis: profile?.patient_diagnosis,
-        photo_url: newPhotoUrl,
-      });
-
-      if (onProfileUpdated) {
-        onProfileUpdated(updated);
-      }
-      if (showToast) showToast('Foto de perfil atualizada com sucesso!');
-      setIsOpen(false);
-    } catch (err) {
-      if (showToast) showToast(`Erro ao atualizar foto: ${err.message}`);
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
-  };
-
   return (
     <div className={`user-avatar-menu-wrapper ${isMobile ? 'mobile' : ''}`} ref={menuRef}>
-      {/* Input oculto para upload de imagem */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="image/jpeg,image/png,image/webp,image/gif"
-        style={{ display: 'none' }}
-      />
-
       {/* Botão Gatilho do Avatar (Apenas o Círculo do Avatar) */}
       <button
         type="button"
@@ -235,25 +184,7 @@ export default function UserAvatarMenu({
               </button>
             )}
 
-            {/* Opção 1: Foto do Usuário */}
-            <button
-              type="button"
-              className="dropdown-action-item"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              <div className="action-icon-circle photo">
-                <i className="fa-solid fa-camera"></i>
-              </div>
-              <div className="action-text">
-                <span className="action-title">
-                  {isUploading ? 'Enviando...' : 'Foto'}
-                </span>
-                <span className="action-subtitle">Alterar imagem de perfil</span>
-              </div>
-            </button>
-
-            {/* Opção 2: Configurar Perfil */}
+            {/* Opção: Configurar Perfil */}
             <button
               type="button"
               className="dropdown-action-item"
