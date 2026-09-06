@@ -80,7 +80,7 @@ export default function UserAvatarMenu({
 
   return (
     <div className={`user-avatar-menu-container ${isMobile ? 'mobile-mode' : ''}`} ref={menuRef}>
-      {/* Botão Gatilho do Avatar */}
+      {/* Botão Gatilho do Avatar (Apenas o Círculo) */}
       <button
         type="button"
         className="user-avatar-trigger-btn"
@@ -104,13 +104,6 @@ export default function UserAvatarMenu({
           )}
           <span className="avatar-online-badge"></span>
         </div>
-        {!isMobile && (
-          <div className="user-brief-info">
-            <span className="user-brief-name">{profile?.name || 'Demo User'}</span>
-            <span className="user-brief-role">{profile?.email || 'demo@betterdays.com'}</span>
-          </div>
-        )}
-        <i className={`fa-solid fa-chevron-down avatar-chevron ${isOpen ? 'open' : ''}`}></i>
       </button>
 
       {/* Dropdown Menu Flutuante */}

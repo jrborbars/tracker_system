@@ -12,36 +12,43 @@
 .user-avatar-trigger-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: var(--color-bg-card, #ffffff);
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: 9999px;
-  padding: 4px 12px 4px 4px;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
 }
 
 .user-avatar-trigger-btn:hover {
-  background: var(--color-bg-surface-subtle, #f8fafc);
-  border-color: var(--color-primary, #0D9488);
-  box-shadow: 0 2px 6px rgba(13, 148, 136, 0.15);
+  transform: scale(1.08);
+}
+
+.user-avatar-trigger-btn:active {
+  transform: scale(0.96);
 }
 
 .avatar-circle-sm {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: var(--color-primary-light, rgba(13, 148, 136, 0.15));
-  border: 1.5px solid var(--color-primary, #0D9488);
+  border: 2px solid var(--color-primary, #0D9488);
   color: var(--color-primary, #0D9488);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.avatar-circle-sm:hover {
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25);
 }
 
 .avatar-img-sm {
