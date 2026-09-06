@@ -1,8 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 import subscriptionRepository from '../infrastructure/subscriptionRepository.js';
 import { formatCurrency } from '../domain/subscriptionModel.js';
 import './MercadoPagoCheckoutModal.css';
+
+/**
+ * Detecta a bandeira do cartão baseando-se nos primeiros dígitos
+ */
+function detectCardBrand(number) {
+  const clean = number.replace(/\D/g, '');
+  if (!clean) return { name: 'Card', icon: 'fa-solid fa-credit-card' };
+  if (/^4/.test(clean)) return { name: 'Visa', icon: 'fa-brands fa-cc-visa' };
+  if (/^(5[1-5]|2[2-7])/.test(clean)) return { name: 'Mastercard', icon: 'fa-brands fa-cc-mastercard' };
+  if (/^(34|37)/.test(clean)) return { name: 'Amex', icon: 'fa-brands fa-cc-amex' };
+  if (/^(4011|4389|5041|6362|6363)/.test(clean)) return { name: 'Elo', icon: 'fa-solid fa-credit-card' };
+  if (/^(6062|3841)/.test(clean)) return { name: 'Hipercard', icon: 'fa-solid fa-credit-card' };
+  return { name: 'Card', icon: 'fa-solid fa-credit-card' };
+}
 
 export default function MercadoPagoCheckoutModal({
   plan,
@@ -13,26 +27,54 @@ export default function MercadoPagoCheckoutModal({
   showToast,
 }) {
   const { t } = useI18n();
-  const [activeTab, setActiveTab] = useState('pix'); // 'pix' | 'card'
+  const [activeTab, setActiveTab] = useState('card'); // Padrão com foco no Cartão
   const [loading, setLoading] = useState(true);
+  const [processingPayment, setProcessingPayment] = useState(false);
   const [processingSimulation, setProcessingSimulation] = useState(false);
   const [pixData, setPixData] = useState(null);
   const [preferenceData, setPreferenceData] = useState(null);
   const [copied, setCopied] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(1800); // 30 min em segundos
+  const [timeLeft, setTimeLeft] = useState(1800); // 30 min
+
+  // Formulário de Cartão de Crédito
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardHolder, setCardHolder] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [cardCpf, setCardCpf] = useState('');
+  const [installments, setInstallments] = useState('1');
+  const [formError, setFormError] = useState('');
 
   const amount = cycle === 'yearly' ? plan.priceYearly : plan.priceMonthly;
+  const brand = useMemo(() => detectCardBrand(cardNumber), [cardNumber]);
 
-  // Carrega transação inicial do Mercado Pago
+  // Parcelamento calculado em até 12x
+  const installmentOptions = useMemo(() => {
+    const maxInstallments = cycle === 'yearly' ? 12 : (amount > 50 ? 3 : 1);
+    const options = [];
+    for (let i = 1; i <= maxInstallments; i++) {
+      const installmentValue = amount / i;
+      options.push({
+        count: i,
+        amount: installmentValue,
+        label: i === 1 
+          ? t('subscription.installmentsSingle', { amount: formatCurrency(amount) })
+          : t('subscription.installmentsMultiple', { count: i, amount: formatCurrency(installmentValue) }),
+      });
+    }
+    return options;
+  }, [amount, cycle, t]);
+
+  // Carrega transações do Mercado Pago
   useEffect(() => {
     let isMounted = true;
     async function initCheckout() {
       try {
         setLoading(true);
-        // Criação de PIX
-        const pixRes = await subscriptionRepository.createCheckoutPreference(plan.id, cycle, 'pix', token);
-        // Criação de Checkout Pro
-        const prefRes = await subscriptionRepository.createCheckoutPreference(plan.id, cycle, 'checkout_pro', token);
+        const [pixRes, prefRes] = await Promise.all([
+          subscriptionRepository.createCheckoutPreference(plan.id, cycle, 'pix', token).catch(() => null),
+          subscriptionRepository.createCheckoutPreference(plan.id, cycle, 'checkout_pro', token).catch(() => null),
+        ]);
         
         if (isMounted) {
           setPixData(pixRes?.payment);
@@ -40,7 +82,7 @@ export default function MercadoPagoCheckoutModal({
         }
       } catch (err) {
         console.error('Erro ao inicializar checkout Mercado Pago:', err);
-        if (showToast) showToast('Erro ao gerar cobrança no Mercado Pago.');
+        if (showToast) showToast('Erro ao inicializar checkout.');
       } finally {
         if (isMounted) setLoading(false);
       }
@@ -50,7 +92,7 @@ export default function MercadoPagoCheckoutModal({
     return () => { isMounted = false; };
   }, [plan.id, cycle, token, showToast]);
 
-  // Timer regressivo do PIX
+  // Timer do PIX
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
@@ -76,7 +118,96 @@ export default function MercadoPagoCheckoutModal({
     }
   };
 
-  // Simulação imediata de aprovação em ambiente de testes
+  // Formatadores de Inputs do Cartão
+  const handleCardNumberChange = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 16);
+    const formatted = val.replace(/(\d{4})(?=\d)/g, '$1 ');
+    setCardNumber(formatted);
+    if (formError) setFormError('');
+  };
+
+  const handleExpiryChange = (e) => {
+    let val = e.target.value.replace(/\D/g, '').slice(0, 4);
+    if (val.length >= 2) {
+      val = `${val.slice(0, 2)}/${val.slice(2)}`;
+    }
+    setCardExpiry(val);
+    if (formError) setFormError('');
+  };
+
+  const handleCvvChange = (e) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+    setCardCvv(val);
+    if (formError) setFormError('');
+  };
+
+  const handleCpfChange = (e) => {
+    let val = e.target.value.replace(/\D/g, '').slice(0, 11);
+    if (val.length > 9) {
+      val = `${val.slice(0, 3)}.${val.slice(3, 6)}.${val.slice(6, 9)}-${val.slice(9)}`;
+    } else if (val.length > 6) {
+      val = `${val.slice(0, 3)}.${val.slice(3, 6)}.${val.slice(6)}`;
+    } else if (val.length > 3) {
+      val = `${val.slice(0, 3)}.${val.slice(3)}`;
+    }
+    setCardCpf(val);
+    if (formError) setFormError('');
+  };
+
+  // Submissão do Cartão de Crédito
+  const handlePayWithCard = async (e) => {
+    e.preventDefault();
+    setFormError('');
+
+    const cleanNumber = cardNumber.replace(/\D/g, '');
+    if (!cleanNumber || cleanNumber.length < 13) {
+      setFormError(t('subscription.cardErrorInvalidNumber'));
+      return;
+    }
+    if (!cardHolder.trim() || cardHolder.trim().length < 3) {
+      setFormError(t('subscription.cardErrorFillAll'));
+      return;
+    }
+    if (!cardExpiry || cardExpiry.length < 5) {
+      setFormError(t('subscription.cardErrorInvalidExpiry'));
+      return;
+    }
+    if (!cardCvv || cardCvv.length < 3) {
+      setFormError(t('subscription.cardErrorInvalidCvv'));
+      return;
+    }
+
+    try {
+      setProcessingPayment(true);
+      const res = await subscriptionRepository.payWithCreditCard(
+        plan.id,
+        cycle,
+        {
+          cardNumber: cleanNumber,
+          holderName: cardHolder.trim().toUpperCase(),
+          expiry: cardExpiry,
+          cvv: cardCvv,
+          cpf: cardCpf.replace(/\D/g, ''),
+          brand: brand.name,
+          installments: Number(installments),
+        },
+        token
+      );
+
+      if (showToast) showToast(t('subscription.paymentSuccess'));
+      if (onPaymentSuccess) {
+        onPaymentSuccess(res.subscription);
+      }
+      onClose();
+    } catch (err) {
+      console.error('Erro ao processar cartão:', err);
+      setFormError(err.message || 'Falha na autorização do cartão pelo Mercado Pago.');
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
+
+  // Simulação de aprovação para ambiente de testes
   const handleSimulateApproval = async () => {
     try {
       setProcessingSimulation(true);
@@ -92,7 +223,7 @@ export default function MercadoPagoCheckoutModal({
       }
       onClose();
     } catch (err) {
-      console.error('Erro na simulação de pagamento:', err);
+      console.error('Erro na simulação:', err);
       if (showToast) showToast(err.message || 'Falha ao confirmar pagamento.');
     } finally {
       setProcessingSimulation(false);
@@ -128,19 +259,19 @@ export default function MercadoPagoCheckoutModal({
         <div className="mp-method-tabs">
           <button
             type="button"
-            className={`mp-tab-btn ${activeTab === 'pix' ? 'active' : ''}`}
-            onClick={() => setActiveTab('pix')}
-          >
-            <i className="fa-brands fa-pix"></i>
-            <span>PIX Instantâneo</span>
-          </button>
-          <button
-            type="button"
             className={`mp-tab-btn ${activeTab === 'card' ? 'active' : ''}`}
             onClick={() => setActiveTab('card')}
           >
             <i className="fa-solid fa-credit-card"></i>
-            <span>Cartão / Mercado Pago</span>
+            <span>{t('subscription.cardTab')}</span>
+          </button>
+          <button
+            type="button"
+            className={`mp-tab-btn ${activeTab === 'pix' ? 'active' : ''}`}
+            onClick={() => setActiveTab('pix')}
+          >
+            <i className="fa-brands fa-pix"></i>
+            <span>{t('subscription.pixTitle')}</span>
           </button>
         </div>
 
@@ -148,11 +279,153 @@ export default function MercadoPagoCheckoutModal({
         {loading ? (
           <div className="mp-loading-state">
             <i className="fa-solid fa-arrows-rotate fa-spin"></i>
-            <p>Gerando cobrança segura no Mercado Pago...</p>
+            <p>{t('subscription.processingPayment')}</p>
           </div>
         ) : (
           <div className="mp-method-content">
-            {activeTab === 'pix' ? (
+            {activeTab === 'card' ? (
+              <form className="mp-card-form" onSubmit={handlePayWithCard}>
+                {formError && (
+                  <div className="mp-form-alert error">
+                    <i className="fa-solid fa-triangle-exclamation"></i>
+                    <span>{formError}</span>
+                  </div>
+                )}
+
+                {/* Número do Cartão com Ícone Dinâmico de Bandeira */}
+                <div className="mp-input-group">
+                  <label htmlFor="mp-card-number">{t('subscription.cardNumber')}</label>
+                  <div className="mp-input-wrapper">
+                    <input
+                      id="mp-card-number"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder={t('subscription.cardNumberPlaceholder')}
+                      value={cardNumber}
+                      onChange={handleCardNumberChange}
+                      required
+                      autoComplete="cc-number"
+                    />
+                    <div className="mp-card-brand-tag" title={brand.name}>
+                      <i className={brand.icon}></i>
+                      <span className="brand-name">{brand.name !== 'Card' ? brand.name : ''}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Nome do Titular */}
+                <div className="mp-input-group">
+                  <label htmlFor="mp-card-holder">{t('subscription.cardHolder')}</label>
+                  <input
+                    id="mp-card-holder"
+                    type="text"
+                    placeholder={t('subscription.cardHolderPlaceholder')}
+                    value={cardHolder}
+                    onChange={(e) => {
+                      setCardHolder(e.target.value.toUpperCase());
+                      if (formError) setFormError('');
+                    }}
+                    required
+                    autoComplete="cc-name"
+                  />
+                </div>
+
+                {/* Linha Dupla: Validade, CVV e CPF */}
+                <div className="mp-form-grid-3">
+                  <div className="mp-input-group">
+                    <label htmlFor="mp-card-expiry">{t('subscription.cardExpiry')}</label>
+                    <input
+                      id="mp-card-expiry"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder={t('subscription.cardExpiryPlaceholder')}
+                      value={cardExpiry}
+                      onChange={handleExpiryChange}
+                      required
+                      autoComplete="cc-exp"
+                    />
+                  </div>
+
+                  <div className="mp-input-group">
+                    <label htmlFor="mp-card-cvv">{t('subscription.cardCvv')}</label>
+                    <input
+                      id="mp-card-cvv"
+                      type="password"
+                      inputMode="numeric"
+                      placeholder={t('subscription.cardCvvPlaceholder')}
+                      value={cardCvv}
+                      onChange={handleCvvChange}
+                      required
+                      autoComplete="cc-csc"
+                    />
+                  </div>
+
+                  <div className="mp-input-group">
+                    <label htmlFor="mp-card-cpf">{t('subscription.cardCpf')}</label>
+                    <input
+                      id="mp-card-cpf"
+                      type="text"
+                      inputMode="numeric"
+                      placeholder={t('subscription.cardCpfPlaceholder')}
+                      value={cardCpf}
+                      onChange={handleCpfChange}
+                    />
+                  </div>
+                </div>
+
+                {/* Parcelas */}
+                <div className="mp-input-group">
+                  <label htmlFor="mp-card-installments">{t('subscription.installments')}</label>
+                  <select
+                    id="mp-card-installments"
+                    value={installments}
+                    onChange={(e) => setInstallments(e.target.value)}
+                    className="mp-select"
+                  >
+                    {installmentOptions.map((opt) => (
+                      <option key={opt.count} value={opt.count}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Selo de Segurança */}
+                <div className="mp-security-badge">
+                  <i className="fa-solid fa-lock"></i>
+                  <span>{t('subscription.cardSecurityNotice')}</span>
+                </div>
+
+                {/* Botão de Pagamento com Cartão */}
+                <button
+                  type="submit"
+                  className="btn-pay-card"
+                  disabled={processingPayment}
+                >
+                  <i className={`fa-solid ${processingPayment ? 'fa-arrows-rotate fa-spin' : 'fa-credit-card'}`}></i>
+                  <span>
+                    {processingPayment
+                      ? t('subscription.processingPayment')
+                      : t('subscription.payCardButton', { amount: formatCurrency(amount) })}
+                  </span>
+                </button>
+
+                {/* Link Opcional para Checkout Pro Externo */}
+                {preferenceData?.init_point && (
+                  <div className="mp-external-option">
+                    <a
+                      href={preferenceData.init_point}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mp-external-link"
+                    >
+                      <i className="fa-solid fa-arrow-up-right-from-square"></i>
+                      <span>{t('subscription.orPayExternal')}</span>
+                    </a>
+                  </div>
+                )}
+              </form>
+            ) : (
               <div className="mp-pix-container">
                 <p className="mp-pix-instruction">{t('subscription.pixDesc')}</p>
 
@@ -165,7 +438,6 @@ export default function MercadoPagoCheckoutModal({
                     height="140"
                     fill="currentColor"
                   >
-                    {/* Visual de QR Code vetorial limpo */}
                     <rect width="100" height="100" fill="var(--bg-surface-subtle)" rx="6" />
                     <rect x="10" y="10" width="26" height="26" fill="var(--color-primary)" rx="4" />
                     <rect x="16" y="16" width="14" height="14" fill="var(--bg-surface)" rx="2" />
@@ -206,23 +478,6 @@ export default function MercadoPagoCheckoutModal({
                   </button>
                 </div>
               </div>
-            ) : (
-              <div className="mp-card-container">
-                <div className="mp-card-info-box">
-                  <i className="fa-solid fa-lock" style={{ color: 'var(--color-primary)' }}></i>
-                  <p>Você será redirecionado para o ambiente seguro do Mercado Pago para concluir com Cartão de Crédito em até 12x.</p>
-                </div>
-
-                <a
-                  href={preferenceData?.init_point || '#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-redirect-mp"
-                >
-                  <i className="fa-solid fa-arrow-up-right-from-square"></i>
-                  <span>Abrir Checkout Oficial Mercado Pago</span>
-                </a>
-              </div>
             )}
           </div>
         )}
@@ -243,3 +498,4 @@ export default function MercadoPagoCheckoutModal({
     </div>
   );
 }
+

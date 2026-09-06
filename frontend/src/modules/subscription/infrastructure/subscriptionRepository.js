@@ -40,6 +40,17 @@ class SubscriptionRepository {
   }
 
   /**
+   * Processa pagamento com cartão de crédito via Mercado Pago Checkout Transparente
+   */
+  async payWithCreditCard(planId, cycle = 'monthly', cardData = {}, token = null) {
+    return httpClient.post(
+      '/subscriptions/pay-card',
+      { planId, cycle, cardData },
+      token
+    );
+  }
+
+  /**
    * Simula a aprovação imediata do pagamento em ambiente de testes
    */
   async simulatePayment(planId, cycle = 'monthly', paymentId = null, token = null) {

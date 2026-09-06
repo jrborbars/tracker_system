@@ -77,6 +77,51 @@ test('POST /subscriptions/simulate-payment activates upgraded plan for user', as
   assert.equal(res.body.subscription.maxDevices, 10);
 });
 
+test('POST /subscriptions/pay-card processes credit card payment and upgrades plan', async () => {
+  const res = await request(app)
+    .post('/subscriptions/pay-card')
+    .set(demoHeaders())
+    .send({
+      planId: 'clinical',
+      cycle: 'yearly',
+      cardData: {
+        cardNumber: '5555444433332222',
+        holderName: 'VAGNER IBAS',
+        expiry: '12/28',
+        cvv: '999',
+        cpf: '12345678901',
+        brand: 'Mastercard',
+        installments: 3,
+      },
+    });
+
+  assert.equal(res.status, 200);
+  assert.equal(res.body.success, true);
+  assert.equal(res.body.subscription.planId, 'clinical');
+  assert.equal(res.body.subscription.paymentMethod, 'mercado_pago_credit_card');
+  assert.equal(res.body.subscription.cardLastFour, '2222');
+  assert.equal(res.body.subscription.installments, 3);
+});
+
+test('POST /subscriptions/pay-card rejects invalid card number', async () => {
+  const res = await request(app)
+    .post('/subscriptions/pay-card')
+    .set(demoHeaders())
+    .send({
+      planId: 'clinical',
+      cycle: 'monthly',
+      cardData: {
+        cardNumber: '123',
+        holderName: 'VAGNER IBAS',
+        expiry: '12/28',
+        cvv: '999',
+      },
+    });
+
+  assert.equal(res.status, 400);
+  assert.match(res.body.detail, /inválido/i);
+});
+
 test('POST /subscriptions/webhook receives and acknowledges Mercado Pago event', async () => {
   const res = await request(app)
     .post('/subscriptions/webhook')

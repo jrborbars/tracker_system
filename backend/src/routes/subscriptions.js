@@ -141,6 +141,71 @@ router.post('/subscriptions/simulate-payment', requireAuth, (req, res) => {
 });
 
 /**
+ * POST /subscriptions/pay-card
+ * Processa pagamento com cartão de crédito direto via Mercado Pago Checkout Transparente
+ */
+router.post('/subscriptions/pay-card', requireAuth, (req, res) => {
+  const { planId, cycle = 'monthly', cardData } = req.body;
+  const plan = PLANS_CONFIG[planId];
+
+  if (!plan) {
+    return res.status(400).json({ detail: `Plano inválido: ${planId}` });
+  }
+
+  const user = findUserById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ detail: 'Usuário não encontrado' });
+  }
+
+  const cardNumberClean = (cardData?.cardNumber || '').replace(/\D/g, '');
+  if (!cardNumberClean || cardNumberClean.length < 13 || cardNumberClean.length > 19) {
+    return res.status(400).json({ detail: 'Número de cartão de crédito inválido' });
+  }
+
+  if (!cardData?.holderName || cardData.holderName.trim().length < 3) {
+    return res.status(400).json({ detail: 'Nome do titular é obrigatório' });
+  }
+
+  if (!cardData?.expiry || !cardData.expiry.includes('/')) {
+    return res.status(400).json({ detail: 'Data de validade inválida (MM/AA)' });
+  }
+
+  const cvvClean = (cardData?.cvv || '').replace(/\D/g, '');
+  if (!cvvClean || cvvClean.length < 3 || cvvClean.length > 4) {
+    return res.status(400).json({ detail: 'Código de segurança (CVV) inválido' });
+  }
+
+  const durationDays = cycle === 'yearly' ? 365 : 30;
+  const expiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000).toISOString();
+  const lastFour = cardNumberClean.slice(-4);
+  const paymentId = `mp_cc_${Date.now()}`;
+
+  user.subscription = {
+    planId: plan.id,
+    planName: plan.name,
+    status: 'active',
+    cycle,
+    maxDevices: plan.maxDevices,
+    maxGeofences: plan.maxGeofences,
+    historyDays: plan.historyDays,
+    expiresAt,
+    paymentMethod: 'mercado_pago_credit_card',
+    cardBrand: cardData.brand || 'Mastercard',
+    cardLastFour: lastFour,
+    installments: Number(cardData.installments) || 1,
+    lastPaymentId: paymentId,
+    updatedAt: new Date().toISOString(),
+  };
+
+  return res.json({
+    success: true,
+    message: `Pagamento com cartão aprovado! Plano "${plan.name}" ativado com sucesso.`,
+    paymentId,
+    subscription: user.subscription,
+  });
+});
+
+/**
  * POST /subscriptions/webhook
  * Webhook oficial para receber notificações de pagamento do Mercado Pago
  */
