@@ -5593,6 +5593,88 @@ textarea.input-control {
   border-color: rgba(229, 57, 53, 0.25);
 }
 
+/* ==========================================================================
+   14. PWA NETWORK STATUS BAR (OFFLINE / RECONNECTED)
+   ========================================================================== */
+.network-status-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  animation: slideDownBar 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: all 0.3s ease;
+}
+
+@keyframes slideDownBar {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.network-status-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.network-status-icon {
+  font-size: 14px;
+}
+
+/* Modo Offline */
+.network-status-bar.offline {
+  background: linear-gradient(135deg, #9A3412 0%, #C2410C 100%);
+  color: #FFFFFF;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.network-status-bar.offline .network-status-icon {
+  animation: pulseOffline 1.8s infinite;
+}
+
+@keyframes pulseOffline {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.7; }
+}
+
+/* Modo Reconectado */
+.network-status-bar.reconnected {
+  background: linear-gradient(135deg, #065F46 0%, #047857 100%);
+  color: #FFFFFF;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  animation: slideDownBar 0.35s ease, fadeOutBar 0.8s ease 3.2s forwards;
+}
+
+@keyframes fadeOutBar {
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+[data-theme="dark"] .network-status-bar.offline {
+  background: linear-gradient(135deg, #7C2D12 0%, #9A3412 100%);
+}
+
+[data-theme="dark"] .network-status-bar.reconnected {
+  background: linear-gradient(135deg, #064E3B 0%, #065F46 100%);
+}
+
+
 
 
 

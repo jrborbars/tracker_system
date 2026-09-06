@@ -107,5 +107,21 @@
       ]
     }
   ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-preview.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Betterdays Dashboard e Monitoramento Clínico no Computador"
+    },
+    {
+      "src": "/screenshots/mobile-preview.png",
+      "sizes": "540x960",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Betterdays Telemetria e Chat de Cuidado no Celular"
+    }
+  ],
   "prefer_related_applications": false
 }

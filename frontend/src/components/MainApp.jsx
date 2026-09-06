@@ -8,6 +8,7 @@ import CareGroupsChatView from './CareGroupsChatView.jsx';
 import TrackerManagementView from './TrackerManagementView.jsx';
 import ProfileView from './ProfileView.jsx';
 import UserAvatarMenu from './UserAvatarMenu.jsx';
+import NetworkStatusBar from './NetworkStatusBar.jsx';
 import logoIconSvg from '../assets/logo-icon.svg';
 import logoTextSvg from '../assets/logo-text.svg';
 import {
@@ -19,6 +20,7 @@ import {
   deleteDevice,
 } from '../api/client.js';
 import socketService from '../services/socketService.js';
+import notificationService from '../services/notificationService.js';
 import '../styles/MainApp.css';
 
 export default function MainApp({ token, onLogout }) {
@@ -92,6 +94,11 @@ export default function MainApp({ token, onLogout }) {
     const handleSosAlert = (sosData) => {
       setSosActive(true);
       showToast(`🚨 ALERTA SOS RECEBIDO: ${sosData.patient || 'Paciente'} (${sosData.location})`);
+      // Disparar notificação nativa do sistema operacional (Desktop / Android)
+      notificationService.notifyEmergencySOS(
+        sosData.patient || 'Familiar / Paciente',
+        `Localização: ${sosData.location || 'Coordenadas GPS transmitidas'}`
+      );
       setTimeout(() => setSosActive(false), 8000);
     };
 
@@ -118,6 +125,10 @@ export default function MainApp({ token, onLogout }) {
     setSosActive(true);
     setActiveTab('map');
     showToast('🚨 Protocolo SOS Ativado! Localizando familiar via satélite e traçando rotas de socorro.');
+    notificationService.notifyEmergencySOS(
+      profile?.name || 'Familiar',
+      'Protocolo SOS Ativado! Rastreamento de emergência iniciado.'
+    );
     setTimeout(() => setSosActive(false), 8000);
   };
 
@@ -143,6 +154,9 @@ export default function MainApp({ token, onLogout }) {
 
   return (
     <div className={`app-container ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      {/* Indicador Global de Rede (PWA Offline / Reconnected) */}
+      <NetworkStatusBar />
+
       {/* 1. SIDEBAR DESKTOP (Menu à esquerda) */}
       <Sidebar
         activeTab={activeTab}

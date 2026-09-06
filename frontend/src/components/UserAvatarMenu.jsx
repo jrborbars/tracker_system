@@ -305,6 +305,44 @@ export default function UserAvatarMenu({
               </button>
             )}
 
+            {/* Opção PWA: Notificações do Sistema */}
+            <button
+              type="button"
+              className="dropdown-action-item"
+              onClick={async () => {
+                if ('Notification' in window) {
+                  if (Notification.permission === 'granted') {
+                    if (showToast) showToast('🔔 Notificações do sistema ativas para alertas e SOS!');
+                  } else {
+                    const perm = await Notification.requestPermission();
+                    if (perm === 'granted') {
+                      if (showToast) showToast('✅ Notificações nativas ativadas com sucesso!');
+                    } else {
+                      if (showToast) showToast('⚠️ Permissão de notificação recusada no navegador.');
+                    }
+                  }
+                } else {
+                  if (showToast) showToast('Navegador não suporta notificações nativas.');
+                }
+                setIsOpen(false);
+              }}
+            >
+              <div
+                className="action-icon-circle"
+                style={{ backgroundColor: 'rgba(59, 130, 246, 0.12)', color: '#3B82F6' }}
+              >
+                <i className="fa-solid fa-bell"></i>
+              </div>
+              <div className="action-text">
+                <span className="action-title">Notificações</span>
+                <span className="action-subtitle">
+                  {typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
+                    ? 'Ativas para alertas SOS'
+                    : 'Ativar alertas no sistema'}
+                </span>
+              </div>
+            </button>
+
             <div className="dropdown-divider"></div>
 
             {/* Opção 3: Sair */}

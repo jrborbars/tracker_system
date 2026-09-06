@@ -4,7 +4,7 @@
  * Suporte offline, cache de assets e instalação PWA no Android, iOS e Desktop.
  */
 
-const CACHE_NAME = 'betterdays-cache-v3';
+const CACHE_NAME = 'betterdays-cache-v4';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -16,6 +16,8 @@ const STATIC_ASSETS = [
   '/android-chrome-192x192.png',
   '/android-chrome-512x512.png',
   '/og-image.png',
+  '/screenshots/desktop-preview.png',
+  '/screenshots/mobile-preview.png',
 ];
 
 // Instalação do Service Worker & Precache de assets essenciais
@@ -90,4 +92,51 @@ self.addEventListener('fetch', (event) => {
       return cachedResponse || fetchPromise;
     })
   );
+});
+
+// Clique na Notificação Nativa do Sistema
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // Se já existe uma janela aberta, focar nela e navegar
+      for (const client of windowClients) {
+        if ('focus' in client) {
+          client.navigate(targetUrl);
+          return client.focus();
+        }
+      }
+      // Se não houver janela aberta, abrir uma nova
+      if (clients.openWindow) {
+        return clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
+
+// Suporte a Mensagens Push do Servidor
+self.addEventListener('push', (event) => {
+  if (!event.data) return;
+
+  try {
+    const data = event.data.json();
+    const title = data.title || 'Betterdays';
+    const options = {
+      body: data.body || 'Nova notificação de monitoramento',
+      icon: '/android-chrome-192x192.png',
+      badge: '/favicon-32x32.png',
+      data: { url: data.url || '/' },
+    };
+    event.waitUntil(self.registration.showNotification(title, options));
+  } catch (e) {
+    const text = event.data.text();
+    event.waitUntil(
+      self.registration.showNotification('Betterdays', {
+        body: text,
+        icon: '/android-chrome-192x192.png',
+      })
+    );
+  }
 });

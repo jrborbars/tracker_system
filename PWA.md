@@ -137,6 +137,23 @@ const handleInstallPwa = async () => {
 
 ---
 
+## ⚡ 4. Recursos Avançados de PWA
+
+### 📶 Indicador Visual de Conexão Offline / Online
+* **Hook:** [`useNetworkStatus.js`](file:///Users/vagneribas/Documents/GitHub/tracker_system/frontend/src/hooks/useNetworkStatus.js)
+* **Componente:** [`NetworkStatusBar.jsx`](file:///Users/vagneribas/Documents/GitHub/tracker_system/frontend/src/components/NetworkStatusBar.jsx)
+* **Comportamento:** Ao desconectar da internet, uma barra suave e destacada surge no topo informando o estado offline e a exibição de dados locais do cache. Ao reconectar, a barra exibe confirmação em verde por 4 segundos e sincroniza automaticamente.
+
+### 🔔 Notificações Nativas do Sistema Operacional (OS / Desktop / Mobile)
+* **Serviço:** [`notificationService.js`](file:///Users/vagneribas/Documents/GitHub/tracker_system/frontend/src/services/notificationService.js)
+* **Handlers no Service Worker:** Eventos `notificationclick` (que foca na janela e navega para `/#map` ou `/#messages`) e `push`.
+* **Gatilhos Automáticos:** Disparado em emergências de **SOS Global** e mensagens prioritárias.
+
+### 🖼️ Vitrine Visual de Instalação (Rich Install Screenshots)
+* O manifesto inclui capturas em proporções `wide` (1280x720) e `narrow` (540x960), ativando o instalador visual rico em navegadores compatíveis (Chrome Desktop e Android).
+
+---
+
 ## 💻 Como Instalar e Testar
 
 ### 1. No Desktop (Windows / macOS / Linux)
@@ -164,6 +181,6 @@ const handleInstallPwa = async () => {
 
 Para inspecionar o status do PWA durante o desenvolvimento:
 1. Pressione `F12` (ou `Cmd + Option + I` no Mac) e acesse a aba **Application** (Aplicativo).
-2. **Manifest:** Valida nome, cores, ícones, orientação e atalhos.
+2. **Manifest:** Valida nome, cores, ícones, orientação, atalhos e screenshots.
 3. **Service Workers:** Permite testar modo offline (*Offline checkbox*), forçar atualização (*Update on reload*) e simular ciclo de vida.
-4. **Storage / Cache Storage:** Visualiza todos os arquivos armazenados no cache `betterdays-pwa-v1`.
+4. **Storage / Cache Storage:** Visualiza todos os arquivos armazenados no cache `betterdays-cache-v4`.
