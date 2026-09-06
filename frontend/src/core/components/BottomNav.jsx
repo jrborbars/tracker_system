@@ -5,9 +5,9 @@ export default function BottomNav({ activeTab, setActiveTab, unreadCount }) {
   const { t } = useI18n();
 
   const navItems = [
-    { id: 'map', label: 'Mapa', icon: 'fa-solid fa-map-location-dot' },
-    { id: 'indoor', label: 'Monitoramento', icon: 'fa-solid fa-house-signal' },
-    { id: 'messages', label: 'Notificações', icon: 'fa-solid fa-bell', badge: unreadCount },
+    { id: 'map', label: t('nav.map'), icon: 'fa-solid fa-map-location-dot' },
+    { id: 'indoor', label: t('nav.indoor'), icon: 'fa-solid fa-house-signal' },
+    { id: 'messages', label: t('nav.messages'), icon: 'fa-solid fa-comments', badge: unreadCount },
   ];
 
 

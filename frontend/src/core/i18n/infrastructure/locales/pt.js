@@ -57,12 +57,12 @@ export default {
   },
   nav: {
     dashboard: 'Dashboard',
-    map: 'Mapa Satelital',
-    indoor: 'Monitoramento Interno',
-    messages: 'Grupos & Mensagens',
+    map: 'Mapa',
+    indoor: 'Ambientes',
+    messages: 'Mensagens',
     tracker: 'Rastreadores',
-    profile: 'Perfil Familiar',
-    logout: 'Sair da Conta',
+    profile: 'Perfil',
+    logout: 'Sair',
     menu: 'Menu',
   },
   pwa: {

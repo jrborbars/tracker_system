@@ -57,12 +57,12 @@ export default {
   },
   nav: {
     dashboard: 'Dashboard',
-    map: 'Satellite Map',
-    indoor: 'Indoor Monitoring',
-    messages: 'Groups & Messages',
+    map: 'Map',
+    indoor: 'Indoor',
+    messages: 'Messages',
     tracker: 'Trackers',
-    profile: 'Family Profile',
-    logout: 'Sign Out',
+    profile: 'Profile',
+    logout: 'Logout',
     menu: 'Menu',
   },
   pwa: {
