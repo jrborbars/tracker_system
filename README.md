@@ -75,8 +75,8 @@ npm run dev        # Inicia a interface web em http://localhost:5173
 ## 🎨 Design System & Identidade Visual
 
 O projeto conta com documentação e showcase visual dedicados:
-* 📄 **Documentação de Decisões e Tokens:** [`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md)
-* 🌐 **Showcase Visual Interativo (HTML):** [`design_system.html`](./design_system.html) *(com seletor interativo de Modo Claro / Escuro)*
+* 📄 **Documentação de Decisões e Tokens:** [`DESIGN_SYSTEM.md`](./doc/DESIGN_SYSTEM.md)
+* 🌐 **Showcase Visual Interativo (HTML):** [`design_system.html`](./doc/design_system.html) *(com seletor interativo de Modo Claro / Escuro)*
 
 ### Princípios do Front-end:
 * ☀️/🌙 **Modo Claro e Modo Escuro:** Alternador integrado com persistência no `localStorage` e mapas satelitais adaptativos (CartoDB Positron / Dark Matter).
@@ -115,8 +115,8 @@ tracker_system/
 │   │   ├── seed.js            # Seed inicial com demo user
 │   │   ├── auth.js            # JWT e requireAuth
 │   │   ├── telemetry.js       # Simulação MQTT/GPS com broadcast Socket.io
-│   │   └── routes/            # Rotas (auth, devices, areas, etc.)
-│   ├── test/                  # 33 testes com node:test e supertest
+│   │   └── routes/            # Rotas (auth, devices, areas, subscriptions, etc.)
+│   ├── test/                  # 40 testes automatizados com node:test
 │   ├── scripts/               # Scripts auxiliares (mint-token)
 │   ├── uploads/               # Armazenamento de mídia
 │   └── package.json           # Dependências do backend
@@ -124,28 +124,30 @@ tracker_system/
 │   ├── index.html
 │   ├── package.json
 │   ├── vite.config.js
-│   ├── README.md              # Documentação completa do Frontend e guia rápido
+│   ├── README.md              # Documentação completa do Frontend
 │   └── src/
 │       ├── core/              # Camada Core: HTTP Client, Sockets, Base Layout & Hooks
 │       │   ├── api/           # httpClient centralizado com JWT e interceptors
 │       │   ├── services/      # Singletons de infra (socketService, notificationService)
 │       │   ├── hooks/         # Hooks globais (useNetworkStatus)
-│       │   └── components/    # Layout compartilhado (Sidebar, BottomNav, UserAvatarMenu)
+│       │   ├── i18n/          # Internacionalização (pt-BR, en-US, es-ES)
+│       │   └── components/    # Layout compartilhado (Sidebar, BottomNav, HeaderActions)
 │       ├── modules/           # Módulos de Domínio (DDD Bounded Contexts)
 │       │   ├── auth/          # Autenticação (LoginView, authRepository)
 │       │   ├── care-chat/     # Chat e Comunicação em tempo real (CareGroupsChatView, useCareSocket)
 │       │   ├── tracking/      # Rastreamento GPS, Mapas e Geofences (LeafletMapView, TrackerManagementView)
 │       │   ├── indoor/        # Monitoramento Interno de Cômodos (IndoorMonitoringView)
 │       │   ├── profile/       # Perfil do Usuário e Foto (ProfileView, profileRepository)
+│       │   ├── subscription/  # Assinaturas & Mercado Pago (SubscriptionPlansModal, MercadoPagoCheckoutModal)
 │       │   └── dashboard/     # Orquestrador das views (MainApp)
-│       ├── api/               # Façade retrocompatível delegando aos repositórios
 │       └── styles/            # Estilos globais (theme.css, index.css)
-├── MERCADO_PAGO_INTEGRATION.md# Guia Oficial de Pagamentos (PIX, Cartão Crédito/Débito)
-├── JSON_DATA_ARCHITECTURE.md   # Arquitetura de Dados, Contratos JSON e Schemas REST/WS
-├── MESSAGING_ARCHITECTURE.md  # Arquitetura detalhada de WebSockets / Mensageria
-├── PWA.md                     # Documentação técnica e guia do Progressive Web App
-├── DESIGN_SYSTEM.md           # Definição e decisões do Design System
-├── design_system.html         # Showcase visual interativo dos componentes
+├── doc/                       # 📚 Diretório Central de Documentação
+│   ├── MERCADO_PAGO_INTEGRATION.md # Guia Oficial de Pagamentos (PIX, Cartão Crédito/Débito)
+│   ├── JSON_DATA_ARCHITECTURE.md    # Arquitetura de Dados, Contratos JSON e Schemas REST/WS
+│   ├── MESSAGING_ARCHITECTURE.md   # Arquitetura detalhada de WebSockets / Mensageria
+│   ├── PWA.md                      # Documentação técnica e guia do Progressive Web App
+│   ├── DESIGN_SYSTEM.md            # Definição e decisões do Design System
+│   └── design_system.html          # Showcase visual interativo dos componentes
 ├── package.json               # Scripts raiz para orquestração
 └── README.md                  # Documentação principal
 ```
