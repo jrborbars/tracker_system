@@ -177,12 +177,10 @@ export default function IndoorMonitoringView({
               <i className="fa-solid fa-house"></i> Dashboard
             </button>
             <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
-            <span className="breadcrumb-current">Monitoramento Interno</span>
+            <span className="breadcrumb-current">
+              <i className="fa-solid fa-house-signal" style={{ color: 'var(--color-primary)' }}></i> Monitoramento Interno
+            </span>
           </div>
-          <h1>
-            <i className="fa-solid fa-house-signal" style={{ color: 'var(--color-primary)' }}></i>
-            Monitoramento Interno de Presença
-          </h1>
         </div>
 
         <div className="page-actions">

@@ -217,10 +217,6 @@ export default function MainApp({ token, onLogout }) {
                     <i className="fa-solid fa-house"></i> Dashboard
                   </span>
                 </div>
-                <h1>
-                  <i className="fa-solid fa-table-columns" style={{ color: 'var(--color-primary)' }}></i>
-                  Painel de Monitoramento
-                </h1>
               </div>
               <div className="page-actions">
                 <button
@@ -411,12 +407,10 @@ export default function MainApp({ token, onLogout }) {
                     <i className="fa-solid fa-house"></i> Dashboard
                   </button>
                   <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
-                  <span className="breadcrumb-current">Mapa Satelital & Cercas</span>
+                  <span className="breadcrumb-current">
+                    <i className="fa-solid fa-map-location-dot" style={{ color: 'var(--color-primary)' }}></i> Mapa Satelital & Cercas
+                  </span>
                 </div>
-                <h1>
-                  <i className="fa-solid fa-map-location-dot" style={{ color: 'var(--color-primary)' }}></i>
-                  Mapa Satelital & Cercas Virtuais
-                </h1>
               </div>
               <div className="page-actions">
                 <button
@@ -511,12 +505,10 @@ export default function MainApp({ token, onLogout }) {
                     <i className="fa-solid fa-house"></i> Dashboard
                   </button>
                   <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
-                  <span className="breadcrumb-current">Grupos & Mensagens</span>
+                  <span className="breadcrumb-current">
+                    <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i> Grupos & Mensagens
+                  </span>
                 </div>
-                <h1>
-                  <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i>
-                  Grupos de Cuidado & Mensagens
-                </h1>
               </div>
               <div className="page-actions">
                 <UserAvatarMenu
@@ -564,12 +556,10 @@ export default function MainApp({ token, onLogout }) {
                     <i className="fa-solid fa-house"></i> Dashboard
                   </button>
                   <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
-                  <span className="breadcrumb-current">Perfil do Cuidador</span>
+                  <span className="breadcrumb-current">
+                    <i className="fa-solid fa-user-shield" style={{ color: 'var(--color-primary)' }}></i> Perfil do Cuidador
+                  </span>
                 </div>
-                <h1>
-                  <i className="fa-solid fa-user-shield" style={{ color: 'var(--color-primary)' }}></i>
-                  Perfil do Cuidador & Protocolo Médico
-                </h1>
               </div>
               <div className="page-actions">
                 <UserAvatarMenu
