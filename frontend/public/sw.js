@@ -4,7 +4,7 @@
  * Suporte offline, cache de assets e instalação PWA no Android, iOS e Desktop.
  */
 
-const CACHE_NAME = 'betterdays-cache-v2';
+const CACHE_NAME = 'betterdays-cache-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
