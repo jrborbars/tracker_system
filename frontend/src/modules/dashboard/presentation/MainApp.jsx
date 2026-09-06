@@ -277,43 +277,6 @@ export default function MainApp({ token, onLogout }) {
           />
         </header>
 
-        {/* Barra Segmentada Superior Mobile: [ Mapa ] [ Monitoramento ] [ Notificações ] */}
-        <div className="mobile-segmented-bar-container">
-          <div className="mobile-segmented-bar">
-            <button
-              type="button"
-              className={`mobile-segmented-tab ${activeTab === 'map' ? 'active' : ''}`}
-              onClick={() => setActiveTab('map')}
-            >
-              <i className="fa-solid fa-map-location-dot"></i>
-              <span>Mapa</span>
-            </button>
-
-            <button
-              type="button"
-              className={`mobile-segmented-tab ${activeTab === 'indoor' ? 'active' : ''}`}
-              onClick={() => setActiveTab('indoor')}
-            >
-              <i className="fa-solid fa-house-signal"></i>
-              <span>Monitoramento</span>
-            </button>
-
-            <button
-              type="button"
-              className={`mobile-segmented-tab ${activeTab === 'messages' ? 'active' : ''}`}
-              onClick={() => setActiveTab('messages')}
-            >
-              <i className="fa-solid fa-bell"></i>
-              <span>Notificações</span>
-              {messages.filter((m) => m.active).length > 0 && (
-                <span className="mobile-tab-unread-badge">
-                  {messages.filter((m) => m.active).length}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-
         {/* Notificação Toast Flutuante */}
         {toastMessage && (
           <div

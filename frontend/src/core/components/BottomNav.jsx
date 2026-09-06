@@ -12,7 +12,7 @@ export default function BottomNav({ activeTab, setActiveTab, unreadCount }) {
 
 
   return (
-    <nav className="mobile-bottom-nav">
+    <nav className="mobile-bottom-nav" aria-label="Navegação móvel">
       {navItems.map((item) => (
         <button
           key={item.id}
@@ -26,27 +26,15 @@ export default function BottomNav({ activeTab, setActiveTab, unreadCount }) {
             }
           }}
         >
-          <div style={{ position: 'relative' }}>
+          <div className="bottom-nav-icon-wrapper">
             <i className={item.icon}></i>
             {item.badge > 0 && (
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '-4px',
-                  right: '-8px',
-                  backgroundColor: 'var(--color-danger)',
-                  color: '#fff',
-                  fontSize: '9px',
-                  fontWeight: 700,
-                  padding: '1px 4px',
-                  borderRadius: '999px',
-                }}
-              >
+              <span className="bottom-nav-badge">
                 {item.badge}
               </span>
             )}
           </div>
-          <span>{item.label}</span>
+          <span className="bottom-nav-label">{item.label}</span>
         </button>
       ))}
     </nav>
