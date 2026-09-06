@@ -121,7 +121,7 @@ export default function TrackerManagementView({
         {/* Banner de Estatísticas e Ação de Conexão */}
         <div className="tracker-top-banner">
           <div className="tracker-banner-stats">
-            <div className="tracker-stat-item">
+            <div className="tracker-stat-item stat-paired">
               <div className="tracker-stat-icon-wrapper">
                 <i className="fa-solid fa-clock"></i>
               </div>
@@ -131,9 +131,9 @@ export default function TrackerManagementView({
               </div>
             </div>
 
-            <div className="tracker-stat-item">
+            <div className="tracker-stat-item stat-wrist">
               <div className="tracker-stat-icon-wrapper">
-                <i className="fa-solid fa-hand-holding-hand"></i>
+                <i className="fa-solid fa-hand-holding-medical"></i>
               </div>
               <div className="tracker-stat-info">
                 <span className="tracker-stat-number">{wristDevicesCount}</span>
@@ -141,7 +141,7 @@ export default function TrackerManagementView({
               </div>
             </div>
 
-            <div className="tracker-stat-item">
+            <div className="tracker-stat-item stat-clothing">
               <div className="tracker-stat-icon-wrapper">
                 <i className="fa-solid fa-shirt"></i>
               </div>
