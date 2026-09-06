@@ -170,7 +170,7 @@ test('POST /devices/ rejects duplicate device_id with 400', async () => {
     .send({
       name: 'Dup',
       description: 'dup',
-      device_id: 'TRCK-10001', // exists in seed
+      device_id: 'WATCH-7492', // exists in seed
       type: 'gps-tracker',
     });
   assert.equal(res.status, 400);
@@ -282,14 +282,14 @@ test('POST /messages/ for owned device creates message', async () => {
     .post('/messages/')
     .set(demoHeaders())
     .send({
-      device_id: 'TRCK-10001',
+      device_id: 'WATCH-7492',
       message: 'Manual note',
       severity: 'info',
       source: 'api',
       active: true,
     });
   assert.equal(res.status, 200);
-  assert.equal(res.body.device_id, 'TRCK-10001');
+  assert.equal(res.body.device_id, 'WATCH-7492');
   assert.equal(res.body.message, 'Manual note');
 });
 

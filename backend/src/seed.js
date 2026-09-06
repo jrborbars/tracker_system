@@ -98,7 +98,7 @@ export function buildSeed() {
     messages: [
       {
         id: uuid(),
-        device_id: 'TRCK-10001',
+        device_id: 'WATCH-7492',
         message: 'Device entered geofence: Depot Perimeter',
         severity: 'info',
         source: 'geofencing',
@@ -107,7 +107,7 @@ export function buildSeed() {
       },
       {
         id: uuid(),
-        device_id: 'TRCK-10001',
+        device_id: 'WATCH-7492',
         message: 'Low battery warning (below 20%)',
         severity: 'warning',
         source: 'mqtt',
@@ -116,7 +116,7 @@ export function buildSeed() {
       },
       {
         id: uuid(),
-        device_id: 'TRCK-20002',
+        device_id: 'CLIP-3810',
         message: 'Device reported an anomaly: speed out of range',
         severity: 'error',
         source: 'api',
