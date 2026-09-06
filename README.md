@@ -20,6 +20,17 @@ O Betterdays utiliza **WebSockets via Socket.io** para comunicação bidireciona
 
 ---
 
+## 📱 Progressive Web App (PWA — Desktop & Mobile)
+
+O sistema conta com suporte a **PWA instalável** em Desktop (Windows, macOS, Linux) e Mobile (Android, iOS):
+* 📲 **Execução Standalone:** Sem barras do navegador, com visual e comportamento de app nativo.
+* ⚡ **Service Worker Inteligente:** Estratégia de cache híbrida (*Stale-While-Revalidate* e fallback offline).
+* 🎯 **Atalhos Rápidos:** Acesso direto via menu de contexto no ícone (Mapa, Rastreadores, Monitoramento Interno).
+
+> 📖 **Guia & Documentação PWA:** Veja [`PWA.md`](./PWA.md) para detalhes de arquitetura, Service Worker, manifesto e instruções de instalação.
+
+---
+
 ## 🚀 Como Executar o Projeto
 
 Pré-requisito: **Node.js `>= 20`**.
@@ -119,6 +130,7 @@ tracker_system/
 │       ├── components/        # Componentes UI (CareGroupsChatView, LeafletMapView, etc.)
 │       └── styles/            # Estilos globais e componentes
 ├── MESSAGING_ARCHITECTURE.md  # Arquitetura detalhada de WebSockets / Mensageria
+├── PWA.md                     # Documentação técnica e guia do Progressive Web App
 ├── DESIGN_SYSTEM.md           # Definição e decisões do Design System
 ├── design_system.html         # Showcase visual interativo dos componentes
 ├── package.json               # Scripts raiz para orquestração
