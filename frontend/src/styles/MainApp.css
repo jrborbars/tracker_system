@@ -3422,8 +3422,8 @@ textarea.input-control {
 
 /* Layout Arquitetônico da Planta Baixa */
 .floorplan-blueprint-view {
-  background-color: #F8FAFC;
-  border: 2px solid var(--border-color);
+  background-color: var(--bg-canvas);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 16px;
   position: relative;
@@ -3438,8 +3438,8 @@ textarea.input-control {
 }
 
 .room-zone {
-  background-color: #FFFFFF;
-  border: 2px solid var(--border-color);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 12px;
   display: flex;
@@ -3464,8 +3464,8 @@ textarea.input-control {
 
 .room-zone.active-patient {
   border-color: var(--color-primary);
-  background: linear-gradient(180deg, #F0FDF4 0%, #E0F2F1 100%);
-  box-shadow: 0 4px 14px rgba(0, 137, 123, 0.2);
+  background-color: var(--color-primary-light);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
 .room-zone-header {
@@ -4306,132 +4306,135 @@ textarea.input-control {
    ========================================================================== */
 [data-theme="dark"] .sidebar-logo-icon,
 [data-theme="dark"] .mobile-logo-icon {
-  filter: drop-shadow(0 0 6px rgba(20, 184, 166, 0.4));
+  filter: drop-shadow(0 0 4px rgba(45, 212, 191, 0.2));
 }
 
 [data-theme="dark"] .sidebar-logo-text,
 [data-theme="dark"] .mobile-logo-text {
-  filter: brightness(0) invert(1);
+  filter: brightness(0) invert(0.85);
 }
 
 [data-theme="dark"] .chat-main-conversation {
-  background-color: #0F172A;
+  background-color: var(--bg-canvas);
 }
 
 [data-theme="dark"] .chat-messages-body {
-  background-color: #0F172A;
-  background-image: radial-gradient(#1E293B 1px, transparent 1px);
+  background-color: var(--bg-canvas);
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
 }
 
 [data-theme="dark"] .chat-bubble.bubble-me {
-  background-color: #064E3B;
-  border-color: #065F46;
-  color: #F8FAFC;
+  background-color: var(--color-primary-light, #132220);
+  border-color: var(--color-primary-subtle, #1C3834);
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .chat-bubble.bubble-me .bubble-text {
-  color: #F8FAFC;
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .chat-bubble.bubble-other {
-  background-color: #1E293B;
-  border-color: #334155;
-  color: #F8FAFC;
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--border-color);
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .chat-bubble.bubble-other .bubble-text {
-  color: #F8FAFC;
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .chat-system-card {
-  background-color: #1E293B;
-  border-color: #334155;
+  background-color: var(--bg-surface);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .chat-system-card.gps {
-  background: linear-gradient(to right, #1E293B, #134E4A);
+  background: var(--bg-surface-subtle);
+  border-left: 3px solid var(--color-primary);
 }
 
 [data-theme="dark"] .chat-system-card.alert {
-  background: linear-gradient(to right, #1E293B, #450A0A);
+  background: var(--color-danger-light);
+  border-left: 3px solid var(--color-danger);
 }
 
 [data-theme="dark"] .chat-typing-bubble {
-  background-color: #1E293B;
-  border-color: #334155;
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .chat-quick-actions-bar {
-  background-color: rgba(21, 29, 42, 0.95);
-  border-color: #273549;
+  background-color: var(--bg-surface);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .chat-input-bar {
-  background-color: #151D2A;
-  border-color: #273549;
+  background-color: var(--bg-surface);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .chat-text-input {
-  background-color: #0B0F17;
-  border-color: #273549;
-  color: #F8FAFC;
+  background-color: var(--bg-canvas);
+  border-color: var(--border-color);
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .chat-text-input:focus {
-  background-color: #151D2A;
+  background-color: var(--bg-surface);
+  border-color: var(--color-primary);
 }
 
 [data-theme="dark"] .layer-selector-group,
 [data-theme="dark"] .focus-actions-group,
 [data-theme="dark"] .route-action-trigger-group,
 [data-theme="dark"] .location-trigger-group {
-  background: rgba(21, 29, 42, 0.94);
-  border-color: #273549;
+  background: var(--bg-surface);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .route-drawer-overlay {
-  background: rgba(21, 29, 42, 0.96);
-  border-color: #273549;
+  background: var(--bg-surface);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .hud-pill {
-  background: rgba(21, 29, 42, 0.92);
-  border-color: #273549;
-  color: #F8FAFC;
+  background: var(--bg-surface);
+  border-color: var(--border-color);
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .dash-sos-banner {
-  background: linear-gradient(135deg, #1E293B 0%, #450A0A 100%);
-  border-color: #7F1D1D;
+  background: var(--color-danger-light);
+  border-color: var(--color-danger-subtle);
 }
 
 [data-theme="dark"] .sos-text p {
-  color: #FECACA;
+  color: var(--text-muted);
 }
 
 [data-theme="dark"] .blueprint-container {
-  background-color: #0B0F17;
-  border-color: #273549;
+  background-color: var(--bg-canvas);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .room-zone {
-  background-color: #151D2A;
-  border-color: #273549;
+  background-color: var(--bg-surface);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .room-zone.active-zone {
-  background: linear-gradient(135deg, #151D2A 0%, #134E4A 100%);
+  background: var(--color-primary-light);
   border-color: var(--color-primary);
 }
 
 [data-theme="dark"] .custom-leaflet-popup .leaflet-popup-content-wrapper {
-  background-color: #151D2A;
-  color: #F8FAFC;
-  border: 1px solid #273549;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
 }
 
 [data-theme="dark"] .custom-leaflet-popup .leaflet-popup-tip {
-  background-color: #151D2A;
+  background-color: var(--bg-surface);
 }
 
 /* ==========================================================================
@@ -5079,45 +5082,45 @@ textarea.input-control {
 }
 
 [data-theme="dark"] .wear-mode-card.active {
-  background-color: #06372E;
+  background-color: var(--color-primary-light);
   border-color: var(--color-primary);
 }
 
 [data-theme="dark"] .tracker-search-input {
-  background-color: #0E1726;
-  border-color: #24354D;
-  color: #E2E8F0;
+  background-color: var(--bg-canvas);
+  border-color: var(--border-color);
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .tracker-battery-section,
 [data-theme="dark"] .wearable-sensors-grid,
 [data-theme="dark"] .pairing-token-box {
-  background-color: #0E1726;
-  border-color: #1E2D42;
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .tracker-id-badge code,
 [data-theme="dark"] .pairing-token-pill {
-  background-color: #0E1726;
-  border-color: #24354D;
-  color: #94A3B8;
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--border-color);
+  color: var(--text-muted);
 }
 
 [data-theme="dark"] .input-control {
-  background-color: #0E1726;
-  border-color: #24354D;
-  color: #E2E8F0;
+  background-color: var(--bg-canvas);
+  border-color: var(--border-color);
+  color: var(--text-main);
 }
 
 [data-theme="dark"] .input-control:focus {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
 }
 
 [data-theme="dark"] .pairing-input {
-  background-color: #0B1320;
-  border-color: #0D9488;
-  color: #2DD4BF;
+  background-color: var(--bg-canvas);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 /* ==========================================================================
@@ -5464,13 +5467,13 @@ textarea.input-control {
 }
 
 [data-theme="dark"] .profile-password-box {
-  background-color: #0E1726;
-  border-color: #1E2D42;
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--border-color);
 }
 
 [data-theme="dark"] .profile-medical-section {
-  background: linear-gradient(135deg, #0E1726 0%, rgba(229, 57, 53, 0.08) 100%);
-  border-color: rgba(229, 57, 53, 0.25);
+  background: var(--color-danger-light);
+  border-color: var(--color-danger-subtle);
 }
 
 /* ==========================================================================

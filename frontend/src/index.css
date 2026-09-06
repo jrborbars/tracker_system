@@ -63,52 +63,56 @@
 }
 
 [data-theme="dark"] {
-  /* Cores Primárias Dark (Teal Luminoso / Calma Noturna) */
-  --color-primary: #14B8A6;
-  --color-primary-light: #134E4A;
-  --color-primary-subtle: #115E59;
+  /* Cores Primárias Dark (Teal Suave e Desaturado) */
+  --color-primary: #2DD4BF;
+  --color-primary-light: #132220;
+  --color-primary-subtle: #1C3834;
   --color-primary-dark: #5EEAD4;
 
-  /* Cores Secundárias Dark (Lavanda Noturna) */
-  --color-secondary: #A78BFA;
-  --color-secondary-light: #2E1065;
-  --color-secondary-subtle: #4C1D95;
-  --color-secondary-dark: #DDD6FE;
+  /* Cores Secundárias Dark (Slate Neutro / Sem saturação excessiva) */
+  --color-secondary: #94A3B8;
+  --color-secondary-light: #18181C;
+  --color-secondary-subtle: #27272A;
+  --color-secondary-dark: #CBD5E1;
 
-  /* Cores de Emergência / SOS Dark (Coral Luminoso) */
-  --color-danger: #F87171;
-  --color-danger-light: #450A0A;
-  --color-danger-subtle: #7F1D1D;
-  --color-danger-dark: #FECACA;
+  /* Cores de Emergência / SOS Dark (Coral Desaturado / Não agressivo aos olhos) */
+  --color-danger: #E06C75;
+  --color-danger-light: #201314;
+  --color-danger-subtle: #381A1C;
+  --color-danger-dark: #FCA5A5;
 
   /* Cores de Advertência Dark (Âmbar Suave) */
-  --color-warning: #FBBF24;
-  --color-warning-light: #451A03;
-  --color-warning-subtle: #78350F;
-  --color-warning-dark: #FEF08A;
+  --color-warning: #D99B38;
+  --color-warning-light: #201810;
+  --color-warning-subtle: #362615;
+  --color-warning-dark: #FDE047;
 
-  /* Cores de Sucesso Dark (Verde Esmeralda) */
-  --color-success: #4ADE80;
-  --color-success-light: #064E3B;
-  --color-success-subtle: #065F46;
-  --color-success-dark: #BBF7D0;
+  /* Cores de Sucesso Dark (Verde Sálvia Suave) */
+  --color-success: #48A978;
+  --color-success-light: #101F16;
+  --color-success-subtle: #183324;
+  --color-success-dark: #86EFAC;
 
-  /* Superfícies e Neutros Dark (Deep Slate) */
-  --bg-canvas: #0B0F17;
-  --bg-surface: #151D2A;
-  --bg-surface-subtle: #1E293B;
-  --border-color: #273549;
-  --border-light: #1E293B;
+  /* Superfícies e Neutros Dark (Preto no Preto / OLED Deep Black) */
+  --bg-canvas: #09090B;
+  --bg-surface: #121215;
+  --bg-surface-subtle: #18181C;
+  --border-color: #24242A;
+  --border-light: #1A1A1F;
+  --color-bg-card: #121215;
+  --color-border: #24242A;
 
-  /* Tipografia Neutra Dark */
-  --text-main: #F1F5F9;
-  --text-muted: #94A3B8;
-  --text-light: #64748B;
+  /* Tipografia Neutra Dark (Branco Suave / Sem ofuscar a visão) */
+  --text-main: #D4D4D8;
+  --text-muted: #8B8B94;
+  --text-light: #52525B;
+  --color-text: #D4D4D8;
+  --color-text-muted: #8B8B94;
 
   /* Sombras de Elevação Dark */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.65), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.75), 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 * {
