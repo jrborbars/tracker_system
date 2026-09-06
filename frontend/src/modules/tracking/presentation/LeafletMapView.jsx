@@ -46,7 +46,6 @@ export default function LeafletMapView({
   devices = [],
   areas = [],
   onSelectDevice,
-  onEmergencyAlert,
   showToast,
   theme = 'light',
 }) {
@@ -270,7 +269,7 @@ export default function LeafletMapView({
 
       marker.addTo(markersGroup);
     });
-  }, [devices, selectedTrackerId]);
+  }, [devices, selectedTrackerId, onSelectDevice]);
 
   // 5. Geolocalização Real do Usuário via Navegador (HTML5 Geolocation)
   const handleLocateUser = () => {

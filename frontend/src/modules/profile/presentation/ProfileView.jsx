@@ -45,19 +45,8 @@ export default function ProfileView({
     }
   }, [profile]);
 
-  const avatarUrl = profile?.photo_url
-    ? profile.photo_url.startsWith('http') || profile.photo_url.startsWith('data:')
-      ? profile.photo_url
-      : `http://localhost:8000${profile.photo_url}`
-    : null;
-
-  const getInitials = (n) => {
-    if (!n) return 'U';
-    const parts = n.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return 'U';
-    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
+  const avatarUrl = getAbsolutePhotoUrl(profile?.photo_url);
+  const getInitials = (n) => getUserInitials(n);
 
   // Upload direto de foto de perfil
   const handlePhotoUpload = async (e) => {

@@ -1,14 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import Sidebar from '../../../core/components/Sidebar.jsx';
 import BottomNav from '../../../core/components/BottomNav.jsx';
 import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
 import NetworkStatusBar from '../../../core/components/NetworkStatusBar.jsx';
-import LeafletMapView from '../../tracking/presentation/LeafletMapView.jsx';
-import TrackerManagementView from '../../tracking/presentation/TrackerManagementView.jsx';
-import AddDeviceModal from '../../tracking/presentation/AddDeviceModal.jsx';
-import IndoorMonitoringView from '../../indoor/presentation/IndoorMonitoringView.jsx';
-import CareGroupsChatView from '../../care-chat/presentation/CareGroupsChatView.jsx';
-import ProfileView from '../../profile/presentation/ProfileView.jsx';
 import logoIconSvg from '../../../assets/logo-icon.svg';
 import logoTextSvg from '../../../assets/logo-text.svg';
 import profileRepository from '../../profile/infrastructure/profileRepository.js';
@@ -17,6 +11,46 @@ import chatRepository from '../../care-chat/infrastructure/chatRepository.js';
 import socketService from '../../../core/services/socketService.js';
 import notificationService from '../../../core/services/notificationService.js';
 import '../../../styles/MainApp.css';
+
+// Code Splitting sob demanda para carregamento instantâneo do bundle
+const LeafletMapView = lazy(() => import('../../tracking/presentation/LeafletMapView.jsx'));
+const TrackerManagementView = lazy(() => import('../../tracking/presentation/TrackerManagementView.jsx'));
+const AddDeviceModal = lazy(() => import('../../tracking/presentation/AddDeviceModal.jsx'));
+const IndoorMonitoringView = lazy(() => import('../../indoor/presentation/IndoorMonitoringView.jsx'));
+const CareGroupsChatView = lazy(() => import('../../care-chat/presentation/CareGroupsChatView.jsx'));
+const ProfileView = lazy(() => import('../../profile/presentation/ProfileView.jsx'));
+
+function TabLoadingFallback() {
+  return (
+    <div
+      className="tab-loading-fallback"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '320px',
+        padding: '40px 20px',
+        gap: '14px',
+        color: 'var(--color-text-muted, #64748b)',
+      }}
+    >
+      <div
+        style={{
+          width: '36px',
+          height: '36px',
+          border: '3px solid rgba(13, 148, 136, 0.2)',
+          borderTopColor: 'var(--color-primary, #0D9488)',
+          borderRadius: '50%',
+          animation: 'spin 0.7s linear infinite',
+        }}
+      />
+      <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text, #1e293b)' }}>
+        Carregando módulo...
+      </span>
+    </div>
+  );
+}
 
 export default function MainApp({ token, onLogout }) {
   const [activeTab, setActiveTab] = useState(() => {
@@ -52,6 +86,11 @@ export default function MainApp({ token, onLogout }) {
     }
   }, [activeTab]);
 
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(''), 4000);
+  };
+
   const toggleTheme = () => {
     setTheme((prev) => {
       const next = prev === 'light' ? 'dark' : 'light';
@@ -61,7 +100,7 @@ export default function MainApp({ token, onLogout }) {
   };
 
   // Carrega todos os dados da API ao iniciar
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [profData, devData, areaData, msgData] = await Promise.all([
         profileRepository.getProfile(token),
@@ -85,7 +124,7 @@ export default function MainApp({ token, onLogout }) {
         if (onLogout) onLogout();
       }
     }
-  };
+  }, [token, onLogout]);
 
   useEffect(() => {
     loadData();
@@ -132,12 +171,7 @@ export default function MainApp({ token, onLogout }) {
       socket.off('sos_alert', handleSosAlert);
       clearInterval(interval);
     };
-  }, [token]);
-
-  const showToast = (msg) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(''), 4000);
-  };
+  }, [loadData]);
 
   // Ação de Emergência SOS / Localizar Rápido
   const handleQuickLocate = () => {
@@ -483,13 +517,14 @@ export default function MainApp({ token, onLogout }) {
                 </div>
 
                 <div className="map-viewport">
-                  <LeafletMapView
-                    devices={devices}
-                    areas={areas}
-                    onEmergencyAlert={handleQuickLocate}
-                    showToast={showToast}
-                    theme={theme}
-                  />
+                  <Suspense fallback={<TabLoadingFallback />}>
+                    <LeafletMapView
+                      devices={devices}
+                      areas={areas}
+                      showToast={showToast}
+                      theme={theme}
+                    />
+                  </Suspense>
                 </div>
 
               </div>
@@ -502,19 +537,21 @@ export default function MainApp({ token, onLogout }) {
             ABA INTERMEDIÁRIA: MONITORAMENTO INTERNO (SENSORES & CÔMODOS)
            ------------------------------------------------------------- */}
         {activeTab === 'indoor' && (
-          <IndoorMonitoringView
-            showToast={showToast}
-            profile={profile}
-            onNavigateTab={setActiveTab}
-            onLogout={onLogout}
-            onProfileUpdated={setProfile}
-            token={token}
-            devicesCount={devices.length}
-            areasCount={areas.length || 3}
-            onEmergencySOS={handleQuickLocate}
-            theme={theme}
-            onToggleTheme={toggleTheme}
-          />
+          <Suspense fallback={<TabLoadingFallback />}>
+            <IndoorMonitoringView
+              showToast={showToast}
+              profile={profile}
+              onNavigateTab={setActiveTab}
+              onLogout={onLogout}
+              onProfileUpdated={setProfile}
+              token={token}
+              devicesCount={devices.length}
+              areasCount={areas.length || 3}
+              onEmergencySOS={handleQuickLocate}
+              theme={theme}
+              onToggleTheme={toggleTheme}
+            />
+          </Suspense>
         )}
 
         {/* -------------------------------------------------------------
@@ -557,13 +594,15 @@ export default function MainApp({ token, onLogout }) {
             </div>
 
             <main className="tab-content-wrapper messages-tab-wrapper">
-              <CareGroupsChatView
-                profile={profile}
-                devices={devices}
-                onNavigateTab={setActiveTab}
-                showToast={showToast}
-                onQuickLocate={handleQuickLocate}
-              />
+              <Suspense fallback={<TabLoadingFallback />}>
+                <CareGroupsChatView
+                  profile={profile}
+                  devices={devices}
+                  onNavigateTab={setActiveTab}
+                  showToast={showToast}
+                  onQuickLocate={handleQuickLocate}
+                />
+              </Suspense>
             </main>
           </>
         )}
@@ -572,41 +611,45 @@ export default function MainApp({ token, onLogout }) {
             ABA: RASTREADOR (GERENCIAMENTO DE DISPOSITIVOS GPS)
            ------------------------------------------------------------- */}
         {activeTab === 'tracker' && (
-          <TrackerManagementView
-            devices={devices}
-            onNavigateTab={setActiveTab}
-            onOpenAddDevice={() => setIsAddModalOpen(true)}
-            onDeleteDevice={handleDeleteDevice}
-            onSelectDeviceForMap={(dev) => setSelectedDevice(dev)}
-            showToast={showToast}
-            profile={profile}
-            onLogout={onLogout}
-            setProfile={setProfile}
-            token={token}
-            areas={areas}
-            handleQuickLocate={handleQuickLocate}
-            theme={theme}
-            toggleTheme={toggleTheme}
-          />
+          <Suspense fallback={<TabLoadingFallback />}>
+            <TrackerManagementView
+              devices={devices}
+              onNavigateTab={setActiveTab}
+              onOpenAddDevice={() => setIsAddModalOpen(true)}
+              onDeleteDevice={handleDeleteDevice}
+              onSelectDeviceForMap={(dev) => setSelectedDevice(dev)}
+              showToast={showToast}
+              profile={profile}
+              onLogout={onLogout}
+              setProfile={setProfile}
+              token={token}
+              areas={areas}
+              handleQuickLocate={handleQuickLocate}
+              theme={theme}
+              toggleTheme={toggleTheme}
+            />
+          </Suspense>
         )}
 
         {/* -------------------------------------------------------------
             ABA 5: PERFIL FAMILIAR (EDITÁVEL & UPLOAD DE FOTO)
            ------------------------------------------------------------- */}
         {activeTab === 'profile' && (
-          <ProfileView
-            profile={profile}
-            setProfile={setProfile}
-            token={token}
-            onNavigateTab={setActiveTab}
-            onLogout={onLogout}
-            showToast={showToast}
-            devicesCount={devices.length}
-            areasCount={areas.length || 3}
-            handleQuickLocate={handleQuickLocate}
-            theme={theme}
-            toggleTheme={toggleTheme}
-          />
+          <Suspense fallback={<TabLoadingFallback />}>
+            <ProfileView
+              profile={profile}
+              setProfile={setProfile}
+              token={token}
+              onNavigateTab={setActiveTab}
+              onLogout={onLogout}
+              showToast={showToast}
+              devicesCount={devices.length}
+              areasCount={areas.length || 3}
+              handleQuickLocate={handleQuickLocate}
+              theme={theme}
+              toggleTheme={toggleTheme}
+            />
+          </Suspense>
         )}
 
       </div>
@@ -620,11 +663,15 @@ export default function MainApp({ token, onLogout }) {
       />
 
       {/* 4. MODAL DE ADICIONAR DISPOSITIVO */}
-      <AddDeviceModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAddDevice={handleAddDevice}
-      />
+      {isAddModalOpen && (
+        <Suspense fallback={null}>
+          <AddDeviceModal
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            onAddDevice={handleAddDevice}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
