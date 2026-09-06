@@ -36,7 +36,8 @@ export default function MercadoPagoCheckoutModal({
   const [copied, setCopied] = useState(false);
   const [timeLeft, setTimeLeft] = useState(1800); // 30 min
 
-  // Formulário de Cartão de Crédito
+  // Formulário de Cartão (Crédito / Débito)
+  const [cardType, setCardType] = useState('credit'); // 'credit' | 'debit'
   const [cardNumber, setCardNumber] = useState('');
   const [cardHolder, setCardHolder] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
@@ -189,7 +190,8 @@ export default function MercadoPagoCheckoutModal({
           cvv: cardCvv,
           cpf: cardCpf.replace(/\D/g, ''),
           brand: brand.name,
-          installments: Number(installments),
+          cardType,
+          installments: cardType === 'debit' ? 1 : Number(installments),
         },
         token
       );
@@ -292,6 +294,29 @@ export default function MercadoPagoCheckoutModal({
                   </div>
                 )}
 
+                {/* Seleção de Função: Cartão de Crédito ou Débito */}
+                <div className="mp-card-type-selector">
+                  <button
+                    type="button"
+                    className={`mp-card-type-pill ${cardType === 'credit' ? 'active' : ''}`}
+                    onClick={() => setCardType('credit')}
+                  >
+                    <i className="fa-solid fa-credit-card"></i>
+                    <span>Cartão de Crédito</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`mp-card-type-pill ${cardType === 'debit' ? 'active' : ''}`}
+                    onClick={() => {
+                      setCardType('debit');
+                      setInstallments('1');
+                    }}
+                  >
+                    <i className="fa-solid fa-money-check-dollar"></i>
+                    <span>Cartão de Débito</span>
+                  </button>
+                </div>
+
                 {/* Número do Cartão com Ícone Dinâmico de Bandeira */}
                 <div className="mp-input-group">
                   <label htmlFor="mp-card-number">{t('subscription.cardNumber')}</label>
@@ -373,22 +398,29 @@ export default function MercadoPagoCheckoutModal({
                   </div>
                 </div>
 
-                {/* Parcelas */}
-                <div className="mp-input-group">
-                  <label htmlFor="mp-card-installments">{t('subscription.installments')}</label>
-                  <select
-                    id="mp-card-installments"
-                    value={installments}
-                    onChange={(e) => setInstallments(e.target.value)}
-                    className="mp-select"
-                  >
-                    {installmentOptions.map((opt) => (
-                      <option key={opt.count} value={opt.count}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {/* Parcelas (Apenas para Crédito) ou Nota de Débito */}
+                {cardType === 'credit' ? (
+                  <div className="mp-input-group">
+                    <label htmlFor="mp-card-installments">{t('subscription.installments')}</label>
+                    <select
+                      id="mp-card-installments"
+                      value={installments}
+                      onChange={(e) => setInstallments(e.target.value)}
+                      className="mp-select"
+                    >
+                      {installmentOptions.map((opt) => (
+                        <option key={opt.count} value={opt.count}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="mp-debit-notice">
+                    <i className="fa-solid fa-circle-check" style={{ color: 'var(--color-success)' }}></i>
+                    <span>Débito à vista com aprovação instantânea Mercado Pago.</span>
+                  </div>
+                )}
 
                 {/* Selo de Segurança */}
                 <div className="mp-security-badge">

@@ -17,7 +17,7 @@ router.get('/subscriptions/plans', (_req, res) => {
   return res.json({
     plans: Object.values(PLANS_CONFIG),
     currency: 'BRL',
-    supportedPaymentMethods: ['pix', 'credit_card', 'mercado_pago_checkout'],
+    supportedPaymentMethods: ['pix', 'credit_card', 'debit_card', 'mercado_pago_checkout'],
   });
 });
 
@@ -142,7 +142,7 @@ router.post('/subscriptions/simulate-payment', requireAuth, (req, res) => {
 
 /**
  * POST /subscriptions/pay-card
- * Processa pagamento com cartão de crédito direto via Mercado Pago Checkout Transparente
+ * Processa pagamento com cartão de crédito ou débito direto via Mercado Pago Checkout Transparente
  */
 router.post('/subscriptions/pay-card', requireAuth, (req, res) => {
   const { planId, cycle = 'monthly', cardData } = req.body;
@@ -159,7 +159,7 @@ router.post('/subscriptions/pay-card', requireAuth, (req, res) => {
 
   const cardNumberClean = (cardData?.cardNumber || '').replace(/\D/g, '');
   if (!cardNumberClean || cardNumberClean.length < 13 || cardNumberClean.length > 19) {
-    return res.status(400).json({ detail: 'Número de cartão de crédito inválido' });
+    return res.status(400).json({ detail: 'Número de cartão inválido' });
   }
 
   if (!cardData?.holderName || cardData.holderName.trim().length < 3) {
@@ -175,10 +175,11 @@ router.post('/subscriptions/pay-card', requireAuth, (req, res) => {
     return res.status(400).json({ detail: 'Código de segurança (CVV) inválido' });
   }
 
+  const cardType = cardData?.cardType === 'debit' ? 'debit' : 'credit';
   const durationDays = cycle === 'yearly' ? 365 : 30;
   const expiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000).toISOString();
   const lastFour = cardNumberClean.slice(-4);
-  const paymentId = `mp_cc_${Date.now()}`;
+  const paymentId = `mp_${cardType === 'debit' ? 'db' : 'cc'}_${Date.now()}`;
 
   user.subscription = {
     planId: plan.id,
@@ -189,17 +190,19 @@ router.post('/subscriptions/pay-card', requireAuth, (req, res) => {
     maxGeofences: plan.maxGeofences,
     historyDays: plan.historyDays,
     expiresAt,
-    paymentMethod: 'mercado_pago_credit_card',
+    paymentMethod: cardType === 'debit' ? 'mercado_pago_debit_card' : 'mercado_pago_credit_card',
+    cardType,
     cardBrand: cardData.brand || 'Mastercard',
     cardLastFour: lastFour,
-    installments: Number(cardData.installments) || 1,
+    installments: cardType === 'debit' ? 1 : (Number(cardData.installments) || 1),
     lastPaymentId: paymentId,
     updatedAt: new Date().toISOString(),
   };
 
+  const typeLabel = cardType === 'debit' ? 'débito' : 'crédito';
   return res.json({
     success: true,
-    message: `Pagamento com cartão aprovado! Plano "${plan.name}" ativado com sucesso.`,
+    message: `Pagamento com cartão de ${typeLabel} aprovado! Plano "${plan.name}" ativado com sucesso.`,
     paymentId,
     subscription: user.subscription,
   });
