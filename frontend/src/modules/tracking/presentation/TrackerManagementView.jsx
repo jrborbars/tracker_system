@@ -116,7 +116,7 @@ export default function TrackerManagementView({
         <div className="tracker-top-banner">
           <div className="tracker-banner-stats">
             <div className="tracker-stat-item">
-              <div className="tracker-stat-icon-wrapper primary">
+              <div className="tracker-stat-icon-wrapper">
                 <i className="fa-solid fa-clock"></i>
               </div>
               <div className="tracker-stat-info">
@@ -126,7 +126,7 @@ export default function TrackerManagementView({
             </div>
 
             <div className="tracker-stat-item">
-              <div className="tracker-stat-icon-wrapper success">
+              <div className="tracker-stat-icon-wrapper">
                 <i className="fa-solid fa-hand-holding-hand"></i>
               </div>
               <div className="tracker-stat-info">
@@ -136,7 +136,7 @@ export default function TrackerManagementView({
             </div>
 
             <div className="tracker-stat-item">
-              <div className="tracker-stat-icon-wrapper neutral">
+              <div className="tracker-stat-icon-wrapper">
                 <i className="fa-solid fa-shirt"></i>
               </div>
               <div className="tracker-stat-info">
@@ -253,7 +253,6 @@ export default function TrackerManagementView({
           <div className="tracker-cards-grid">
             {filteredDevices.map((device) => {
               const isLowBat = (device.battery_level || 0) < 25;
-              const isCriticalBat = (device.battery_level || 0) < 15;
               const isPinging = pingingId === device.id;
               const isVibrating = vibratingId === device.id;
               const isWrist = (device.wear_mode || 'pulso') === 'pulso' || (device.type || '').includes('pulso');
@@ -261,107 +260,73 @@ export default function TrackerManagementView({
               const heartRate = device.heart_rate || (isWrist ? 74 : null);
 
               return (
-                <div key={device.id} className="tracker-card wearable-card">
-                  {/* Cabeçalho do Card com Modo de Uso e Status */}
+                <div key={device.id} className="tracker-card">
+                  {/* Cabeçalho Limpo: Identificação e Status */}
                   <div className="tracker-card-header">
                     <div className="tracker-card-identity">
-                      <div className={`tracker-avatar-circle ${isWrist ? 'wrist' : 'clothing'}`}>
+                      <div className="tracker-avatar-circle">
                         <i className={isWrist ? 'fa-solid fa-clock' : 'fa-solid fa-shirt'}></i>
-                        <span className="tracker-pulse-dot" title="Sincronizado via WearOS"></span>
                       </div>
                       <div className="tracker-card-names">
                         <h4 className="tracker-name">{device.name}</h4>
-                        <div className="tracker-id-badge">
-                          <span className={`wear-mode-pill ${isWrist ? 'wrist' : 'clothing'}`}>
-                            <i className={isWrist ? 'fa-solid fa-hand-holding-hand' : 'fa-solid fa-shirt'}></i>
+                        <div className="tracker-meta-row">
+                          <code className="tracker-token-code">{pairingCode}</code>
+                          <span className="tracker-meta-dot">&bull;</span>
+                          <span className="tracker-wear-mode-text">
                             {isWrist ? t('tracker.onWrist') : t('tracker.onClothing')}
-                          </span>
-                          <span className="pairing-token-pill" title="Token de pareamento">
-                            <i className="fa-brands fa-android" style={{ color: '#3DDC84' }}></i>
-                            <code>{pairingCode}</code>
                           </span>
                         </div>
                       </div>
                     </div>
 
                     <div className="tracker-status-tag-live">
-                      <i className="fa-solid fa-wifi"></i>
+                      <span className="status-live-dot"></span>
                       <span>{t('tracker.wearOsActive')}</span>
                     </div>
                   </div>
 
-                  {/* Descrição e Cuidados */}
+                  {/* Observação / Cuidados (se houver) */}
                   {device.description && (
                     <p className="tracker-description">{device.description}</p>
                   )}
 
-                  {/* Sensores de Saúde & Wearable (Batimentos, Queda, Carga) */}
-                  <div className="wearable-sensors-grid">
+                  {/* Métricas Principais em Faixa Unificada */}
+                  <div className="tracker-metrics-strip">
                     {/* Frequência Cardíaca */}
-                    <div className="sensor-metric-box">
-                      <div className="sensor-metric-header">
-                        <i className="fa-solid fa-heart-pulse sensor-icon heart fa-beat" style={{ animationDuration: '1.2s' }}></i>
-                        <span className="sensor-metric-label">{t('tracker.heartRateLabel')}</span>
+                    <div className="tracker-metric-cell">
+                      <i className="fa-solid fa-heart-pulse metric-icon heart"></i>
+                      <div className="metric-text-group">
+                        <span className="metric-label">{t('tracker.heartRateLabel')}</span>
+                        <span className="metric-value">
+                          {heartRate ? `${heartRate} BPM` : '—'}
+                        </span>
                       </div>
-                      <span className="sensor-metric-value">
-                        {heartRate ? `${heartRate} BPM` : t('tracker.sensorClip')}
-                      </span>
                     </div>
 
-                    {/* Sensor de Quedas */}
-                    <div className="sensor-metric-box">
-                      <div className="sensor-metric-header">
-                        <i className="fa-solid fa-person-falling sensor-icon fall"></i>
-                        <span className="sensor-metric-label">{t('tracker.fallSensor')}</span>
+                    {/* Nível de Bateria */}
+                    <div className="tracker-metric-cell">
+                      <i className={`fa-solid ${isLowBat ? 'fa-battery-quarter' : 'fa-battery-three-quarters'} metric-icon battery ${isLowBat ? 'low' : ''}`}></i>
+                      <div className="metric-text-group">
+                        <span className="metric-label">{t('tracker.battery')}</span>
+                        <span className={`metric-value ${isLowBat ? 'low' : ''}`}>
+                          {device.battery_level || 0}%
+                        </span>
                       </div>
-                      <span className="sensor-metric-value ok">
-                        {t('tracker.protected')}
-                      </span>
                     </div>
 
-                    {/* Bateria do Relógio */}
-                    <div className="sensor-metric-box">
-                      <div className="sensor-metric-header">
-                        <i className={`fa-solid ${isLowBat ? 'fa-battery-quarter' : 'fa-battery-full'} sensor-icon battery ${isLowBat ? 'low' : 'ok'}`}></i>
-                        <span className="sensor-metric-label">{t('tracker.battery')}</span>
+                    {/* Status de Proteção / Cercas */}
+                    <div className="tracker-metric-cell">
+                      <i className="fa-solid fa-shield-halved metric-icon security"></i>
+                      <div className="metric-text-group">
+                        <span className="metric-label">{t('tracker.security')}</span>
+                        <span className="metric-value ok">
+                          {t('tracker.protected')}
+                        </span>
                       </div>
-                      <span className={`sensor-metric-value ${isLowBat ? 'low' : 'ok'}`}>
-                        {device.battery_level || 0}%
-                      </span>
                     </div>
                   </div>
 
-                  {/* Barra de Bateria do Relógio */}
-                  <div className="tracker-battery-bar-track">
-                    <div
-                      className={`tracker-battery-bar-fill ${
-                        isCriticalBat ? 'critical' : isLowBat ? 'warning' : 'healthy'
-                      }`}
-                      style={{ width: `${Math.min(100, Math.max(5, device.battery_level || 0))}%` }}
-                    ></div>
-                  </div>
-
-                  {/* Telemetria e Cercas */}
-                  <div className="tracker-telemetry-box">
-                    <div className="tracker-telemetry-row">
-                      <span className="telemetry-label">
-                        <i className="fa-solid fa-location-crosshairs"></i> {t('tracker.gpsSatellite')}
-                      </span>
-                      <span className="telemetry-val">
-                        {device.lat ? device.lat.toFixed(5) : '-23.5505'}, {device.lng ? device.lng.toFixed(5) : '-46.6333'}
-                      </span>
-                    </div>
-                    <div className="tracker-telemetry-row">
-                      <span className="telemetry-label">
-                        <i className="fa-solid fa-shield-heart"></i> {t('tracker.security')}
-                      </span>
-                      <span className="telemetry-val safe">
-                        {t('tracker.activeFences')}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Ações do Relógio */}
+                  {/* Ações do Card */}
                   <div className="tracker-card-actions">
                     <button
                       type="button"
@@ -389,7 +354,7 @@ export default function TrackerManagementView({
 
                     <button
                       type="button"
-                      className="btn-tracker-action refresh"
+                      className="btn-tracker-action icon-only"
                       onClick={() => handlePingDevice(device)}
                       title={t('tracker.syncTelemetry')}
                       disabled={isPinging}
@@ -399,7 +364,7 @@ export default function TrackerManagementView({
 
                     <button
                       type="button"
-                      className="btn-tracker-action danger"
+                      className="btn-tracker-action icon-only danger"
                       onClick={() => onDeleteDevice(device.id, device.name)}
                       title={t('tracker.unpairDevice')}
                     >

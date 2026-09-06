@@ -413,18 +413,15 @@ export default function MainApp({ token, onLogout }) {
                           <i className="fa-solid fa-shield-halved"></i> {t('dashboard.stats.geofencesActive')}
                         </span>
                         <span className={`badge-chip ${device.battery_level < 25 ? 'battery-low' : 'battery-ok'}`}>
-                          <i className="fa-solid fa-battery-three-quarters"></i> {device.battery_level}%
+                          <i className={`fa-solid ${device.battery_level < 25 ? 'fa-battery-quarter' : 'fa-battery-three-quarters'}`}></i> {device.battery_level}%
                         </span>
                       </div>
 
-                      <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-                        {device.description}
-                      </p>
-
-                      <div style={{ fontSize: '11px', color: 'var(--text-light)', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Lat: {device.lat ? device.lat.toFixed(4) : '—'}</span>
-                        <span>Lng: {device.lng ? device.lng.toFixed(4) : '—'}</span>
-                      </div>
+                      {device.description && (
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: '1.4', margin: '0' }}>
+                          {device.description}
+                        </p>
+                      )}
 
                       <div className="device-actions">
                         <button

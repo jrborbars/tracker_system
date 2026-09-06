@@ -40,7 +40,7 @@ export function buildSeed() {
       {
         id: deviceAId,
         name: 'Relógio do Vô João',
-        description: 'Paciente com Síndrome de Eisenmenger. Relógio no pulso esquerdo com monitoramento de batimentos e GPS ativo.',
+        description: 'Acompanhamento cardiológico contínuo (Eisenmenger).',
         device_id: 'WATCH-7492',
         pairing_token: 'BD-7492',
         wear_mode: 'pulso',
@@ -58,7 +58,7 @@ export function buildSeed() {
       {
         id: deviceBId,
         name: 'Clip da Dona Maria',
-        description: 'Fixado na roupa/cinto. Monitoramento de passos, detecção de queda e cerca perimetral.',
+        description: 'Acompanhamento preventivo e suporte familiar.',
         device_id: 'CLIP-3810',
         pairing_token: 'BD-3810',
         wear_mode: 'roupa',
