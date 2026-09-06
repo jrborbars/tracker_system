@@ -19,7 +19,13 @@ import notificationService from '../../../core/services/notificationService.js';
 import '../../../styles/MainApp.css';
 
 export default function MainApp({ token, onLogout }) {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    try {
+      return sessionStorage.getItem('betterdays_active_tab') || 'dashboard';
+    } catch {
+      return 'dashboard';
+    }
+  });
   const [profile, setProfile] = useState(null);
   const [devices, setDevices] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -36,6 +42,15 @@ export default function MainApp({ token, onLogout }) {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('betterdays_theme', theme);
   }, [theme]);
+
+  // Sincronizar aba ativa para persistir durante recarregamento
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('betterdays_active_tab', activeTab);
+    } catch (err) {
+      console.error('Erro ao salvar aba ativa:', err);
+    }
+  }, [activeTab]);
 
   const toggleTheme = () => {
     setTheme((prev) => {
@@ -60,6 +75,15 @@ export default function MainApp({ token, onLogout }) {
       setMessages(msgData);
     } catch (err) {
       console.error('Erro ao carregar dados do app:', err);
+      const errMsg = err?.message || '';
+      if (
+        errMsg.includes('401') ||
+        errMsg.toLowerCase().includes('unauthorized') ||
+        errMsg.toLowerCase().includes('token') ||
+        errMsg.toLowerCase().includes('não autorizado')
+      ) {
+        if (onLogout) onLogout();
+      }
     }
   };
 
