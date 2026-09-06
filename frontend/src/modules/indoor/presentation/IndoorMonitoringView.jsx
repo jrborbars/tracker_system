@@ -85,6 +85,7 @@ export default function IndoorMonitoringView({
   areasCount,
   onEmergencySOS,
   theme,
+  onToggleTheme,
   toggleTheme,
 }) {
   const { t, locale } = useI18n();
@@ -233,7 +234,7 @@ export default function IndoorMonitoringView({
             areasCount={areasCount}
             onEmergencySOS={onEmergencySOS}
             theme={theme}
-            onToggleTheme={onToggleTheme}
+            onToggleTheme={onToggleTheme || toggleTheme}
           />
         </div>
       </div>
