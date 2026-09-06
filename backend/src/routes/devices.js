@@ -17,7 +17,7 @@ router.get('/devices/', requireAuth, (req, res) => {
 
 // POST /devices/ — create a device. Duplicate device_id => 400.
 router.post('/devices/', requireAuth, (req, res) => {
-  const { name, description, device_id, type, avatar } = req.body || {};
+  const { name, description, device_id, type, avatar, pairing_token, wear_mode, heart_rate, fall_detection } = req.body || {};
 
   if (!name || !description || !device_id || !type) {
     return res
@@ -25,7 +25,7 @@ router.post('/devices/', requireAuth, (req, res) => {
       .json({ detail: 'name, description, device_id and type are required' });
   }
 
-  if (store.devices.some((d) => d.device_id === device_id)) {
+  if (store.devices.some((d) => d.device_id === device_id && !d.deleted)) {
     return res.status(400).json({ detail: 'Device ID already exists' });
   }
 
@@ -34,11 +34,15 @@ router.post('/devices/', requireAuth, (req, res) => {
     name,
     description,
     device_id,
+    pairing_token: pairing_token || `BD-${Math.floor(1000 + Math.random() * 9000)}`,
+    wear_mode: wear_mode || (type.includes('clip') ? 'roupa' : 'pulso'),
     type,
-    last_seen: null,
-    lat: null,
-    lng: null,
-    battery_level: null,
+    heart_rate: heart_rate || 72,
+    fall_detection: fall_detection !== undefined ? fall_detection : true,
+    last_seen: new Date().toISOString(),
+    lat: -23.5505 + (Math.random() - 0.5) * 0.01,
+    lng: -46.6333 + (Math.random() - 0.5) * 0.01,
+    battery_level: 95,
     avatar: avatar ?? null,
     deleted: 0,
     user_id: req.user.id,

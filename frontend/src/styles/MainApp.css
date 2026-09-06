@@ -4911,12 +4911,264 @@
   line-height: 1.5;
 }
 
+.tracker-avatar-circle.wrist {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.tracker-avatar-circle.clothing {
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary);
+}
+
+.wear-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.wear-mode-pill.wrist {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.wear-mode-pill.clothing {
+  background-color: var(--color-secondary-light);
+  color: var(--color-secondary-dark);
+}
+
+.pairing-token-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-color);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+}
+
+.pairing-token-pill code {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+/* Sensores do Wearable */
+.wearable-sensors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+}
+
+.sensor-metric-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+
+.sensor-metric-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.sensor-icon.heart {
+  color: var(--color-danger);
+}
+
+.sensor-icon.fall {
+  color: var(--color-primary);
+}
+
+.sensor-icon.battery.ok {
+  color: var(--color-success);
+}
+
+.sensor-icon.battery.low {
+  color: var(--color-danger);
+}
+
+.sensor-metric-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.sensor-metric-value.ok {
+  color: var(--color-success);
+}
+
+.sensor-metric-value.low {
+  color: var(--color-danger);
+}
+
+/* Modal de Pareamento de Wearables */
+.modal-dialog.wearable-modal {
+  max-width: 520px;
+}
+
+.wearable-modal-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.wear-mode-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.wear-mode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 12px;
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.wear-mode-card:hover {
+  border-color: var(--color-primary-subtle);
+  background-color: var(--bg-surface-subtle);
+}
+
+.wear-mode-card.active {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.wear-mode-icon {
+  font-size: 20px;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+
+.wear-mode-details strong {
+  display: block;
+  font-size: 12px;
+  color: var(--text-main);
+  margin-bottom: 2px;
+}
+
+.wear-mode-details span {
+  display: block;
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.wear-mode-card .check-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+/* Caixa de Token de Pareamento */
+.pairing-token-box {
+  background-color: var(--bg-surface-subtle);
+  border: 1.5px dashed var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pairing-token-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.btn-generate-token {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-generate-token:hover {
+  background-color: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.pairing-input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pairing-input {
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
+
+.pairing-badge-ready {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-success);
+  white-space: nowrap;
+}
+
 /* Modo Escuro */
 [data-theme="dark"] .tracker-top-banner,
 [data-theme="dark"] .tracker-card,
-[data-theme="dark"] .tracker-empty-state {
+[data-theme="dark"] .tracker-empty-state,
+[data-theme="dark"] .wear-mode-card {
   background-color: var(--bg-surface);
   border-color: var(--border-color);
+}
+
+[data-theme="dark"] .wear-mode-card.active {
+  background-color: #06372E;
+  border-color: var(--color-primary);
 }
 
 [data-theme="dark"] .tracker-search-input {
@@ -4925,12 +5177,15 @@
   color: #E2E8F0;
 }
 
-[data-theme="dark"] .tracker-battery-section {
+[data-theme="dark"] .tracker-battery-section,
+[data-theme="dark"] .wearable-sensors-grid,
+[data-theme="dark"] .pairing-token-box {
   background-color: #0E1726;
   border-color: #1E2D42;
 }
 
-[data-theme="dark"] .tracker-id-badge code {
+[data-theme="dark"] .tracker-id-badge code,
+[data-theme="dark"] .pairing-token-pill {
   background-color: #0E1726;
   border-color: #24354D;
   color: #94A3B8;
