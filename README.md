@@ -60,7 +60,9 @@ npm start          # Inicia na porta http://localhost:8000 (HTTP + WebSockets)
 # ou 'npm run dev' para modo auto-reload
 ```
 - **Health check:** `http://localhost:8000/health`
-- **Root API banner:** `http://localhost:8000/`
+- **Swagger UI Interativo:** `http://localhost:8000/docs`
+- **ReDoc UI:** `http://localhost:8000/redoc`
+- **OpenAPI 3.0 JSON:** `http://localhost:8000/openapi.json`
 - **WebSocket Endpoint:** `ws://localhost:8000/socket.io/`
 
 #### 2. Front-end (`frontend/`)

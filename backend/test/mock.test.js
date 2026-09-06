@@ -45,6 +45,27 @@ test('GET /metrics returns a Prometheus text body', async () => {
   assert.match(res.text, /tracker_mock_requests_total/);
 });
 
+test('GET /openapi.json returns OpenAPI 3.0 spec', async () => {
+  const res = await request(app).get('/openapi.json');
+  assert.equal(res.status, 200);
+  assert.equal(res.body.openapi, '3.0.3');
+  assert.ok(res.body.paths['/devices/']);
+  assert.ok(res.body.paths['/subscriptions/plans']);
+});
+
+test('GET /docs returns Swagger UI HTML', async () => {
+  const res = await request(app).get('/docs');
+  assert.equal(res.status, 200);
+  assert.match(res.text, /swagger-ui/);
+  assert.match(res.text, /Betterdays Tracker/);
+});
+
+test('GET /redoc returns ReDoc HTML', async () => {
+  const res = await request(app).get('/redoc');
+  assert.equal(res.status, 200);
+  assert.match(res.text, /redoc/);
+});
+
 test('unknown route returns 404 with FastAPI-style detail', async () => {
   const res = await request(app).get('/nope');
   assert.equal(res.status, 404);

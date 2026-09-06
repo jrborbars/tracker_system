@@ -8,6 +8,7 @@ Bem-vindo ao diretório central de documentação técnica e guias de arquitetur
 
 | Documento | Descrição & Escopo |
 | :--- | :--- |
+| [**⚡ Swagger UI & Especificação OpenAPI 3.0**](./openapi.json) | Documentação interativa de endpoints REST (`/docs`), visualizador ReDoc (`/redoc`) e especificação JSON (`/openapi.json`). |
 | [**💳 Guia de Pagamentos & Mercado Pago**](./MERCADO_PAGO_INTEGRATION.md) | Integração completa com Mercado Pago (PIX, Cartão de Crédito e Débito, Checkout Pro, Webhooks e Cartões de Teste). |
 | [**📡 Arquitetura de Dados & Contratos JSON**](./JSON_DATA_ARCHITECTURE.md) | Catálogo completo de esquemas JSON, fluxo Clean Architecture/DDD, Repositórios e chamadas HTTP/WebSocket. |
 | [**💬 Arquitetura de Mensageria & WebSockets**](./MESSAGING_ARCHITECTURE.md) | Especificação de comunicação em tempo real, tópicos de telemetria MQTT, salas Socket.io e protocolos de telemetria. |

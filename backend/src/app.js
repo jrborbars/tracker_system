@@ -8,6 +8,7 @@ import cors from 'cors';
 import path from 'node:path';
 import config from './config.js';
 import api from './routes/index.js';
+import swaggerRouter from './docs/swagger.js';
 import { reseed } from './db.js';
 
 export function createApp() {
@@ -54,6 +55,9 @@ export function createApp() {
     reseed();
     return res.json({ message: 'Mock database reseeded' });
   });
+
+  // OpenAPI 3.0 & Swagger UI documentation (/docs, /redoc, /openapi.json)
+  app.use(swaggerRouter);
 
   // All domain routes.
   app.use(api);
