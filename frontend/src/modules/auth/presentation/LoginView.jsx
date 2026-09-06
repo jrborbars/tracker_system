@@ -92,19 +92,18 @@ export default function LoginView({ onLoginSuccess }) {
                   color: isSelected ? '#ffffff' : 'var(--color-text-muted, #64748b)',
                   border: 'none',
                   borderRadius: '16px',
-                  padding: '2px 8px',
+                  padding: '4px 10px',
                   fontSize: '11px',
                   fontWeight: isSelected ? 700 : 500,
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '3px',
+                  gap: '4px',
                   transition: 'all 0.2s ease',
                 }}
                 title={`${meta.name} (${meta.region})`}
               >
-                <span>{meta.flag}</span>
-                <span>{meta.code.toUpperCase()}</span>
+                <span style={{ letterSpacing: '0.5px' }}>{meta.code.toUpperCase()}</span>
               </button>
             );
           })}

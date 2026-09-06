@@ -91,7 +91,7 @@ class NotificationService {
    * Notificação específica de Emergência SOS
    */
   notifyEmergencySOS(senderName = 'Paciente', details = 'Botão de pânico acionado!') {
-    return this.notify(`🚨 ALERTA SOS: ${senderName}`, {
+    return this.notify(`ALERTA SOS: ${senderName}`, {
       body: details,
       icon: '/android-chrome-192x192.png',
       requireInteraction: true,
@@ -104,7 +104,7 @@ class NotificationService {
    * Notificação de nova mensagem do Grupo de Cuidado
    */
   notifyCareMessage(senderName, text, groupName = 'Grupo de Cuidado') {
-    return this.notify(`💬 ${senderName} (${groupName})`, {
+    return this.notify(`${senderName} (${groupName})`, {
       body: text || 'Nova mensagem recebida',
       icon: '/android-chrome-192x192.png',
       tag: 'care-message',

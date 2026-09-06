@@ -97,7 +97,7 @@ export default function MainApp({ token, onLogout }) {
   const toggleTheme = () => {
     setTheme((prev) => {
       const next = prev === 'light' ? 'dark' : 'light';
-      showToast(`Tema alterado para ${next === 'dark' ? 'Modo Escuro 🌙' : 'Modo Claro ☀️'}`);
+      showToast(`Tema alterado para ${next === 'dark' ? 'Modo Escuro' : 'Modo Claro'}`);
       return next;
     });
   };
@@ -154,7 +154,7 @@ export default function MainApp({ token, onLogout }) {
 
     const handleSosAlert = (sosData) => {
       setSosActive(true);
-      showToast(`🚨 ALERTA SOS RECEBIDO: ${sosData.patient || 'Paciente'} (${sosData.location})`);
+      showToast(`ALERTA SOS RECEBIDO: ${sosData.patient || 'Paciente'} (${sosData.location})`);
       // Disparar notificação nativa do sistema operacional (Desktop / Android)
       notificationService.notifyEmergencySOS(
         sosData.patient || 'Familiar / Paciente',

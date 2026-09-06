@@ -359,7 +359,7 @@ export default function LeafletMapView({
         }
 
         if (showToast) {
-          showToast(`📍 Localização obtida com sucesso! (Precisão: ±${Math.round(accuracy)}m)`);
+          showToast(`Localização obtida com sucesso! (Precisão: ±${Math.round(accuracy)}m)`);
         }
       },
       (error) => {

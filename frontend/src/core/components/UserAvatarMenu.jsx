@@ -163,15 +163,15 @@ export default function UserAvatarMenu({
                     type="button"
                     onClick={() => {
                       changeLanguage(lang);
-                      if (showToast) showToast(`${meta.flag} ${meta.name} (${meta.region})`);
+                      if (showToast) showToast(`${meta.name} (${meta.region})`);
                     }}
                     style={{
-                      padding: '6px 4px',
-                      border: isSelected ? '2px solid var(--color-primary, #0D9488)' : '1px solid var(--color-border, #e2e8f0)',
+                      padding: '8px 4px',
+                      border: isSelected ? '1.5px solid var(--color-primary, #0D9488)' : '1px solid var(--color-border, #e2e8f0)',
                       borderRadius: '8px',
                       background: isSelected ? 'var(--color-primary-light, rgba(13, 148, 136, 0.12))' : 'transparent',
                       color: isSelected ? 'var(--color-primary, #0D9488)' : 'var(--color-text, #1e293b)',
-                      fontSize: '11px',
+                      fontSize: '12px',
                       fontWeight: isSelected ? 700 : 500,
                       cursor: 'pointer',
                       display: 'flex',
@@ -182,8 +182,8 @@ export default function UserAvatarMenu({
                     }}
                     title={`${meta.name} (${meta.region})`}
                   >
-                    <span style={{ fontSize: '15px' }}>{meta.flag}</span>
-                    <span style={{ fontSize: '10px', letterSpacing: '0.5px' }}>{meta.code.toUpperCase()}</span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>{meta.code.toUpperCase()}</span>
+                    <span style={{ fontSize: '10px', color: isSelected ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>{meta.name}</span>
                   </button>
                 );
               })}

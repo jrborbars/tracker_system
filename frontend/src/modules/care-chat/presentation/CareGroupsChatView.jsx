@@ -2,16 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import useCareSocket from './useCareSocket.js';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
-// Dados iniciais pré-configurados de grupos de cuidado inspirados no caso de uso Eisenmenger
+// Dados iniciais pré-configurados de grupos de cuidado com tipografia limpa e sem emojis
 const INITIAL_CARE_GROUPS = [
   {
     id: 'grp-1',
-    name: '👨‍👩‍👧‍👦 Família Mariana — Cuidado Geral',
+    name: 'Família Mariana — Cuidado Geral',
     category: 'family',
     patientName: 'Mariana Silva',
-    avatarBg: '#E0F2F1',
-    avatarColor: '#00897B',
-    avatarIcon: 'fa-solid fa-people-roof',
+    avatarBg: 'var(--color-bg-surface-subtle, #f1f5f9)',
+    avatarColor: 'var(--color-primary, #0D9488)',
+    avatarIcon: 'fa-solid fa-users',
     members: ['Você (Cuidador)', 'Mariana (Paciente)', 'Carlos Silva (Irmão)', 'Clara (Enfermeira)'],
     unreadCount: 0,
     messages: [
@@ -19,7 +19,7 @@ const INITIAL_CARE_GROUPS = [
         id: 'm1',
         sender: 'Carlos Silva',
         senderRole: 'Familiar',
-        senderColor: '#7E57C2',
+        senderColor: '#64748b',
         avatar: 'CS',
         text: 'Bom dia pessoal! A Mariana tomou o café e descansou bem esta noite. A saturação ao acordar estava em 89% (dentro do habitual dela).',
         timestamp: '08:30',
@@ -40,7 +40,7 @@ const INITIAL_CARE_GROUPS = [
         id: 'm3',
         sender: 'Clara (Enfermeira)',
         senderRole: 'Equipe de Saúde',
-        senderColor: '#00897B',
+        senderColor: '#0D9488',
         avatar: 'CE',
         text: 'Perfeito. Lembrem-se de evitar qualquer caminhada sob sol forte hoje. Se ela for ao jardim, usar o concentrador portátil.',
         timestamp: '09:15',
@@ -62,7 +62,7 @@ const INITIAL_CARE_GROUPS = [
         id: 'm5',
         sender: 'Carlos Silva',
         senderRole: 'Familiar',
-        senderColor: '#7E57C2',
+        senderColor: '#64748b',
         avatar: 'CS',
         text: 'Acabei de passar na farmácia e peguei os suplementos e as cânulas nasais reservas.',
         timestamp: '10:20',
@@ -73,11 +73,11 @@ const INITIAL_CARE_GROUPS = [
   },
   {
     id: 'grp-2',
-    name: '🩺 Cardiologia InCor & Suporte Clínico',
+    name: 'Cardiologia InCor & Suporte Clínico',
     category: 'medical',
     patientName: 'Mariana Silva',
-    avatarBg: '#EDE7F6',
-    avatarColor: '#7E57C2',
+    avatarBg: 'var(--color-bg-surface-subtle, #f1f5f9)',
+    avatarColor: 'var(--color-primary, #0D9488)',
     avatarIcon: 'fa-solid fa-user-doctor',
     members: ['Dr. Roberto (Cardio InCor)', 'Dra. Helena (Pneumo)', 'Você (Cuidador)'],
     unreadCount: 0,
@@ -86,7 +86,7 @@ const INITIAL_CARE_GROUPS = [
         id: 'm201',
         sender: 'Dr. Roberto',
         senderRole: 'Cardiologista HC-FMUSP',
-        senderColor: '#7E57C2',
+        senderColor: '#0D9488',
         avatar: 'DR',
         text: 'Olá! Analisei os dados do monitoramento desta semana. A frequência cardíaca média ficou estável em 78 bpm e sem picos de síncope.',
         timestamp: 'Ontem 16:40',
@@ -107,7 +107,7 @@ const INITIAL_CARE_GROUPS = [
         id: 'm203',
         sender: 'Dr. Roberto',
         senderRole: 'Cardiologista HC-FMUSP',
-        senderColor: '#7E57C2',
+        senderColor: '#0D9488',
         avatar: 'DR',
         text: 'Excelente conduta. Manter a suplementação de oxigênio conforme prescrito. Agendamos a reavaliação de rotina para daqui a 3 semanas.',
         timestamp: '09:40',
@@ -118,12 +118,12 @@ const INITIAL_CARE_GROUPS = [
   },
   {
     id: 'grp-3',
-    name: '🚨 Central SOS & Alertas Rápidos',
+    name: 'Central SOS & Alertas Rápidos',
     category: 'alerts',
     patientName: 'Mariana Silva',
-    avatarBg: '#FFEBEE',
-    avatarColor: '#E53935',
-    avatarIcon: 'fa-solid fa-triangle-exclamation',
+    avatarBg: 'var(--color-bg-surface-subtle, #f1f5f9)',
+    avatarColor: 'var(--color-danger, #ef4444)',
+    avatarIcon: 'fa-solid fa-bell',
     members: ['Central de Monitoramento Betterdays', 'Equipe de Resgate', 'Você (Cuidador)'],
     unreadCount: 0,
     messages: [
@@ -151,12 +151,12 @@ const INITIAL_CARE_GROUPS = [
   },
   {
     id: 'grp-4',
-    name: '💊 Farmácia & Oxigenioterapia',
+    name: 'Farmácia & Oxigenioterapia',
     category: 'medical',
     patientName: 'Mariana Silva',
-    avatarBg: '#FFF3E0',
-    avatarColor: '#FB8C00',
-    avatarIcon: 'fa-solid fa-prescription-bottle-medical',
+    avatarBg: 'var(--color-bg-surface-subtle, #f1f5f9)',
+    avatarColor: 'var(--color-primary, #0D9488)',
+    avatarIcon: 'fa-solid fa-pills',
     members: ['Farmacêutica Juliana (Oxigênio HomeCare)', 'Você (Cuidador)'],
     unreadCount: 0,
     messages: [
@@ -164,7 +164,7 @@ const INITIAL_CARE_GROUPS = [
         id: 'm401',
         sender: 'Juliana HomeCare',
         senderRole: 'Fornecedor de O2',
-        senderColor: '#E65100',
+        senderColor: '#64748b',
         avatar: 'JH',
         text: 'Bom dia! A troca do cilindro backup de oxigênio medicinal está agendada para amanhã entre 14h e 16h.',
         timestamp: 'Ontem 11:30',
@@ -308,7 +308,7 @@ export default function CareGroupsChatView({
         sender: 'Você',
         senderRole: 'Cuidador Principal',
         avatar: 'DU',
-        text: '💊 Dose de medicação e checagem de oximetria confirmada e registrada no prontuário.',
+        text: 'Dose de medicação e checagem de oximetria confirmada e registrada no prontuário.',
         isMe: true,
       });
       if (showToast) showToast('Confirmação de medicação enviada!');
@@ -320,7 +320,7 @@ export default function CareGroupsChatView({
         sender: 'Cuidador Principal',
         details: 'Protocolo de resgate satelital iniciado via chat de cuidado.',
       });
-      if (showToast) showToast('🚨 Alerta SOS emitido via WebSocket para toda a rede de cuidado!');
+      if (showToast) showToast('Alerta SOS emitido via WebSocket para toda a rede de cuidado!');
     }
   };
 
@@ -334,9 +334,9 @@ export default function CareGroupsChatView({
       name: newGroupName.trim(),
       category: newGroupCategory,
       patientName: newGroupPatient.trim() || 'Mariana Silva',
-      avatarBg: newGroupCategory === 'medical' ? '#EDE7F6' : '#E0F2F1',
-      avatarColor: newGroupCategory === 'medical' ? '#7E57C2' : '#00897B',
-      avatarIcon: newGroupCategory === 'medical' ? 'fa-solid fa-user-doctor' : 'fa-solid fa-users',
+      avatarBg: 'var(--color-bg-surface-subtle, #f1f5f9)',
+      avatarColor: 'var(--color-primary, #0D9488)',
+      avatarIcon: newGroupCategory === 'medical' ? 'fa-solid fa-user-doctor' : newGroupCategory === 'alerts' ? 'fa-solid fa-bell' : 'fa-solid fa-users',
       members: newGroupMembers.split(',').map((m) => m.trim()),
       unreadCount: 0,
       messages: [
@@ -419,21 +419,21 @@ export default function CareGroupsChatView({
             className={`category-chip ${categoryFilter === 'family' ? 'active' : ''}`}
             onClick={() => setCategoryFilter('family')}
           >
-            👨‍👩‍👦 {t('chat.filterFamily')}
+            <i className="fa-solid fa-users" style={{ marginRight: '5px' }}></i> {t('chat.filterFamily')}
           </button>
           <button
             type="button"
             className={`category-chip ${categoryFilter === 'medical' ? 'active' : ''}`}
             onClick={() => setCategoryFilter('medical')}
           >
-            🩺 {t('chat.filterMedical')}
+            <i className="fa-solid fa-user-doctor" style={{ marginRight: '5px' }}></i> {t('chat.filterMedical')}
           </button>
           <button
             type="button"
             className={`category-chip ${categoryFilter === 'alerts' ? 'active' : ''}`}
             onClick={() => setCategoryFilter('alerts')}
           >
-            🚨 {t('chat.filterAlerts')}
+            <i className="fa-solid fa-bell" style={{ marginRight: '5px' }}></i> {t('chat.filterAlerts')}
           </button>
         </div>
 
@@ -657,7 +657,7 @@ export default function CareGroupsChatView({
             className="quick-action-pill"
             onClick={() => handleQuickAction('gps')}
           >
-            <i className="fa-solid fa-location-dot" style={{ color: 'var(--color-primary)' }}></i>
+            <i className="fa-solid fa-location-dot"></i>
             <span>GPS</span>
           </button>
           <button
@@ -665,7 +665,7 @@ export default function CareGroupsChatView({
             className="quick-action-pill"
             onClick={() => handleQuickAction('meds')}
           >
-            <i className="fa-solid fa-pills" style={{ color: 'var(--color-success)' }}></i>
+            <i className="fa-solid fa-pills"></i>
             <span>Medicação</span>
           </button>
           <button
@@ -673,7 +673,7 @@ export default function CareGroupsChatView({
             className="quick-action-pill sos-pill"
             onClick={() => handleQuickAction('sos')}
           >
-            <i className="fa-solid fa-crosshairs"></i>
+            <i className="fa-solid fa-triangle-exclamation"></i>
             <span>{t('chat.quickAlert')}</span>
           </button>
         </div>
@@ -730,7 +730,7 @@ export default function CareGroupsChatView({
                 <label>Nome do Grupo *</label>
                 <input
                   type="text"
-                  placeholder="Ex: 🩺 Dra. Helena - Pneumologista"
+                  placeholder="Ex: Dra. Helena - Pneumologista"
                   value={newGroupName}
                   onChange={(e) => setNewGroupName(e.target.value)}
                   required
@@ -743,9 +743,9 @@ export default function CareGroupsChatView({
                   value={newGroupCategory}
                   onChange={(e) => setNewGroupCategory(e.target.value)}
                 >
-                  <option value="family">👨‍👩‍👧‍👦 Familiar</option>
-                  <option value="medical">🩺 Médicos</option>
-                  <option value="alerts">🚨 Emergências</option>
+                  <option value="family">Familiar & Apoio</option>
+                  <option value="medical">Equipe Médica & Especialistas</option>
+                  <option value="alerts">Alertas & Emergências</option>
                 </select>
               </div>
 
