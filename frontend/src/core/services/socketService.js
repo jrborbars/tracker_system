@@ -48,6 +48,22 @@ class SocketService {
     return this.socket;
   }
 
+  on(event, callback) {
+    const s = this.getSocket();
+    s.on(event, callback);
+    return () => s.off(event, callback);
+  }
+
+  off(event, callback) {
+    const s = this.getSocket();
+    s.off(event, callback);
+  }
+
+  emit(event, data, callback) {
+    const s = this.getSocket();
+    s.emit(event, data, callback);
+  }
+
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();
