@@ -301,7 +301,7 @@
   display: none;
   background-color: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
-  padding: 10px 16px;
+  padding: 6px 14px;
   position: sticky;
   top: 0;
   z-index: 2000;
@@ -309,8 +309,8 @@
 }
 
 .mobile-topbar-spacer {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   flex-shrink: 0;
 }
 
@@ -323,12 +323,12 @@
 }
 
 .mobile-logo-icon {
-  height: 32px;
+  height: 26px;
   width: auto;
 }
 
 .mobile-logo-text {
-  height: 22px;
+  height: 18px;
   width: auto;
 }
 
@@ -336,35 +336,35 @@
 .page-header {
   background-color: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
-  padding: 14px 32px;
-  min-height: 64px;
+  padding: 5px 20px;
+  min-height: 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 10px;
   box-sizing: border-box;
 }
 
 .header-breadcrumbs {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 0;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .breadcrumb-home-btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: transparent;
   border: none;
   color: var(--color-primary);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 2px 6px;
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
 }
@@ -376,37 +376,27 @@
 
 .breadcrumb-sep {
   color: var(--text-light);
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .breadcrumb-current {
   color: var(--text-main);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 13px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
-.page-title h1 {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-main);
+.page-title {
   display: flex;
   align-items: center;
-  gap: 10px;
-}
-
-.page-title p {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-top: 2px;
 }
 
 .page-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
 .btn-primary-action {
@@ -414,13 +404,13 @@
   color: #FFFFFF;
   border: none;
   border-radius: var(--radius-sm);
-  padding: 10px 18px;
-  font-size: 13px;
+  padding: 6px 14px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
 }
@@ -432,7 +422,7 @@
 
 /* Corpo das Telas */
 .tab-content-wrapper {
-  padding: 32px;
+  padding: 8px 12px 18px 12px;
   flex: 1;
 }
 
@@ -442,8 +432,8 @@
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 
 .stat-card {
@@ -494,14 +484,14 @@
   background: linear-gradient(135deg, #FFFFFF 0%, var(--color-danger-light) 100%);
   border: 1px solid var(--color-danger-subtle);
   border-radius: var(--radius-lg);
-  padding: 22px 28px;
-  margin-bottom: 28px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: var(--shadow-md);
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 14px;
 }
 
 .sos-info {
@@ -2689,8 +2679,8 @@
 }
 
 .avatar-circle {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   position: relative;
   display: flex;
@@ -2700,7 +2690,7 @@
   border: 1.5px solid var(--color-primary);
   color: var(--color-primary);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 11px;
   flex-shrink: 0;
   box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
@@ -2709,7 +2699,7 @@
 .avatar-circle:hover {
   background-color: var(--color-primary-light);
   border-color: var(--color-primary-dark);
-  box-shadow: 0 0 0 3px var(--color-primary-light);
+  box-shadow: 0 0 0 2px var(--color-primary-light);
 }
 
 .avatar-img {
@@ -2721,20 +2711,20 @@
 
 .avatar-initials {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 11px;
   color: var(--color-primary);
   letter-spacing: 0.5px;
 }
 
 .avatar-online-dot {
   position: absolute;
-  bottom: 0px;
-  right: 0px;
-  width: 10px;
-  height: 10px;
+  bottom: -1px;
+  right: -1px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background-color: var(--color-success);
-  border: 2px solid var(--bg-surface);
+  border: 1.5px solid var(--bg-surface);
 }
 
 /* ==========================================================================
@@ -3974,7 +3964,7 @@
 
   .mobile-topbar {
     display: grid;
-    grid-template-columns: 40px 1fr 40px;
+    grid-template-columns: 30px 1fr 30px;
     align-items: center;
     justify-items: center;
   }
@@ -3992,7 +3982,7 @@
   }
 
   .tab-content-wrapper {
-    padding: 16px;
+    padding: 8px 10px;
   }
 
   /* Ocultar cabeçalhos redundantes e barras de status do mapa no mobile para deixar o mapa em evidência */
