@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import LoginView from './modules/auth/presentation/LoginView.jsx';
 import MainApp from './modules/dashboard/presentation/MainApp.jsx';
 import { I18nProvider } from './core/i18n/presentation/I18nContext.jsx';
+import TopProgressBar from './core/components/TopProgressBar.jsx';
 
 const AUTH_TOKEN_KEY = 'betterdays_auth_token';
 
@@ -37,6 +38,7 @@ export default function App() {
 
   return (
     <I18nProvider>
+      <TopProgressBar />
       {!token ? (
         <LoginView onLoginSuccess={handleLoginSuccess} />
       ) : (

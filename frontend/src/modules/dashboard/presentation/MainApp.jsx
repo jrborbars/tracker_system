@@ -12,6 +12,7 @@ import subscriptionRepository from '../../subscription/infrastructure/subscripti
 import { canAddDevice } from '../../subscription/domain/subscriptionModel.js';
 import socketService from '../../../core/services/socketService.js';
 import notificationService from '../../../core/services/notificationService.js';
+import loadingService from '../../../core/services/loadingService.js';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 import '../../../styles/MainApp.css';
 
@@ -47,11 +48,11 @@ function TabLoadingFallback() {
           border: '3px solid rgba(13, 148, 136, 0.2)',
           borderTopColor: 'var(--color-primary, #0D9488)',
           borderRadius: '50%',
-          animation: 'spin 0.7s linear infinite',
+          animation: 'spin 0.8s linear infinite',
         }}
       />
-      <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text, #1e293b)' }}>
-        {t('common.loadingModule')}
+      <span style={{ fontSize: '13px', fontWeight: 500 }}>
+        {t('common.loading')}
       </span>
     </div>
   );
@@ -66,6 +67,17 @@ export default function MainApp({ token, onLogout }) {
       return 'dashboard';
     }
   });
+
+  const handleNavigateTab = useCallback((tabId) => {
+    if (tabId !== activeTab) {
+      loadingService.start();
+      setActiveTab(tabId);
+      setTimeout(() => {
+        loadingService.done();
+      }, 180);
+    }
+  }, [activeTab]);
+
   const [profile, setProfile] = useState(null);
   const [devices, setDevices] = useState([]);
   const [areas, setAreas] = useState([]);
@@ -188,7 +200,7 @@ export default function MainApp({ token, onLogout }) {
   // Ação de Emergência SOS / Localizar Rápido
   const handleQuickLocate = () => {
     setSosActive(true);
-    setActiveTab('map');
+    handleNavigateTab('map');
     showToast(t('dashboard.emergencyActive'));
   };
 
@@ -237,7 +249,7 @@ export default function MainApp({ token, onLogout }) {
       {/* 1. SIDEBAR DESKTOP (Menu à esquerda) */}
       <Sidebar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleNavigateTab}
         unreadCount={messages.filter((m) => m.active).length}
         onLogout={onLogout}
         isCollapsed={isSidebarCollapsed}
@@ -260,7 +272,7 @@ export default function MainApp({ token, onLogout }) {
           </div>
           <HeaderActions
             profile={profile}
-            onNavigateTab={setActiveTab}
+            onNavigateTab={handleNavigateTab}
             onLogout={onLogout}
             onProfileUpdated={setProfile}
             token={token}
@@ -318,7 +330,7 @@ export default function MainApp({ token, onLogout }) {
               <div className="page-actions">
                 <HeaderActions
                   profile={profile}
-                  onNavigateTab={setActiveTab}
+                  onNavigateTab={handleNavigateTab}
                   onLogout={onLogout}
                   onProfileUpdated={setProfile}
                   token={token}
@@ -458,7 +470,7 @@ export default function MainApp({ token, onLogout }) {
                           className="btn-card-action primary"
                           onClick={() => {
                             setSelectedDevice(device);
-                            setActiveTab('map');
+                            handleNavigateTab('map');
                           }}
                         >
                           <i className="fa-solid fa-map-pin"></i> {t('dashboard.devicesList.viewOnMap')}
@@ -491,7 +503,7 @@ export default function MainApp({ token, onLogout }) {
                   <button
                     type="button"
                     className="breadcrumb-home-btn"
-                    onClick={() => setActiveTab('dashboard')}
+                    onClick={() => handleNavigateTab('dashboard')}
                     title={t('nav.dashboard')}
                   >
                     <i className="fa-solid fa-house"></i> {t('nav.dashboard')}
@@ -505,7 +517,7 @@ export default function MainApp({ token, onLogout }) {
               <div className="page-actions">
                 <HeaderActions
                   profile={profile}
-                  onNavigateTab={setActiveTab}
+                  onNavigateTab={handleNavigateTab}
                   onLogout={onLogout}
                   onProfileUpdated={setProfile}
                   token={token}
@@ -564,7 +576,7 @@ export default function MainApp({ token, onLogout }) {
             <IndoorMonitoringView
               showToast={showToast}
               profile={profile}
-              onNavigateTab={setActiveTab}
+              onNavigateTab={handleNavigateTab}
               onLogout={onLogout}
               onProfileUpdated={setProfile}
               token={token}
@@ -591,7 +603,7 @@ export default function MainApp({ token, onLogout }) {
                   <button
                     type="button"
                     className="breadcrumb-home-btn"
-                    onClick={() => setActiveTab('dashboard')}
+                    onClick={() => handleNavigateTab('dashboard')}
                     title={t('nav.dashboard')}
                   >
                     <i className="fa-solid fa-house"></i> {t('nav.dashboard')}
@@ -605,7 +617,7 @@ export default function MainApp({ token, onLogout }) {
               <div className="page-actions">
                 <HeaderActions
                   profile={profile}
-                  onNavigateTab={setActiveTab}
+                  onNavigateTab={handleNavigateTab}
                   onLogout={onLogout}
                   onProfileUpdated={setProfile}
                   token={token}
@@ -627,7 +639,7 @@ export default function MainApp({ token, onLogout }) {
                 <CareGroupsChatView
                   profile={profile}
                   devices={devices}
-                  onNavigateTab={setActiveTab}
+                  onNavigateTab={handleNavigateTab}
                   showToast={showToast}
                   onQuickLocate={handleQuickLocate}
                 />
@@ -643,7 +655,7 @@ export default function MainApp({ token, onLogout }) {
           <Suspense fallback={<TabLoadingFallback />}>
             <TrackerManagementView
               devices={devices}
-              onNavigateTab={setActiveTab}
+              onNavigateTab={handleNavigateTab}
               onOpenAddDevice={handleOpenAddDevice}
               onDeleteDevice={handleDeleteDevice}
               onSelectDeviceForMap={(dev) => setSelectedDevice(dev)}
@@ -672,7 +684,7 @@ export default function MainApp({ token, onLogout }) {
               profile={profile}
               setProfile={setProfile}
               token={token}
-              onNavigateTab={setActiveTab}
+              onNavigateTab={handleNavigateTab}
               onLogout={onLogout}
               showToast={showToast}
               devicesCount={devices.length}
@@ -692,7 +704,7 @@ export default function MainApp({ token, onLogout }) {
       {/* 3. MOBILE BOTTOM NAVIGATION BAR (Barra inferior com botões) */}
       <BottomNav
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleNavigateTab}
         unreadCount={messages.filter((m) => m.active).length}
         onOpenAddDevice={handleOpenAddDevice}
       />

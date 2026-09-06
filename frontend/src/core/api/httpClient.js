@@ -1,7 +1,4 @@
-/**
- * httpClient.js — Cliente HTTP Base (Core Infrastructure)
- * Responsável por chamadas REST centralizadas, injeção de tokens JWT e tratamento padronizado de erros.
- */
+import loadingService from '../services/loadingService.js';
 
 const API_BASE_URL = 'http://localhost:8000';
 
@@ -42,39 +39,56 @@ class HttpClient {
     return data;
   }
 
+  async _execute(requestFn) {
+    loadingService.start();
+    try {
+      return await requestFn();
+    } finally {
+      loadingService.done();
+    }
+  }
+
   async get(endpoint, token = null) {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'GET',
-      headers: this._getHeaders(token, false),
+    return this._execute(async () => {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'GET',
+        headers: this._getHeaders(token, false),
+      });
+      return this._handleResponse(response);
     });
-    return this._handleResponse(response);
   }
 
   async post(endpoint, body, token = null) {
-    const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'POST',
-      headers: this._getHeaders(token, !isFormData),
-      body: isFormData ? body : JSON.stringify(body),
+    return this._execute(async () => {
+      const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'POST',
+        headers: this._getHeaders(token, !isFormData),
+        body: isFormData ? body : JSON.stringify(body),
+      });
+      return this._handleResponse(response);
     });
-    return this._handleResponse(response);
   }
 
   async put(endpoint, body, token = null) {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'PUT',
-      headers: this._getHeaders(token, true),
-      body: JSON.stringify(body),
+    return this._execute(async () => {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'PUT',
+        headers: this._getHeaders(token, true),
+        body: JSON.stringify(body),
+      });
+      return this._handleResponse(response);
     });
-    return this._handleResponse(response);
   }
 
   async delete(endpoint, token = null) {
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      method: 'DELETE',
-      headers: this._getHeaders(token, false),
+    return this._execute(async () => {
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+        method: 'DELETE',
+        headers: this._getHeaders(token, false),
+      });
+      return this._handleResponse(response);
     });
-    return this._handleResponse(response);
   }
 }
 
