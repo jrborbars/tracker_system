@@ -136,24 +136,6 @@ export default function UserAvatarMenu({
 
           <div className="dropdown-divider"></div>
 
-          {/* Seletor de Idioma */}
-          {/* Botão de Emergência Rápida SOS dentro do Menu */}
-          {onEmergencySOS && (
-            <div className="dropdown-sos-container">
-              <button
-                type="button"
-                className="dropdown-sos-action-btn"
-                onClick={() => {
-                  onEmergencySOS();
-                  setIsOpen(false);
-                }}
-              >
-                <i className="fa-solid fa-crosshairs"></i>
-                <span>{t('dashboard.emergencyProtocol')}</span>
-              </button>
-            </div>
-          )}
-
           <div className="dropdown-actions-list">
             {/* Opção Tema: Alternar Modo Escuro / Claro */}
             {onToggleTheme && (
