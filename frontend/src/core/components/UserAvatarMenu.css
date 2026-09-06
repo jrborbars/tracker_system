@@ -339,3 +339,146 @@
   opacity: 0.6;
 }
 
+/* ==========================================================================
+   ELEMENTOS DE NOTIFICAÇÃO E MODO ESCURO DENTRO DO MENU MOBILE
+   ========================================================================== */
+
+.mobile-menu-notif-badge {
+  background-color: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Mini Switch Toggle */
+.mini-toggle-pill {
+  width: 34px;
+  height: 18px;
+  background-color: var(--color-border, #cbd5e1);
+  border-radius: 10px;
+  position: relative;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.mini-toggle-thumb {
+  width: 14px;
+  height: 14px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.mini-toggle-pill.active {
+  background-color: var(--color-primary, #0D9488);
+}
+
+.mini-toggle-pill.active .mini-toggle-thumb {
+  transform: translateX(16px);
+}
+
+/* Subview de Notificações */
+.menu-notifications-view {
+  display: flex;
+  flex-direction: column;
+  max-height: 380px;
+}
+
+.menu-notif-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px 8px;
+  gap: 8px;
+}
+
+.btn-menu-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted, #64748b);
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-menu-back:hover {
+  color: var(--color-primary, #0D9488);
+  background-color: var(--color-bg-surface-subtle, rgba(0, 0, 0, 0.04));
+}
+
+.menu-notif-header-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text, #1e293b);
+}
+
+.menu-notif-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.menu-notif-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  transition: background-color 0.15s ease;
+}
+
+.menu-notif-item:hover {
+  background-color: var(--color-bg-surface-subtle, rgba(0, 0, 0, 0.04));
+}
+
+.menu-notif-item.unread {
+  background-color: var(--color-primary-light, rgba(13, 148, 136, 0.08));
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE: DESKTOP vs MOBILE
+   ========================================================================== */
+
+/* Em telas grandes (Desktop), os itens 'mobile-only' ficam escondidos */
+@media (min-width: 769px) {
+  .dropdown-action-item.mobile-only {
+    display: none !important;
+  }
+}
+
+/* Em telas menores (Mobile / Tablet), esconde os botões do topo fora do avatar
+   e exibe as opções integradas dentro do menu do avatar */
+@media (max-width: 768px) {
+  .header-desktop-only {
+    display: none !important;
+  }
+
+  .dropdown-action-item.mobile-only {
+    display: flex !important;
+  }
+}
+

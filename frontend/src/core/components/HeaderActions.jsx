@@ -21,14 +21,17 @@ export default function HeaderActions({
   isMobile = false,
 }) {
   return (
-    <div className={`header-actions-wrapper ${isMobile ? 'mobile-mode' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      {/* Botão Circular de Alternância de Tema (Dark / Light) */}
-      <ThemeToggleBtn theme={theme} onToggleTheme={onToggleTheme} />
+    <div className={`header-actions-wrapper ${isMobile ? 'mobile-mode' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* Botões visíveis no Desktop (escondidos no mobile via CSS media query) */}
+      <div className="header-desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Botão Circular de Alternância de Tema (Dark / Light) */}
+        <ThemeToggleBtn theme={theme} onToggleTheme={onToggleTheme} />
 
-      {/* Botão de Sino de Notificações estilo Facebook */}
-      <NotificationBell messages={messages} onNavigateTab={onNavigateTab} />
+        {/* Botão de Sino de Notificações estilo Facebook */}
+        <NotificationBell messages={messages} onNavigateTab={onNavigateTab} />
+      </div>
 
-      {/* Menu do Avatar do Usuário */}
+      {/* Menu do Avatar do Usuário (no Mobile inclui Notificações e Tema internamente) */}
       <UserAvatarMenu
         profile={profile}
         onNavigateTab={onNavigateTab}
@@ -40,6 +43,9 @@ export default function HeaderActions({
         devicesCount={devicesCount}
         areasCount={areasCount}
         onEmergencySOS={onEmergencySOS}
+        theme={theme}
+        onToggleTheme={onToggleTheme}
+        messages={messages}
         subscription={subscription}
         onOpenSubscription={onOpenSubscription}
       />

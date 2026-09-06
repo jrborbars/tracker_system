@@ -16,14 +16,81 @@ export default function UserAvatarMenu({
   onEmergencySOS,
   theme = 'light',
   onToggleTheme,
+  messages = [],
   subscription,
   onOpenSubscription,
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [menuView, setMenuView] = useState('main'); // 'main' | 'notifications'
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const menuRef = useRef(null);
   const { t, language, changeLanguage, supportedLanguages, languageMeta } = useI18n();
+
+  const [notifications, setNotifications] = useState([
+    {
+      id: 'notif-1',
+      type: 'sos',
+      title: 'Protocolo de Telemetria Ativo',
+      desc: 'Relógio do Vô João conectado com sinal GPS de alta precisão.',
+      time: 'há 2 min',
+      unread: true,
+      tab: 'map',
+      icon: 'fa-solid fa-satellite-dish',
+      iconColor: 'var(--color-primary, #00897b)',
+    },
+    {
+      id: 'notif-2',
+      type: 'geofence',
+      title: 'Cerca Virtual Segura',
+      desc: 'Paciente permaneceu dentro da área "Casa & Jardim" nas últimas 2 horas.',
+      time: 'há 18 min',
+      unread: true,
+      tab: 'map',
+      icon: 'fa-solid fa-draw-polygon',
+      iconColor: 'var(--color-success, #10b981)',
+    },
+    {
+      id: 'notif-3',
+      type: 'chat',
+      title: 'Mensagem da Equipe de Cuidado',
+      desc: 'Dra. Mariana: "Saturação e batimentos cardíacos normais hoje."',
+      time: 'há 45 min',
+      unread: false,
+      tab: 'messages',
+      icon: 'fa-solid fa-comment-medical',
+      iconColor: 'var(--color-primary, #00897b)',
+    },
+    {
+      id: 'notif-4',
+      type: 'battery',
+      title: 'Status de Bateria do Clip',
+      desc: 'Clip da Dona Maria com 63% de carga restante (autonomia estimada: 18h).',
+      time: 'há 2h',
+      unread: false,
+      tab: 'tracker',
+      icon: 'fa-solid fa-battery-three-quarters',
+      iconColor: 'var(--color-warning, #f59e0b)',
+    },
+  ]);
+
+  const unreadCount = notifications.filter((n) => n.unread).length;
+
+  const handleMarkAllRead = (e) => {
+    e.stopPropagation();
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+  };
+
+  const handleNotifItemClick = (notif) => {
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === notif.id ? { ...n, unread: false } : n))
+    );
+    if (notif.tab && onNavigateTab) {
+      onNavigateTab(notif.tab);
+    }
+    setIsOpen(false);
+    setMenuView('main');
+  };
 
   // Detectar se já está instalado ou rodando como PWA standalone
   useEffect(() => {
@@ -70,6 +137,7 @@ export default function UserAvatarMenu({
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsOpen(false);
+        setMenuView('main');
       }
     };
     if (isOpen) {
@@ -111,113 +179,233 @@ export default function UserAvatarMenu({
       {/* Dropdown Menu Flutuante */}
       {isOpen && (
         <div className="user-avatar-dropdown animate-pop">
-          {/* Cabeçalho do Dropdown com Foto e Status */}
-          <div className="dropdown-user-card">
-            <div className="dropdown-avatar-wrapper">
-              <div className="dropdown-avatar-lg">
-                {avatarUrl ? (
-                  <img
-                    src={avatarUrl}
-                    alt={profile?.name || 'Foto do perfil'}
-                    className="dropdown-avatar-img"
-                  />
+          {menuView === 'notifications' ? (
+            /* Subview de Notificações Mobile / Dropdown */
+            <div className="menu-notifications-view">
+              <div className="menu-notif-header">
+                <button
+                  type="button"
+                  className="btn-menu-back"
+                  onClick={() => setMenuView('main')}
+                  title="Voltar ao menu"
+                >
+                  <i className="fa-solid fa-arrow-left"></i>
+                  <span>Voltar</span>
+                </button>
+                <div className="menu-notif-header-title">
+                  <strong>Notificações</strong>
+                  {unreadCount > 0 && (
+                    <span className="notif-unread-count-pill">{unreadCount} novas</span>
+                  )}
+                </div>
+                {unreadCount > 0 && (
+                  <button
+                    type="button"
+                    className="btn-mark-all-read"
+                    onClick={handleMarkAllRead}
+                  >
+                    Marcar lidas
+                  </button>
+                )}
+              </div>
+
+              <div className="dropdown-divider"></div>
+
+              <div className="menu-notif-list">
+                {notifications.length === 0 ? (
+                  <div className="notif-empty-state">
+                    <i className="fa-solid fa-bell-slash"></i>
+                    <p>Nenhuma notificação no momento.</p>
+                  </div>
                 ) : (
-                  <span className="dropdown-avatar-initials">{getUserInitials(profile?.name)}</span>
+                  notifications.map((notif) => (
+                    <div
+                      key={notif.id}
+                      className={`menu-notif-item ${notif.unread ? 'unread' : ''}`}
+                      onClick={() => handleNotifItemClick(notif)}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <div className="notif-item-icon-wrapper" style={{ color: notif.iconColor }}>
+                        <i className={notif.icon}></i>
+                      </div>
+                      <div className="notif-item-content">
+                        <div className="notif-item-title-row">
+                          <strong className="notif-item-title">{notif.title}</strong>
+                          {notif.unread && <span className="notif-unread-dot"></span>}
+                        </div>
+                        <p className="notif-item-desc">{notif.desc}</p>
+                        <span className="notif-item-time">{notif.time}</span>
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
             </div>
-
-            <div className="dropdown-user-details">
-              <h4 className="dropdown-user-name">{profile?.name || 'Demo User'}</h4>
-              <span className="dropdown-user-email">{profile?.email || 'demo@betterdays.com'}</span>
-              <span className="dropdown-user-phone">{profile?.phone || '(11) 98765-4321'}</span>
-            </div>
-          </div>
-
-          <div className="dropdown-divider"></div>
-
-          <div className="dropdown-actions-list">
-            {/* Opção: Meu Plano & Assinatura (Mercado Pago) */}
-            <button
-              type="button"
-              className="dropdown-action-item"
-              onClick={() => {
-                setIsOpen(false);
-                if (onOpenSubscription) onOpenSubscription();
-              }}
-            >
-              <div className="action-icon-circle subscription" style={{ backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
-                <i className="fa-solid fa-crown"></i>
-              </div>
-              <div className="action-text">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span className="action-title">{t('subscription.menuItem')}</span>
-                  <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '10px', backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
-                    {subscription?.planName || 'Gratuito'}
-                  </span>
+          ) : (
+            /* Visualização Principal do Menu */
+            <>
+              {/* Cabeçalho do Dropdown com Foto e Status */}
+              <div className="dropdown-user-card">
+                <div className="dropdown-avatar-wrapper">
+                  <div className="dropdown-avatar-lg">
+                    {avatarUrl ? (
+                      <img
+                        src={avatarUrl}
+                        alt={profile?.name || 'Foto do perfil'}
+                        className="dropdown-avatar-img"
+                      />
+                    ) : (
+                      <span className="dropdown-avatar-initials">{getUserInitials(profile?.name)}</span>
+                    )}
+                  </div>
                 </div>
-                <span className="action-subtitle">Mercado Pago &bull; PIX e Cartão</span>
-              </div>
-            </button>
 
-            {/* Opção: Configurar Perfil */}
-            <button
-              type="button"
-              className="dropdown-action-item"
-              onClick={() => {
-                if (onNavigateTab) onNavigateTab('profile');
-                setIsOpen(false);
-              }}
-            >
-              <div className="action-icon-circle settings">
-                <i className="fa-solid fa-gear"></i>
+                <div className="dropdown-user-details">
+                  <h4 className="dropdown-user-name">{profile?.name || 'Demo User'}</h4>
+                  <span className="dropdown-user-email">{profile?.email || 'demo@betterdays.com'}</span>
+                  <span className="dropdown-user-phone">{profile?.phone || '(11) 98765-4321'}</span>
+                </div>
               </div>
-              <div className="action-text">
-                <span className="action-title">{t('nav.profile')}</span>
-                <span className="action-subtitle">{t('profile.personalSection')}</span>
-              </div>
-            </button>
 
-            {/* Opção PWA: Instalar Aplicativo */}
-            {!isStandalone && (
-              <button
-                type="button"
-                className="dropdown-action-item"
-                onClick={handleInstallPwa}
-              >
-                <div
-                  className="action-icon-circle pwa"
-                  style={{ backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}
+              <div className="dropdown-divider"></div>
+
+              <div className="dropdown-actions-list">
+                {/* Opção: Notificações (Disponível no Mobile) */}
+                <button
+                  type="button"
+                  className="dropdown-action-item mobile-only"
+                  onClick={() => setMenuView('notifications')}
                 >
-                  <i className="fa-solid fa-download"></i>
-                </div>
-                <div className="action-text">
-                  <span className="action-title">{t('pwa.installApp')}</span>
-                  <span className="action-subtitle">PWA Standalone</span>
-                </div>
-              </button>
-            )}
+                  <div
+                    className="action-icon-circle notifications"
+                    style={{ backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#ef4444' }}
+                  >
+                    <i className="fa-solid fa-bell"></i>
+                  </div>
+                  <div className="action-text" style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span className="action-title">Notificações</span>
+                      {unreadCount > 0 && (
+                        <span className="mobile-menu-notif-badge">{unreadCount}</span>
+                      )}
+                    </div>
+                    <span className="action-subtitle">
+                      {unreadCount > 0 ? `${unreadCount} alertas não lidos` : 'Nenhum alerta recente'}
+                    </span>
+                  </div>
+                  <i className="fa-solid fa-chevron-right" style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}></i>
+                </button>
 
-            <div className="dropdown-divider"></div>
+                {/* Opção: Modo Escuro / Claro (Disponível no Mobile) */}
+                <button
+                  type="button"
+                  className="dropdown-action-item mobile-only"
+                  onClick={() => {
+                    if (onToggleTheme) onToggleTheme();
+                  }}
+                >
+                  <div
+                    className="action-icon-circle theme"
+                    style={{
+                      backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                      color: theme === 'dark' ? '#60a5fa' : '#d97706',
+                    }}
+                  >
+                    <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
+                  </div>
+                  <div className="action-text" style={{ flex: 1 }}>
+                    <span className="action-title">{theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>
+                    <span className="action-subtitle">{theme === 'dark' ? 'Alternar para tema claro' : 'Alternar para tema escuro'}</span>
+                  </div>
+                  <div className={`mini-toggle-pill ${theme === 'dark' ? 'active' : ''}`}>
+                    <span className="mini-toggle-thumb"></span>
+                  </div>
+                </button>
 
-            {/* Opção Sair */}
-            <button
-              type="button"
-              className="dropdown-action-item logout"
-              onClick={() => {
-                setIsOpen(false);
-                if (onLogout) onLogout();
-              }}
-            >
-              <div className="action-icon-circle logout">
-                <i className="fa-solid fa-right-from-bracket"></i>
+                {/* Opção: Meu Plano & Assinatura (Mercado Pago) */}
+                <button
+                  type="button"
+                  className="dropdown-action-item"
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (onOpenSubscription) onOpenSubscription();
+                  }}
+                >
+                  <div className="action-icon-circle subscription" style={{ backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
+                    <i className="fa-solid fa-crown"></i>
+                  </div>
+                  <div className="action-text">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span className="action-title">{t('subscription.menuItem')}</span>
+                      <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '10px', backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
+                        {subscription?.planName || 'Gratuito'}
+                      </span>
+                    </div>
+                    <span className="action-subtitle">Mercado Pago &bull; PIX e Cartão</span>
+                  </div>
+                </button>
+
+                {/* Opção: Configurar Perfil */}
+                <button
+                  type="button"
+                  className="dropdown-action-item"
+                  onClick={() => {
+                    if (onNavigateTab) onNavigateTab('profile');
+                    setIsOpen(false);
+                  }}
+                >
+                  <div className="action-icon-circle settings">
+                    <i className="fa-solid fa-gear"></i>
+                  </div>
+                  <div className="action-text">
+                    <span className="action-title">{t('nav.profile')}</span>
+                    <span className="action-subtitle">{t('profile.personalSection')}</span>
+                  </div>
+                </button>
+
+                {/* Opção PWA: Instalar Aplicativo */}
+                {!isStandalone && (
+                  <button
+                    type="button"
+                    className="dropdown-action-item"
+                    onClick={handleInstallPwa}
+                  >
+                    <div
+                      className="action-icon-circle pwa"
+                      style={{ backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}
+                    >
+                      <i className="fa-solid fa-download"></i>
+                    </div>
+                    <div className="action-text">
+                      <span className="action-title">{t('pwa.installApp')}</span>
+                      <span className="action-subtitle">PWA Standalone</span>
+                    </div>
+                  </button>
+                )}
+
+                <div className="dropdown-divider"></div>
+
+                {/* Opção Sair */}
+                <button
+                  type="button"
+                  className="dropdown-action-item logout"
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (onLogout) onLogout();
+                  }}
+                >
+                  <div className="action-icon-circle logout">
+                    <i className="fa-solid fa-right-from-bracket"></i>
+                  </div>
+                  <div className="action-text">
+                    <span className="action-title">{t('nav.logout')}</span>
+                    <span className="action-subtitle">Encerrar sessão</span>
+                  </div>
+                </button>
               </div>
-              <div className="action-text">
-                <span className="action-title">{t('nav.logout')}</span>
-                <span className="action-subtitle">Encerrar sessão</span>
-              </div>
-            </button>
-          </div>
+            </>
+          )}
 
           <div className="dropdown-divider"></div>
 
