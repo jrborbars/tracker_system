@@ -221,7 +221,6 @@ export default function MainApp({ token, onLogout }) {
                   <i className="fa-solid fa-table-columns" style={{ color: 'var(--color-primary)' }}></i>
                   Painel de Monitoramento
                 </h1>
-                <p>Visão geral dos familiares monitorados com Síndrome de Eisenmenger</p>
               </div>
               <div className="page-actions">
                 <button
@@ -418,7 +417,6 @@ export default function MainApp({ token, onLogout }) {
                   <i className="fa-solid fa-map-location-dot" style={{ color: 'var(--color-primary)' }}></i>
                   Mapa Satelital & Cercas Virtuais
                 </h1>
-                <p>Monitoramento geográfico em tempo real com tiles OpenStreetMap e CartoDB Positron</p>
               </div>
               <div className="page-actions">
                 <button
@@ -519,7 +517,6 @@ export default function MainApp({ token, onLogout }) {
                   <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i>
                   Grupos de Cuidado & Mensagens
                 </h1>
-                <p>Comunicação em tempo real entre familiares, médicos e cuidadores</p>
               </div>
               <div className="page-actions">
                 <UserAvatarMenu
@@ -573,7 +570,6 @@ export default function MainApp({ token, onLogout }) {
                   <i className="fa-solid fa-user-shield" style={{ color: 'var(--color-primary)' }}></i>
                   Perfil do Cuidador & Protocolo Médico
                 </h1>
-                <p>Informações cadastrais e protocolo de socorro de emergência</p>
               </div>
               <div className="page-actions">
                 <UserAvatarMenu

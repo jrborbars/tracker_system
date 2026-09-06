@@ -183,7 +183,6 @@ export default function IndoorMonitoringView({
             <i className="fa-solid fa-house-signal" style={{ color: 'var(--color-primary)' }}></i>
             Monitoramento Interno de Presença
           </h1>
-          <p>Localização em tempo real nos cômodos via sensores térmicos e radar (Privacidade preservada)</p>
         </div>
 
         <div className="page-actions">
