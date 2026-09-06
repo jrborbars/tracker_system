@@ -368,8 +368,6 @@ export default function CareGroupsChatView({
         {/* Cabeçalho da Sidebar */}
         <div className="chat-sidebar-header">
           <div className="chat-sidebar-title">
-            <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i>
-            <h2>{t('chat.title')}</h2>
             <span
               className={`ws-live-badge ${isConnected ? 'connected' : 'connecting'}`}
               title={isConnected ? 'Conectado em tempo real via WebSocket' : 'Tentando conectar ao servidor WebSocket...'}
