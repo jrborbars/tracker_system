@@ -4461,13 +4461,7 @@ textarea.input-control {
   flex-wrap: wrap;
 }
 
-.tracker-stat-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.tracker-stat-icon-wrapper {
+.t.tracker-stat-icon-wrapper {
   width: 38px;
   height: 38px;
   border-radius: var(--radius-sm);
@@ -4476,9 +4470,9 @@ textarea.input-control {
   justify-content: center;
   font-size: 16px;
   flex-shrink: 0;
-  background-color: var(--color-bg-surface-subtle, #f1f5f9);
-  color: var(--color-primary, #0D9488);
-  border: 1px solid var(--color-border, #e2e8f0);
+  background-color: var(--bg-surface-subtle);
+  color: var(--color-primary);
+  border: 1px solid var(--border-color);
 }
 
 .tracker-stat-info {
@@ -4668,9 +4662,9 @@ textarea.input-control {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background-color: var(--color-bg-surface-subtle, #f1f5f9);
-  color: var(--color-primary, #0D9488);
-  border: 1px solid var(--color-border, #e2e8f0);
+  background-color: var(--bg-surface-subtle);
+  color: var(--color-primary);
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4702,19 +4696,19 @@ textarea.input-control {
   font-family: monospace;
   font-size: 11px;
   font-weight: 700;
-  background-color: var(--color-bg-surface-subtle, #f1f5f9);
-  color: var(--color-primary, #0D9488);
+  background-color: var(--bg-surface-subtle);
+  color: var(--color-primary);
   padding: 1px 6px;
   border-radius: 4px;
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--border-color);
 }
 
 .tracker-meta-dot {
-  color: var(--text-light, #94a3b8);
+  color: var(--text-light);
 }
 
 .tracker-wear-mode-text {
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -4724,9 +4718,9 @@ textarea.input-control {
   gap: 6px;
   font-size: 11px;
   font-weight: 600;
-  color: var(--text-muted, #64748b);
-  background-color: var(--color-bg-surface-subtle, #f1f5f9);
-  border: 1px solid var(--color-border, #e2e8f0);
+  color: var(--text-muted);
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-color);
   padding: 3px 8px;
   border-radius: 12px;
 }
@@ -4735,19 +4729,19 @@ textarea.input-control {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--color-success, #10b981);
+  background-color: var(--color-success);
   display: inline-block;
 }
 
 .tracker-description {
   font-size: 12px;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   line-height: 1.45;
   margin: 0;
-  background-color: var(--color-bg-surface-subtle, #f1f5f9);
+  background-color: var(--bg-surface-subtle);
   padding: 7px 10px;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border, #e2e8f0);
+  border: 1px solid var(--border-color);
 }
 
 /* Faixa de Métricas Unificada */
@@ -4755,8 +4749,8 @@ textarea.input-control {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  background-color: var(--color-bg-surface-subtle, #f1f5f9);
-  border: 1px solid var(--color-border, #e2e8f0);
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 8px 10px;
 }
@@ -4770,20 +4764,20 @@ textarea.input-control {
 
 .metric-icon {
   font-size: 14px;
-  color: var(--color-primary, #0D9488);
+  color: var(--color-primary);
   flex-shrink: 0;
 }
 
 .metric-icon.heart {
-  color: var(--color-primary, #0D9488);
+  color: var(--color-primary);
 }
 
 .metric-icon.battery.low {
-  color: var(--color-danger, #ef4444);
+  color: var(--color-danger);
 }
 
 .metric-icon.security {
-  color: var(--color-primary, #0D9488);
+  color: var(--color-primary);
 }
 
 .metric-text-group {
@@ -4795,7 +4789,7 @@ textarea.input-control {
 .metric-label {
   font-size: 10px;
   font-weight: 600;
-  color: var(--text-muted, #64748b);
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.3px;
   white-space: nowrap;
@@ -4806,18 +4800,18 @@ textarea.input-control {
 .metric-value {
   font-size: 12px;
   font-weight: 700;
-  color: var(--text-main, #1e293b);
+  color: var(--text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .metric-value.ok {
-  color: var(--color-primary-dark, #0f766e);
+  color: var(--color-primary-dark);
 }
 
 .metric-value.low {
-  color: var(--color-danger, #ef4444);
+  color: var(--color-danger);
 }
 
 /* Ações do Card de Rastreador */
@@ -4826,7 +4820,7 @@ textarea.input-control {
   align-items: center;
   gap: 8px;
   margin-top: 2px;
-  border-top: 1px solid var(--color-border, #e2e8f0);
+  border-top: 1px solid var(--border-color);
   padding-top: 10px;
 }
 
@@ -5073,52 +5067,123 @@ textarea.input-control {
 }
 
 /* Modo Escuro */
+/* ==========================================================================
+   HIERARQUIA DE MODO ESCURO (LINEAR / RAYCAST / SUPABASE STYLE)
+   ========================================================================== */
 [data-theme="dark"] .tracker-top-banner,
 [data-theme="dark"] .tracker-card,
 [data-theme="dark"] .tracker-empty-state,
-[data-theme="dark"] .wear-mode-card {
+[data-theme="dark"] .wear-mode-card,
+[data-theme="dark"] .device-card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .profile-summary-card,
+[data-theme="dark"] .profile-form-card {
   background-color: var(--bg-surface);
   border-color: var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-[data-theme="dark"] .wear-mode-card.active {
-  background-color: var(--color-primary-light);
-  border-color: var(--color-primary);
-}
-
-[data-theme="dark"] .tracker-search-input {
-  background-color: var(--bg-canvas);
-  border-color: var(--border-color);
-  color: var(--text-main);
-}
-
+[data-theme="dark"] .tracker-stat-icon-wrapper,
+[data-theme="dark"] .tracker-avatar-circle,
+[data-theme="dark"] .tracker-token-code,
+[data-theme="dark"] .tracker-status-tag-live,
+[data-theme="dark"] .tracker-description,
+[data-theme="dark"] .tracker-metrics-strip,
 [data-theme="dark"] .tracker-battery-section,
 [data-theme="dark"] .wearable-sensors-grid,
-[data-theme="dark"] .pairing-token-box {
+[data-theme="dark"] .pairing-token-box,
+[data-theme="dark"] .pairing-token-pill {
   background-color: var(--bg-surface-subtle);
   border-color: var(--border-color);
 }
 
-[data-theme="dark"] .tracker-id-badge code,
-[data-theme="dark"] .pairing-token-pill {
+[data-theme="dark"] .tracker-description {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .tracker-search-input {
+  background-color: var(--bg-surface);
+  border-color: var(--border-color);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .tracker-search-input:focus {
+  background-color: var(--bg-surface-subtle);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(45, 212, 191, 0.15);
+}
+
+[data-theme="dark"] .filter-pill-btn {
+  background-color: var(--bg-surface);
+  border-color: var(--border-color);
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .filter-pill-btn:hover {
+  background-color: var(--bg-surface-subtle);
+  color: var(--text-main);
+  border-color: #32323c;
+}
+
+[data-theme="dark"] .filter-pill-btn.active {
+  background-color: rgba(45, 212, 191, 0.12);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .btn-tracker-action {
   background-color: var(--bg-surface-subtle);
   border-color: var(--border-color);
   color: var(--text-muted);
 }
 
+[data-theme="dark"] .btn-tracker-action:hover:not(:disabled) {
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-main);
+  border-color: #32323c;
+}
+
+[data-theme="dark"] .btn-tracker-action.primary {
+  background-color: rgba(45, 212, 191, 0.12);
+  border-color: rgba(45, 212, 191, 0.25);
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .btn-tracker-action.primary:hover {
+  background-color: var(--color-primary);
+  color: #09090b;
+}
+
+[data-theme="dark"] .btn-tracker-action.danger {
+  color: var(--color-danger);
+  border-color: transparent;
+}
+
+[data-theme="dark"] .btn-tracker-action.danger:hover {
+  background-color: rgba(248, 113, 113, 0.15);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: var(--color-danger);
+}
+
+[data-theme="dark"] .wear-mode-card.active {
+  background-color: rgba(45, 212, 191, 0.12);
+  border-color: var(--color-primary);
+}
+
 [data-theme="dark"] .input-control {
-  background-color: var(--bg-canvas);
+  background-color: var(--bg-surface);
   border-color: var(--border-color);
   color: var(--text-main);
 }
 
 [data-theme="dark"] .input-control:focus {
+  background-color: var(--bg-surface-subtle);
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.15);
 }
 
 [data-theme="dark"] .pairing-input {
-  background-color: var(--bg-canvas);
+  background-color: var(--bg-surface-subtle);
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
