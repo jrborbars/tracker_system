@@ -14,10 +14,10 @@ export default function Sidebar({
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fa-solid fa-table-columns' },
-    { id: 'map', label: 'Mapa Satelital', icon: 'fa-solid fa-map-location-dot' },
-    { id: 'indoor', label: 'Monitoramento Interno', icon: 'fa-solid fa-house-signal' },
+    { id: 'map', label: 'Mapa', icon: 'fa-solid fa-map-location-dot' },
+    { id: 'indoor', label: 'Interno', icon: 'fa-solid fa-house-signal' },
     { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-comments', badge: unreadCount },
-    { id: 'profile', label: 'Perfil Familiar', icon: 'fa-solid fa-user-shield' },
+    { id: 'profile', label: 'Perfil', icon: 'fa-solid fa-user-shield' },
   ];
 
   return (
@@ -36,7 +36,7 @@ export default function Sidebar({
           type="button"
           className="btn-toggle-sidebar"
           onClick={onToggleCollapse}
-          title={isCollapsed ? 'Expandir Menu Lateral' : 'Recolher Menu Lateral'}
+          title={isCollapsed ? 'Expandir' : 'Recolher'}
           aria-label={isCollapsed ? 'Expandir Menu' : 'Recolher Menu'}
         >
           <i className={`fa-solid ${isCollapsed ? 'fa-bars' : 'fa-angles-left'}`}></i>
@@ -75,25 +75,25 @@ export default function Sidebar({
           type="button"
           className="btn-sidebar-theme-toggle"
           onClick={onToggleTheme}
-          title={theme === 'dark' ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
+          title={theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}
         >
           <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`} style={{ color: theme === 'dark' ? '#FBBF24' : 'var(--color-primary)' }}></i>
-          {!isCollapsed && <span>{theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}</span>}
+          {!isCollapsed && <span>{theme === 'dark' ? 'Claro' : 'Escuro'}</span>}
         </button>
 
-        <div className="satellite-status" title="GPS Satélite Ativo">
+        <div className="satellite-status" title="Satélite Conectado">
           <i className="fa-solid fa-satellite-dish" style={{ color: 'var(--color-primary)' }}></i>
-          {!isCollapsed && <span>GPS Satélite Ativo</span>}
+          {!isCollapsed && <span>Satélite</span>}
         </div>
 
         <button
           type="button"
           className="btn-sidebar-logout"
           onClick={onLogout}
-          title="Encerrar Sessão"
+          title="Sair"
         >
           <i className="fa-solid fa-right-from-bracket"></i>
-          {!isCollapsed && <span>Encerrar Sessão</span>}
+          {!isCollapsed && <span>Sair</span>}
         </button>
       </div>
     </aside>

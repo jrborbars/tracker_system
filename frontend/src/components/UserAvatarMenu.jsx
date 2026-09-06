@@ -200,7 +200,7 @@ export default function UserAvatarMenu({
                 </div>
                 <div className="action-text">
                   <span className="action-title">
-                    {theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}
+                    {theme === 'dark' ? 'Claro' : 'Escuro'}
                   </span>
                   <span className="action-subtitle">Alternar tema visual</span>
                 </div>
@@ -219,7 +219,7 @@ export default function UserAvatarMenu({
               </div>
               <div className="action-text">
                 <span className="action-title">
-                  {isUploading ? 'Enviando foto...' : 'Foto do Usuário'}
+                  {isUploading ? 'Enviando...' : 'Foto'}
                 </span>
                 <span className="action-subtitle">Alterar imagem de perfil</span>
               </div>
@@ -239,7 +239,7 @@ export default function UserAvatarMenu({
               </div>
               <div className="action-text">
                 <span className="action-title">Configurar</span>
-                <span className="action-subtitle">Perfil, contatos e dados médicos</span>
+                <span className="action-subtitle">Perfil e dados médicos</span>
               </div>
             </button>
 
