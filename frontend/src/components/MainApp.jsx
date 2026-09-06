@@ -6,6 +6,7 @@ import LeafletMapView from './LeafletMapView.jsx';
 import IndoorMonitoringView from './IndoorMonitoringView.jsx';
 import CareGroupsChatView from './CareGroupsChatView.jsx';
 import TrackerManagementView from './TrackerManagementView.jsx';
+import ProfileView from './ProfileView.jsx';
 import UserAvatarMenu from './UserAvatarMenu.jsx';
 import logoIconSvg from '../assets/logo-icon.svg';
 import logoTextSvg from '../assets/logo-text.svg';
@@ -557,112 +558,22 @@ export default function MainApp({ token, onLogout }) {
         )}
 
         {/* -------------------------------------------------------------
-            ABA 5: PERFIL FAMILIAR
+            ABA 5: PERFIL FAMILIAR (EDITÁVEL & UPLOAD DE FOTO)
            ------------------------------------------------------------- */}
         {activeTab === 'profile' && (
-          <>
-            <div className="page-header">
-              <div className="page-title">
-                <div className="header-breadcrumbs">
-                  <button
-                    type="button"
-                    className="breadcrumb-home-btn"
-                    onClick={() => setActiveTab('dashboard')}
-                    title="Voltar ao Dashboard"
-                  >
-                    <i className="fa-solid fa-house"></i> Dashboard
-                  </button>
-                  <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
-                  <span className="breadcrumb-current">
-                    <i className="fa-solid fa-user-shield" style={{ color: 'var(--color-primary)' }}></i> Perfil do Cuidador
-                  </span>
-                </div>
-              </div>
-              <div className="page-actions">
-                <UserAvatarMenu
-                  profile={profile}
-                  onNavigateTab={setActiveTab}
-                  onLogout={onLogout}
-                  onProfileUpdated={setProfile}
-                  token={token}
-                  showToast={showToast}
-                  devicesCount={devices.length}
-                  areasCount={areas.length || 3}
-                  onEmergencySOS={handleQuickLocate}
-                  theme={theme}
-                  onToggleTheme={toggleTheme}
-                />
-              </div>
-            </div>
-
-            <main className="tab-content-wrapper">
-              <div className="profile-view-card">
-                <div className="profile-avatar-large">
-                  <i className="fa-solid fa-user-shield"></i>
-                </div>
-                <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-main)' }}>
-                  {profile ? profile.name : 'Carregando...'}
-                </h2>
-                <span style={{ fontSize: '13px', color: 'var(--color-primary-dark)', fontWeight: 700 }}>
-                  Cuidador Principal Responsável
-                </span>
-
-                <div className="profile-details-grid">
-                  <div className="profile-field">
-                    <label>E-mail Cadastrado</label>
-                    <span>{profile ? profile.email : '...'}</span>
-                  </div>
-
-                  <div className="profile-field">
-                    <label>Telefone de Contato / WhatsApp</label>
-                    <span>{profile ? profile.phone : '...'}</span>
-                  </div>
-
-                  <div className="profile-field">
-                    <label>Plano de Monitoramento</label>
-                    <span>Betterdays Satélite 24/7 (Ativo)</span>
-                  </div>
-
-                  <div className="profile-field">
-                    <label>ID da Conta</label>
-                    <span style={{ fontFamily: 'monospace', fontSize: '13px' }}>
-                      {profile ? profile.id.slice(0, 18) + '...' : '...'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Protocolo Médico da Síndrome de Eisenmenger */}
-                <div className="medical-protocol-box">
-                  <h4>
-                    <i className="fa-solid fa-heart-pulse"></i>
-                    Protocolo de Emergência — Síndrome de Eisenmenger
-                  </h4>
-                  <ul>
-                    <li><strong>Cardiologista de Referência:</strong> Dr. Carlos Mendonça &bull; Tel: (11) 98765-4321</li>
-                    <li><strong>Hospital de Emergência:</strong> Instituto do Coração (InCor) &bull; Pronto-Socorro 24h</li>
-                    <li><strong>Observações Clínicas:</strong> Paciente cianótico crônico. Em caso de síncope, manter deitado, administrar O2 suplementar e acionar o socorro imediatamente.</li>
-                  </ul>
-                </div>
-
-                <div style={{ marginTop: '28px', display: 'flex', gap: '14px', alignItems: 'center' }}>
-                  <button
-                    type="button"
-                    className="btn btn-outline"
-                    onClick={() => showToast('Configurações salvas com sucesso.')}
-                  >
-                    <i className="fa-solid fa-pen-to-square"></i> Editar Perfil
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger"
-                    onClick={onLogout}
-                  >
-                    <i className="fa-solid fa-right-from-bracket"></i> Encerrar Sessão
-                  </button>
-                </div>
-              </div>
-            </main>
-          </>
+          <ProfileView
+            profile={profile}
+            setProfile={setProfile}
+            token={token}
+            onNavigateTab={setActiveTab}
+            onLogout={onLogout}
+            showToast={showToast}
+            devicesCount={devices.length}
+            areasCount={areas.length || 3}
+            handleQuickLocate={handleQuickLocate}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
         )}
 
       </div>

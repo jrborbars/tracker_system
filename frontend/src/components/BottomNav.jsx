@@ -7,7 +7,6 @@ export default function BottomNav({ activeTab, setActiveTab, unreadCount }) {
     { id: 'tracker', label: 'Rastreador', icon: 'fa-solid fa-microchip' },
     { id: 'indoor', label: 'Interno', icon: 'fa-solid fa-house-signal' },
     { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-bell', badge: unreadCount },
-    { id: 'profile', label: 'Perfil', icon: 'fa-solid fa-user-shield' },
   ];
 
 

@@ -61,7 +61,17 @@ export function ownedActiveDeviceByRawId(userId, rawDeviceId) {
 
 /** Serialize a user, always stripping the (mock) password field. */
 export function publicUser(user) {
-  return { id: user.id, email: user.email, name: user.name, phone: user.phone };
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    phone: user.phone,
+    photo_url: user.photo_url || null,
+    emergency_contact: user.emergency_contact || null,
+    patient_diagnosis: user.patient_diagnosis || null,
+    doctor_contact: user.doctor_contact || null,
+    hospital_reference: user.hospital_reference || null,
+  };
 }
 
 export default store;
