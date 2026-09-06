@@ -195,17 +195,17 @@ export default function ProfileView({
                 ) : (
                   <span className="profile-photo-initials">{getInitials(name)}</span>
                 )}
-                
-                <button
-                  type="button"
-                  className="btn-upload-overlay"
-                  onClick={() => fileInputRef.current?.click()}
-                  title="Alterar foto de perfil"
-                  disabled={isUploadingPhoto}
-                >
-                  <i className={`fa-solid ${isUploadingPhoto ? 'fa-spinner fa-spin' : 'fa-camera'}`}></i>
-                </button>
               </div>
+
+              <button
+                type="button"
+                className="btn-upload-overlay"
+                onClick={() => fileInputRef.current?.click()}
+                title="Alterar foto de perfil"
+                disabled={isUploadingPhoto}
+              >
+                <i className={`fa-solid ${isUploadingPhoto ? 'fa-spinner fa-spin' : 'fa-camera'}`}></i>
+              </button>
             </div>
 
             <button
@@ -241,15 +241,6 @@ export default function ProfileView({
                 </div>
               </div>
             </div>
-
-            <button
-              type="button"
-              className="btn-profile-logout"
-              onClick={onLogout}
-              title="Encerrar Sessão"
-            >
-              <i className="fa-solid fa-right-from-bracket"></i> Sair da Conta
-            </button>
           </aside>
 
           {/* Formulário Principal de Edição */}
