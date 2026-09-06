@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import UserAvatarMenu from './UserAvatarMenu.jsx';
+import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
 
 // Ambientes monitorados (Residência / Clínica / Suíte Hospitalar)
 const DEFAULT_ROOMS = [

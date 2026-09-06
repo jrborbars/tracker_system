@@ -1,6 +1,6 @@
 import React from 'react';
-import logoIconSvg from '../assets/logo-icon.svg';
-import logoTextSvg from '../assets/logo-text.svg';
+import logoIconSvg from '../../assets/logo-icon.svg';
+import logoTextSvg from '../../assets/logo-text.svg';
 
 export default function Sidebar({
   activeTab,

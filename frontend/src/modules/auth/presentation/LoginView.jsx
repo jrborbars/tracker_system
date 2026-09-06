@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { login, register } from '../api/client.js';
-import logoIconSvg from '../assets/logo-icon.svg';
-import logoTextSvg from '../assets/logo-text.svg';
-import '../styles/LoginView.css';
+import authRepository from '../infrastructure/authRepository.js';
+import logoIconSvg from '../../../assets/logo-icon.svg';
+import logoTextSvg from '../../../assets/logo-text.svg';
+import './LoginView.css';
 
 export default function LoginView({ onLoginSuccess }) {
   const [theme, setTheme] = useState(() => localStorage.getItem('betterdays_theme') || 'light');
@@ -54,12 +54,12 @@ export default function LoginView({ onLoginSuccess }) {
     try {
       if (isRegister) {
         // Fluxo de Cadastro
-        const newUser = await register({ email, password, name, phone });
+        const newUser = await authRepository.register({ email, password, name, phone });
         setSuccessMessage(`Cadastro realizado com sucesso para ${newUser.name}! Faça login para continuar.`);
         setIsRegister(false);
       } else {
         // Fluxo de Login
-        const authData = await login(email, password);
+        const authData = await authRepository.login(email, password);
         if (onLoginSuccess) {
           onLoginSuccess(authData.access_token);
         }

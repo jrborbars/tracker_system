@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import UserAvatarMenu from './UserAvatarMenu.jsx';
-import { updateProfile, uploadPhoto } from '../api/client.js';
+import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import profileRepository from '../infrastructure/profileRepository.js';
+import { getUserInitials, getAbsolutePhotoUrl } from '../domain/profileModel.js';
 
 export default function ProfileView({
   profile,
@@ -71,10 +72,10 @@ export default function ProfileView({
     try {
       setIsUploadingPhoto(true);
       if (showToast) showToast('Enviando nova foto...');
-      const uploadRes = await uploadPhoto(token, file);
+      const uploadRes = await profileRepository.uploadPhoto(token, file);
       const newPhotoUrl = uploadRes.url;
 
-      const updated = await updateProfile(token, {
+      const updated = await profileRepository.updateProfile(token, {
         name,
         email,
         phone,
@@ -123,7 +124,7 @@ export default function ProfileView({
         payload.password = password.trim();
       }
 
-      const updated = await updateProfile(token, payload);
+      const updated = await profileRepository.updateProfile(token, payload);
       setProfile(updated);
       setPassword('');
       setConfirmPassword('');

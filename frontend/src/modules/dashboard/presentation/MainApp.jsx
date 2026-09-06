@@ -1,27 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from './Sidebar.jsx';
-import BottomNav from './BottomNav.jsx';
-import AddDeviceModal from './AddDeviceModal.jsx';
-import LeafletMapView from './LeafletMapView.jsx';
-import IndoorMonitoringView from './IndoorMonitoringView.jsx';
-import CareGroupsChatView from './CareGroupsChatView.jsx';
-import TrackerManagementView from './TrackerManagementView.jsx';
-import ProfileView from './ProfileView.jsx';
-import UserAvatarMenu from './UserAvatarMenu.jsx';
-import NetworkStatusBar from './NetworkStatusBar.jsx';
-import logoIconSvg from '../assets/logo-icon.svg';
-import logoTextSvg from '../assets/logo-text.svg';
-import {
-  getProfile,
-  getDevices,
-  getAreas,
-  getMessages,
-  createDevice,
-  deleteDevice,
-} from '../api/client.js';
-import socketService from '../services/socketService.js';
-import notificationService from '../services/notificationService.js';
-import '../styles/MainApp.css';
+import Sidebar from '../../../core/components/Sidebar.jsx';
+import BottomNav from '../../../core/components/BottomNav.jsx';
+import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import NetworkStatusBar from '../../../core/components/NetworkStatusBar.jsx';
+import LeafletMapView from '../../tracking/presentation/LeafletMapView.jsx';
+import TrackerManagementView from '../../tracking/presentation/TrackerManagementView.jsx';
+import AddDeviceModal from '../../tracking/presentation/AddDeviceModal.jsx';
+import IndoorMonitoringView from '../../indoor/presentation/IndoorMonitoringView.jsx';
+import CareGroupsChatView from '../../care-chat/presentation/CareGroupsChatView.jsx';
+import ProfileView from '../../profile/presentation/ProfileView.jsx';
+import logoIconSvg from '../../../assets/logo-icon.svg';
+import logoTextSvg from '../../../assets/logo-text.svg';
+import profileRepository from '../../profile/infrastructure/profileRepository.js';
+import trackingRepository from '../../tracking/infrastructure/trackingRepository.js';
+import chatRepository from '../../care-chat/infrastructure/chatRepository.js';
+import socketService from '../../../core/services/socketService.js';
+import notificationService from '../../../core/services/notificationService.js';
+import '../../../styles/MainApp.css';
 
 export default function MainApp({ token, onLogout }) {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -54,10 +49,10 @@ export default function MainApp({ token, onLogout }) {
   const loadData = async () => {
     try {
       const [profData, devData, areaData, msgData] = await Promise.all([
-        getProfile(token),
-        getDevices(token),
-        getAreas(token),
-        getMessages(token),
+        profileRepository.getProfile(token),
+        trackingRepository.getDevices(token),
+        trackingRepository.getAreas(token),
+        chatRepository.getMessages(token),
       ]);
       setProfile(profData);
       setDevices(devData);
@@ -134,7 +129,7 @@ export default function MainApp({ token, onLogout }) {
 
   // Cadastrar Dispositivo
   const handleAddDevice = async (deviceData) => {
-    await createDevice(token, deviceData);
+    await trackingRepository.createDevice(token, deviceData);
     await loadData();
     showToast(`Rastreador "${deviceData.name}" conectado com sucesso!`);
   };
@@ -142,7 +137,7 @@ export default function MainApp({ token, onLogout }) {
   // Excluir Dispositivo
   const handleDeleteDevice = async (id, name) => {
     if (window.confirm(`Deseja realmente remover o rastreador "${name}"?`)) {
-      await deleteDevice(token, id);
+      await trackingRepository.deleteDevice(token, id);
       await loadData();
       showToast(`Rastreador "${name}" removido.`);
     }

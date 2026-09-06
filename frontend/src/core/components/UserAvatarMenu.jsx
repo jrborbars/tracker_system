@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { uploadPhoto, updateProfile } from '../api/client.js';
+import profileRepository from '../../modules/profile/infrastructure/profileRepository.js';
+import { getUserInitials, getAbsolutePhotoUrl } from '../../modules/profile/domain/profileModel.js';
 
 export default function UserAvatarMenu({
   profile,
@@ -62,25 +63,10 @@ export default function UserAvatarMenu({
     }
   };
 
-  // Calcula as iniciais do nome quando não houver foto
-  const getInitials = (name) => {
-    if (!name) return 'U';
-    const parts = name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return 'U';
-    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  };
-
   const userName = profile?.name || 'Demo User';
   const userEmail = profile?.email || 'familiar@betterdays.com';
-  const initials = getInitials(userName);
-
-  // URL absoluta da foto
-  const avatarUrl = profile?.photo_url
-    ? profile.photo_url.startsWith('http') || profile.photo_url.startsWith('data:')
-      ? profile.photo_url
-      : `http://localhost:8000${profile.photo_url}`
-    : null;
+  const initials = getUserInitials(userName);
+  const avatarUrl = getAbsolutePhotoUrl(profile?.photo_url);
 
   // Fechar menu ao clicar fora
   useEffect(() => {
@@ -112,10 +98,10 @@ export default function UserAvatarMenu({
       setIsUploading(true);
       if (showToast) showToast('Enviando nova foto de perfil...');
 
-      const uploadRes = await uploadPhoto(token, file);
+      const uploadRes = await profileRepository.uploadPhoto(token, file);
       const newPhotoUrl = uploadRes.url;
 
-      const updated = await updateProfile(token, {
+      const updated = await profileRepository.updateProfile(token, {
         name: profile?.name,
         email: profile?.email,
         phone: profile?.phone,

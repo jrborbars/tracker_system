@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import useCareSocket from '../hooks/useCareSocket';
+import useCareSocket from './useCareSocket.js';
 
 // Dados iniciais pré-configurados de grupos de cuidado inspirados no caso de uso Eisenmenger
 const INITIAL_CARE_GROUPS = [

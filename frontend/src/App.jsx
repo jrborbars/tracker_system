@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import LoginView from './components/LoginView.jsx';
-import MainApp from './components/MainApp.jsx';
+import LoginView from './modules/auth/presentation/LoginView.jsx';
+import MainApp from './modules/dashboard/presentation/MainApp.jsx';
 
 export default function App() {
   const [token, setToken] = useState(null);

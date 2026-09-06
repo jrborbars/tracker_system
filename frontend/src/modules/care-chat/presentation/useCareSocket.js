@@ -2,7 +2,7 @@
  * useCareSocket.js — React custom hook for real-time care chat, typing indicators, SOS, and telemetry.
  */
 import { useState, useEffect, useCallback, useRef } from 'react';
-import socketService from '../services/socketService';
+import socketService from '../../../core/services/socketService.js';
 
 export function useCareSocket(initialGroups = []) {
   const [isConnected, setIsConnected] = useState(false);

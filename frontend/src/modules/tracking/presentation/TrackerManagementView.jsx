@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import UserAvatarMenu from './UserAvatarMenu.jsx';
+import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import { isBatteryCritical, isBatteryLow, getBatteryStatusColor, formatCoordinate } from '../domain/trackerModel.js';
 
 export default function TrackerManagementView({
   devices = [],

@@ -1,144 +1,41 @@
-const API_BASE_URL = 'http://localhost:8000';
+/**
+ * client.js — Fachada (Facade) Unificada da Camada de Infraestrutura / Repositórios
+ * Mantém 100% de compatibilidade com os módulos e centraliza chamadas aos repositórios de domínio.
+ */
+import authRepository from '../modules/auth/infrastructure/authRepository.js';
+import profileRepository from '../modules/profile/infrastructure/profileRepository.js';
+import trackingRepository from '../modules/tracking/infrastructure/trackingRepository.js';
+import chatRepository from '../modules/care-chat/infrastructure/chatRepository.js';
 
-export async function login(email, password) {
-  const response = await fetch(`${API_BASE_URL}/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
+// 1. Auth Domain
+export const login = (email, password) => authRepository.login(email, password);
+export const register = (user) => authRepository.register(user);
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao realizar login');
-  }
-  return data;
-}
+// 2. Profile Domain
+export const getProfile = (token) => profileRepository.getProfile(token);
+export const updateProfile = (token, data) => profileRepository.updateProfile(token, data);
+export const uploadPhoto = (token, file) => profileRepository.uploadPhoto(token, file);
 
-export async function register(user) {
-  const response = await fetch(`${API_BASE_URL}/register`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(user),
-  });
+// 3. Tracking Domain
+export const getDevices = (token) => trackingRepository.getDevices(token);
+export const createDevice = (token, data) => trackingRepository.createDevice(token, data);
+export const deleteDevice = (token, id) => trackingRepository.deleteDevice(token, id);
+export const getAreas = (token) => trackingRepository.getAreas(token);
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao cadastrar usuário');
-  }
-  return data;
-}
+// 4. Care Chat Domain
+export const getMessages = (token) => chatRepository.getMessages(token);
+export const getGroups = (token) => chatRepository.getGroups(token);
 
-export async function getProfile(token) {
-  const response = await fetch(`${API_BASE_URL}/profile`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao obter perfil');
-  }
-  return data;
-}
-
-export async function updateProfile(token, profileData) {
-  const response = await fetch(`${API_BASE_URL}/profile`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(profileData),
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao atualizar perfil');
-  }
-  return data;
-}
-
-export async function getDevices(token) {
-  const response = await fetch(`${API_BASE_URL}/devices/`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao listar dispositivos');
-  }
-  return data;
-}
-
-export async function createDevice(token, deviceData) {
-  const response = await fetch(`${API_BASE_URL}/devices/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(deviceData),
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao cadastrar dispositivo');
-  }
-  return data;
-}
-
-export async function deleteDevice(token, deviceId) {
-  const response = await fetch(`${API_BASE_URL}/devices/${deviceId}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao excluir dispositivo');
-  }
-  return data;
-}
-
-export async function getAreas(token) {
-  const response = await fetch(`${API_BASE_URL}/areas/`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao listar zonas seguras');
-  }
-  return data;
-}
-
-export async function getMessages(token) {
-  const response = await fetch(`${API_BASE_URL}/messages/`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao listar mensagens');
-  }
-  return data;
-}
-
-export async function uploadPhoto(token, file) {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await fetch(`${API_BASE_URL}/upload/`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.detail || 'Erro ao enviar foto');
-  }
-  return data;
-}
-
+export default {
+  login,
+  register,
+  getProfile,
+  updateProfile,
+  uploadPhoto,
+  getDevices,
+  createDevice,
+  deleteDevice,
+  getAreas,
+  getMessages,
+  getGroups,
+};

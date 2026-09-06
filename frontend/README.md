@@ -40,64 +40,80 @@ Para facilitar o desenvolvimento e testes rápidos, a tela de login conta com o 
 
 ---
 
-## 🏗️ Arquitetura e Estrutura de Pastas
+## 🏗️ Arquitetura Limpa & Estrutura Modular (DDD)
+
+A aplicação segue os princípios de **Clean Architecture (Arquitetura Limpa)** e **Domain-Driven Design (DDD)**, dividida em um **Kernel Compartilhado (`core/`)** e **Módulos de Domínio (`modules/`)**:
 
 ```
 frontend/
-├── public/                     # Arquivos estáticos servidos diretamente na raiz (/)
-│   ├── manifest.json           # Manifesto PWA (display standalone, atalhos, tema)
-│   ├── sw.js                   # Service Worker (Cache Stale-While-Revalidate, Notificações e Offline)
-│   ├── favicon.ico             # Favicon clássico desktop
-│   ├── favicon.svg             # Favicon vetorial oficial
-│   ├── favicon-32x32.png       # Favicon PNG 32px
-│   ├── favicon-16x16.png       # Favicon PNG 16px
-│   ├── apple-touch-icon.png    # Ícone iOS Safari 180px
-│   ├── android-chrome-192x192.png # Ícone Android PWA 192px (any & maskable)
-│   ├── android-chrome-512x512.png # Ícone PWA Master 512px (any & maskable)
-│   ├── og-image.png            # Mídia para compartilhamento em redes e WhatsApp
-│   └── screenshots/            # Capturas de tela para vitrine visual de instalação PWA
-│       ├── desktop-preview.png # Vitrine Desktop (1280x720)
-│       └── mobile-preview.png  # Vitrine Mobile (540x960)
+├── public/                         # Arquivos estáticos servidos diretamente na raiz (/)
+│   ├── manifest.json               # Manifesto PWA (display standalone, atalhos, tema)
+│   ├── sw.js                       # Service Worker (Cache Stale-While-Revalidate, Notificações e Offline)
+│   ├── favicon.ico                 # Favicon clássico desktop
+│   ├── favicon.svg                 # Favicon vetorial oficial
+│   ├── favicon-32x32.png           # Favicon PNG 32px
+│   ├── favicon-16x16.png           # Favicon PNG 16px
+│   ├── apple-touch-icon.png        # Ícone iOS Safari 180px
+│   ├── android-chrome-192x192.png  # Ícone Android PWA 192px (any & maskable)
+│   ├── android-chrome-512x512.png  # Ícone PWA Master 512px (any & maskable)
+│   ├── og-image.png                # Mídia para compartilhamento em redes e WhatsApp
+│   └── screenshots/                # Capturas de tela para vitrine visual de instalação PWA
+│       ├── desktop-preview.png     # Vitrine Desktop (1280x720)
+│       └── mobile-preview.png      # Vitrine Mobile (540x960)
 │
-├── src/                        # Código-fonte da aplicação React
-│   ├── api/
-│   │   └── client.js           # Cliente HTTP REST (autenticação JWT, dispositivos, perfil, fotos)
+├── src/                            # Código-fonte da aplicação React
+│   ├── core/                       # 🌐 Kernel Compartilhado & Infraestrutura Base
+│   │   ├── api/
+│   │   │   └── httpClient.js       # Wrapper HTTP fetch centralizado com injeção de JWT e erros
+│   │   ├── services/
+│   │   │   ├── socketService.js    # Singleton WebSocket (Socket.io) com reconexão automática
+│   │   │   └── notificationService.js # Gerenciador de notificações nativas do SO (Desktop/Android)
+│   │   ├── hooks/
+│   │   │   └── useNetworkStatus.js # Monitoramento em tempo real do estado de conexão da internet
+│   │   └── components/             # Componentes estruturais globais de layout
+│   │       ├── NetworkStatusBar.jsx# Barra visual de status de rede (Modo Offline / Reconexão)
+│   │       ├── Sidebar.jsx         # Navegação desktop com rodapé de versão e status do sistema
+│   │       ├── BottomNav.jsx       # Navegação mobile fixa inferior
+│   │       └── UserAvatarMenu.jsx  # Menu do avatar (Configurar perfil, Instalar PWA, Notificações, Logout)
 │   │
-│   ├── assets/                 # SVGs e vetores de marca
-│   │   ├── logo-icon.svg       # Ícone do monograma Betterdays
-│   │   └── logo-text.svg       # Tipografia oficial Betterdays
+│   ├── modules/                    # 🧩 Bounded Contexts (Domínios de Negócio)
+│   │   ├── auth/                   # 🔐 Domínio: Autenticação & Identidade
+│   │   │   ├── infrastructure/     # authRepository.js (login, register)
+│   │   │   └── presentation/       # LoginView.jsx, LoginView.css
+│   │   │
+│   │   ├── profile/                # 👤 Domínio: Perfil Familiar & Dados Médicos
+│   │   │   ├── domain/             # profileModel.js (regras, formatação de WhatsApp, iniciais)
+│   │   │   ├── infrastructure/     # profileRepository.js (getProfile, updateProfile, uploadPhoto)
+│   │   │   └── presentation/       # ProfileView.jsx
+│   │   │
+│   │   ├── tracking/               # 🛰️ Domínio: Telemetria, Rastreadores & Mapa
+│   │   │   ├── domain/             # trackerModel.js (regras de bateria crítica, formatação de GPS)
+│   │   │   ├── infrastructure/     # trackingRepository.js (getDevices, createDevice, deleteDevice, getAreas)
+│   │   │   └── presentation/       # TrackerManagementView.jsx, LeafletMapView.jsx, RouteDrawer.jsx, AddDeviceModal.jsx
+│   │   │
+│   │   ├── care-chat/              # 💬 Domínio: Mensageria em Tempo Real & SOS
+│   │   │   ├── domain/             # chatModel.js (formatação de hora, detecção de emergência)
+│   │   │   ├── infrastructure/     # chatRepository.js (getMessages, getGroups)
+│   │   │   └── presentation/       # CareGroupsChatView.jsx, useCareSocket.js
+│   │   │
+│   │   ├── indoor/                 # 🏠 Domínio: Monitoramento Interno Residencial
+│   │   │   └── presentation/       # IndoorMonitoringView.jsx
+│   │   │
+│   │   └── dashboard/              # 📊 Domínio: Orquestrador Global & Visão Geral
+│   │       └── presentation/       # MainApp.jsx
 │   │
-│   ├── components/             # Componentes modulares da interface
-│   │   ├── LoginView.jsx       # Tela de login e cadastro com floating labels e alternador de tema
-│   │   ├── MainApp.jsx         # Orquestrador global de abas, estado e eventos de emergência
-│   │   ├── Sidebar.jsx         # Navegação desktop com rodapé de versão e status do sistema
-│   │   ├── BottomNav.jsx       # Navegação mobile fixa inferior
-│   │   ├── UserAvatarMenu.jsx  # Menu do avatar (Configurar perfil, Instalar PWA, Notificações, Logout)
-│   │   ├── LeafletMapView.jsx  # Mapa satelital em tempo real (CartoDB, GPS, rotas e geofences)
-│   │   ├── RouteDrawer.jsx     # Painel de rotas de socorro e localização rápida
-│   │   ├── TrackerManagementView.jsx # Gestão de relógios inteligentes (pulso/roupa), telemetria e pareamento
-│   │   ├── IndoorMonitoringView.jsx # Planta baixa residencial e monitoramento de cômodos
-│   │   ├── CareGroupsChatView.jsx # Chat estilo WhatsApp em tempo real (Socket.io, digitação, leitura)
-│   │   ├── ProfileView.jsx     # Edição de perfil do usuário, upload de foto, senha e WhatsApp
-│   │   ├── NetworkStatusBar.jsx# Barra visual de status de rede (Modo Offline / Reconexão)
-│   │   └── AddDeviceModal.jsx  # Modal de cadastro e pareamento de novos rastreadores
-│   │
-│   ├── hooks/                  # Hooks React reutilizáveis
-│   │   ├── useCareSocket.js    # Conexão WebSocket para chat, indicadores de digitação e SOS
-│   │   └── useNetworkStatus.js # Monitoramento em tempo real do estado de conexão da internet
-│   │
-│   ├── services/               # Singletons de infraestrutura do front-end
-│   │   ├── socketService.js    # Singleton do cliente Socket.io com reconexão automática
-│   │   └── notificationService.js # Gerenciador de notificações nativas do SO (Desktop/Android)
+│   ├── assets/                     # SVGs e vetores de marca
+│   │   ├── logo-icon.svg           # Ícone do monograma Betterdays
+│   │   └── logo-text.svg           # Tipografia oficial Betterdays
 │   │
 │   ├── styles/
-│   │   └── MainApp.css         # Design System unificado (CSS Grid, Flexbox, Modo Claro/Escuro)
+│   │   └── MainApp.css             # Design System unificado (CSS Grid, Flexbox, Modo Claro/Escuro)
 │   │
-│   ├── App.jsx                 # Controlador de autenticação (exibe LoginView ou MainApp)
-│   └── main.jsx                # Ponto de entrada (DOM render e registro do Service Worker)
+│   ├── App.jsx                     # Controlador de autenticação raiz (LoginView vs MainApp)
+│   └── main.jsx                    # Ponto de entrada (DOM render e registro do Service Worker)
 │
-├── index.html                  # HTML principal com meta tags SEO, PWA e OpenGraph
-├── vite.config.js              # Configuração do bundler Vite
+├── index.html                      # HTML principal com meta tags SEO, PWA e OpenGraph
+├── vite.config.js                  # Configuração do bundler Vite
 └── package.json                # Dependências e scripts do projeto
 ```
 
