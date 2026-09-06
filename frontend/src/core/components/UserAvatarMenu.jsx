@@ -132,19 +132,6 @@ export default function UserAvatarMenu({
               <span className="dropdown-user-email">{profile?.email || 'demo@betterdays.com'}</span>
               <span className="dropdown-user-phone">{profile?.phone || '(11) 98765-4321'}</span>
             </div>
-
-            {/* Status Médicos / Resumo Rápido */}
-            <div className="dropdown-status-tags">
-              <div className="dropdown-tag gps-ok">
-                <i className="fa-solid fa-circle-check"></i> {t('tracking.gpsConnected')}
-              </div>
-              <div className="dropdown-tag geofences">
-                <i className="fa-solid fa-draw-polygon"></i> {t('tracking.geofencesCount', { count: areasCount })}
-              </div>
-              <div className="dropdown-tag trackers">
-                <i className="fa-solid fa-user-check"></i> {t('dashboard.stats.trackersOnline')}
-              </div>
-            </div>
           </div>
 
           <div className="dropdown-divider"></div>
