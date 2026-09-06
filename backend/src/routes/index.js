@@ -10,6 +10,7 @@ import areasRouter from './areas.js';
 import messagesRouter from './messages.js';
 import uploadRouter from './upload.js';
 import geofencingRouter from './geofencing.js';
+import subscriptionsRouter from './subscriptions.js';
 
 const api = Router();
 api.use(authRouter); // POST /register, /login
@@ -19,5 +20,6 @@ api.use(areasRouter); // /areas/*
 api.use(messagesRouter); // /messages/*
 api.use(uploadRouter); // /upload/
 api.use(geofencingRouter); // /geofencing/data
+api.use(subscriptionsRouter); // /subscriptions/*
 
 export default api;

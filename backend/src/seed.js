@@ -34,6 +34,18 @@ export function buildSeed() {
         phone: '+1 555 0100',
         // Mock-only secure demo password to avoid browser password leak alerts
         password: 'bdCare2026!Demo',
+        subscription: {
+          planId: 'family',
+          planName: 'Cuidado Familiar',
+          status: 'active',
+          cycle: 'monthly',
+          maxDevices: 3,
+          maxGeofences: 999,
+          historyDays: 30,
+          expiresAt: new Date(now + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          paymentMethod: 'mercado_pago_pix',
+          lastPaymentId: 'mp_pay_init_demo',
+        },
       },
     ],
     devices: [

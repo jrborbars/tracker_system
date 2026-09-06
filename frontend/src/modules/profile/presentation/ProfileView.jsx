@@ -16,6 +16,8 @@ export default function ProfileView({
   handleQuickLocate,
   theme,
   toggleTheme,
+  subscription,
+  onOpenSubscription,
 }) {
   const { t } = useI18n();
   const [name, setName] = useState('');
@@ -161,6 +163,8 @@ export default function ProfileView({
             onEmergencySOS={handleQuickLocate}
             theme={theme}
             onToggleTheme={toggleTheme}
+            subscription={subscription}
+            onOpenSubscription={onOpenSubscription}
           />
         </div>
       </div>

@@ -17,6 +17,8 @@ export default function TrackerManagementView({
   handleQuickLocate,
   theme,
   toggleTheme,
+  subscription,
+  onOpenSubscription,
 }) {
   const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
@@ -106,6 +108,8 @@ export default function TrackerManagementView({
             onEmergencySOS={handleQuickLocate}
             theme={theme}
             onToggleTheme={toggleTheme}
+            subscription={subscription}
+            onOpenSubscription={onOpenSubscription}
           />
         </div>
       </div>

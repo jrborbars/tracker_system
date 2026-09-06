@@ -16,6 +16,8 @@ export default function UserAvatarMenu({
   onEmergencySOS,
   theme = 'light',
   onToggleTheme,
+  subscription,
+  onOpenSubscription,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -219,7 +221,7 @@ export default function UserAvatarMenu({
                   onToggleTheme();
                 }}
               >
-                <div className="action-icon-circle theme" style={{ backgroundColor: theme === 'dark' ? '#3B2D05' : '#FFF3E0', color: theme === 'dark' ? '#FBBF24' : '#E65100' }}>
+                <div className="action-icon-circle theme">
                   <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
                 </div>
                 <div className="action-text">
@@ -230,6 +232,29 @@ export default function UserAvatarMenu({
                 </div>
               </button>
             )}
+
+            {/* Opção: Meu Plano & Assinatura (Mercado Pago) */}
+            <button
+              type="button"
+              className="dropdown-action-item"
+              onClick={() => {
+                setIsOpen(false);
+                if (onOpenSubscription) onOpenSubscription();
+              }}
+            >
+              <div className="action-icon-circle subscription" style={{ backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
+                <i className="fa-solid fa-crown"></i>
+              </div>
+              <div className="action-text">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span className="action-title">{t('subscription.menuItem')}</span>
+                  <span style={{ fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '10px', backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}>
+                    {subscription?.planName || 'Gratuito'}
+                  </span>
+                </div>
+                <span className="action-subtitle">Mercado Pago &bull; PIX e Cartão</span>
+              </div>
+            </button>
 
             {/* Opção: Configurar Perfil */}
             <button

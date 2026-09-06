@@ -8,6 +8,8 @@ import logoTextSvg from '../../../assets/logo-text.svg';
 import profileRepository from '../../profile/infrastructure/profileRepository.js';
 import trackingRepository from '../../tracking/infrastructure/trackingRepository.js';
 import chatRepository from '../../care-chat/infrastructure/chatRepository.js';
+import subscriptionRepository from '../../subscription/infrastructure/subscriptionRepository.js';
+import { canAddDevice } from '../../subscription/domain/subscriptionModel.js';
 import socketService from '../../../core/services/socketService.js';
 import notificationService from '../../../core/services/notificationService.js';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
@@ -20,6 +22,7 @@ const AddDeviceModal = lazy(() => import('../../tracking/presentation/AddDeviceM
 const IndoorMonitoringView = lazy(() => import('../../indoor/presentation/IndoorMonitoringView.jsx'));
 const CareGroupsChatView = lazy(() => import('../../care-chat/presentation/CareGroupsChatView.jsx'));
 const ProfileView = lazy(() => import('../../profile/presentation/ProfileView.jsx'));
+const SubscriptionPlansModal = lazy(() => import('../../subscription/presentation/SubscriptionPlansModal.jsx'));
 
 function TabLoadingFallback() {
   const { t } = useI18n();
@@ -67,7 +70,9 @@ export default function MainApp({ token, onLogout }) {
   const [devices, setDevices] = useState([]);
   const [areas, setAreas] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [subscription, setSubscription] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [sosActive, setSosActive] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -105,16 +110,20 @@ export default function MainApp({ token, onLogout }) {
   // Carrega todos os dados da API ao iniciar
   const loadData = useCallback(async () => {
     try {
-      const [profData, devData, areaData, msgData] = await Promise.all([
+      const [profData, devData, areaData, msgData, subData] = await Promise.all([
         profileRepository.getProfile(token),
         trackingRepository.getDevices(token),
         trackingRepository.getAreas(token),
         chatRepository.getMessages(token),
+        subscriptionRepository.getCurrentSubscription(token).catch(() => null),
       ]);
       setProfile(profData);
       setDevices(devData);
       setAreas(areaData);
       setMessages(msgData);
+      if (subData?.subscription) {
+        setSubscription(subData.subscription);
+      }
     } catch (err) {
       console.error('Erro ao carregar dados do app:', err);
       const errMsg = err?.message || '';
@@ -183,8 +192,22 @@ export default function MainApp({ token, onLogout }) {
     showToast(t('dashboard.emergencyActive'));
   };
 
+  const handleOpenAddDevice = () => {
+    if (!canAddDevice(devices.length, subscription)) {
+      showToast(t('subscription.deviceLimitReached', { max: subscription?.maxDevices || 1 }));
+      setIsSubscriptionModalOpen(true);
+      return;
+    }
+    setIsAddModalOpen(true);
+  };
+
   const handleAddDevice = async (deviceData) => {
     try {
+      if (!canAddDevice(devices.length, subscription)) {
+        showToast(t('subscription.deviceLimitReached', { max: subscription?.maxDevices || 1 }));
+        setIsSubscriptionModalOpen(true);
+        return;
+      }
       const created = await trackingRepository.createDevice(token, deviceData);
       setDevices((prev) => [...prev, created]);
       showToast(t('tracking.addSuccess'));
@@ -221,7 +244,7 @@ export default function MainApp({ token, onLogout }) {
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         theme={theme}
         onToggleTheme={toggleTheme}
-        onOpenAddDevice={() => setIsAddModalOpen(true)}
+        onOpenAddDevice={handleOpenAddDevice}
       />
 
 
@@ -248,6 +271,8 @@ export default function MainApp({ token, onLogout }) {
             onEmergencySOS={handleQuickLocate}
             theme={theme}
             onToggleTheme={toggleTheme}
+            subscription={subscription}
+            onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
           />
         </header>
 
@@ -302,6 +327,8 @@ export default function MainApp({ token, onLogout }) {
                   onEmergencySOS={handleQuickLocate}
                   theme={theme}
                   onToggleTheme={toggleTheme}
+                  subscription={subscription}
+                  onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
                 />
               </div>
             </div>
@@ -390,7 +417,7 @@ export default function MainApp({ token, onLogout }) {
                   <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px', marginBottom: '16px' }}>
                     {t('tracking.addDeviceSubtitle')}
                   </p>
-                  <button type="button" className="btn-primary-action" style={{ margin: '0 auto' }} onClick={() => setIsAddModalOpen(true)}>
+                  <button type="button" className="btn-primary-action" style={{ margin: '0 auto' }} onClick={handleOpenAddDevice}>
                     <i className="fa-solid fa-plus"></i> {t('tracking.addDeviceTitle')}
                   </button>
                 </div>
@@ -493,6 +520,8 @@ export default function MainApp({ token, onLogout }) {
                   onEmergencySOS={handleQuickLocate}
                   theme={theme}
                   onToggleTheme={toggleTheme}
+                  subscription={subscription}
+                  onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
                 />
               </div>
             </div>
@@ -548,6 +577,8 @@ export default function MainApp({ token, onLogout }) {
               onEmergencySOS={handleQuickLocate}
               theme={theme}
               onToggleTheme={toggleTheme}
+              subscription={subscription}
+              onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
             />
           </Suspense>
         )}
@@ -587,6 +618,8 @@ export default function MainApp({ token, onLogout }) {
                   onEmergencySOS={handleQuickLocate}
                   theme={theme}
                   onToggleTheme={toggleTheme}
+                  subscription={subscription}
+                  onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
                 />
               </div>
             </div>
@@ -613,7 +646,7 @@ export default function MainApp({ token, onLogout }) {
             <TrackerManagementView
               devices={devices}
               onNavigateTab={setActiveTab}
-              onOpenAddDevice={() => setIsAddModalOpen(true)}
+              onOpenAddDevice={handleOpenAddDevice}
               onDeleteDevice={handleDeleteDevice}
               onSelectDeviceForMap={(dev) => setSelectedDevice(dev)}
               showToast={showToast}
@@ -625,6 +658,8 @@ export default function MainApp({ token, onLogout }) {
               handleQuickLocate={handleQuickLocate}
               theme={theme}
               toggleTheme={toggleTheme}
+              subscription={subscription}
+              onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
             />
           </Suspense>
         )}
@@ -646,6 +681,8 @@ export default function MainApp({ token, onLogout }) {
               handleQuickLocate={handleQuickLocate}
               theme={theme}
               toggleTheme={toggleTheme}
+              subscription={subscription}
+              onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
             />
           </Suspense>
         )}
@@ -657,7 +694,7 @@ export default function MainApp({ token, onLogout }) {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         unreadCount={messages.filter((m) => m.active).length}
-        onOpenAddDevice={() => setIsAddModalOpen(true)}
+        onOpenAddDevice={handleOpenAddDevice}
       />
 
       {/* 4. MODAL DE ADICIONAR DISPOSITIVO */}
@@ -670,6 +707,21 @@ export default function MainApp({ token, onLogout }) {
           />
         </Suspense>
       )}
+
+      {/* 5. MODAL DE PLANOS & ASSINATURA MERCADO PAGO */}
+      {isSubscriptionModalOpen && (
+        <Suspense fallback={null}>
+          <SubscriptionPlansModal
+            isOpen={isSubscriptionModalOpen}
+            onClose={() => setIsSubscriptionModalOpen(false)}
+            currentSubscription={subscription}
+            token={token}
+            onSubscriptionUpdated={(sub) => setSubscription(sub)}
+            showToast={showToast}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
+

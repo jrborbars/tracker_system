@@ -87,6 +87,8 @@ export default function IndoorMonitoringView({
   theme,
   onToggleTheme,
   toggleTheme,
+  subscription,
+  onOpenSubscription,
 }) {
   const { t, locale } = useI18n();
   const [currentRoomId, setCurrentRoomId] = useState('bathroom'); // Inicia simulando o banheiro para demonstrar o cronômetro e alerta
@@ -235,6 +237,8 @@ export default function IndoorMonitoringView({
             onEmergencySOS={onEmergencySOS}
             theme={theme}
             onToggleTheme={onToggleTheme || toggleTheme}
+            subscription={subscription}
+            onOpenSubscription={onOpenSubscription}
           />
         </div>
       </div>
