@@ -120,15 +120,26 @@ tracker_system/
 │   ├── scripts/               # Scripts auxiliares (mint-token)
 │   ├── uploads/               # Armazenamento de mídia
 │   └── package.json           # Dependências do backend
-├── frontend/                  # Front-end React + Vite
+├── frontend/                  # Front-end React + Vite (Clean Architecture + DDD)
 │   ├── index.html
 │   ├── package.json
 │   ├── vite.config.js
+│   ├── README.md              # Documentação completa do Frontend e guia rápido
 │   └── src/
-│       ├── services/          # Singleton de conexão Socket.io
-│       ├── hooks/             # Hook useCareSocket para React
-│       ├── components/        # Componentes UI (CareGroupsChatView, LeafletMapView, etc.)
-│       └── styles/            # Estilos globais e componentes
+│       ├── core/              # Camada Core: HTTP Client, Sockets, Base Layout & Hooks
+│       │   ├── api/           # httpClient centralizado com JWT e interceptors
+│       │   ├── services/      # Singletons de infra (socketService, notificationService)
+│       │   ├── hooks/         # Hooks globais (useNetworkStatus)
+│       │   └── components/    # Layout compartilhado (Sidebar, BottomNav, UserAvatarMenu)
+│       ├── modules/           # Módulos de Domínio (DDD Bounded Contexts)
+│       │   ├── auth/          # Autenticação (LoginView, authRepository)
+│       │   ├── care-chat/     # Chat e Comunicação em tempo real (CareGroupsChatView, useCareSocket)
+│       │   ├── tracking/      # Rastreamento GPS, Mapas e Geofences (LeafletMapView, TrackerManagementView)
+│       │   ├── indoor/        # Monitoramento Interno de Cômodos (IndoorMonitoringView)
+│       │   ├── profile/       # Perfil do Usuário e Foto (ProfileView, profileRepository)
+│       │   └── dashboard/     # Orquestrador das views (MainApp)
+│       ├── api/               # Façade retrocompatível delegando aos repositórios
+│       └── styles/            # Estilos globais (theme.css, index.css)
 ├── MESSAGING_ARCHITECTURE.md  # Arquitetura detalhada de WebSockets / Mensageria
 ├── PWA.md                     # Documentação técnica e guia do Progressive Web App
 ├── DESIGN_SYSTEM.md           # Definição e decisões do Design System
