@@ -1,17 +1,67 @@
 {
-  "name": "Betterdays — Sistema de Monitoramento e Cuidado Familiar",
+  "id": "/",
+  "name": "Betterdays — Sistema de Cuidado e Monitoramento Familiar",
   "short_name": "Betterdays",
-  "description": "Sistema de monitoramento satelital e apoio a familiares de pessoas com Síndrome de Eisenmenger",
+  "description": "Sistema de monitoramento satelital em tempo real, telemetria de relógios inteligentes e apoio integrado a familiares de pessoas com Síndrome de Eisenmenger.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#F8FAFC",
+  "theme_color": "#0D9488",
+  "categories": [
+    "health",
+    "medical",
+    "lifestyle",
+    "utilities"
+  ],
   "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
     {
       "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/favicon.svg",
@@ -19,9 +69,43 @@
       "type": "image/svg+xml"
     }
   ],
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#F8FAFC",
-  "theme_color": "#00897B",
-  "orientation": "portrait-primary"
+  "shortcuts": [
+    {
+      "name": "Mapa Satelital",
+      "short_name": "Mapa",
+      "description": "Ver localização em tempo real no mapa satelital",
+      "url": "/#map",
+      "icons": [
+        {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Rastreadores",
+      "short_name": "Relógios",
+      "description": "Gerenciar relógios inteligentes e telemetria",
+      "url": "/#tracker",
+      "icons": [
+        {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Monitoramento Interno",
+      "short_name": "Interno",
+      "description": "Planta baixa dos cômodos da residência",
+      "url": "/#indoor",
+      "icons": [
+        {
+          "src": "/android-chrome-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
 }

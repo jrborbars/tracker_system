@@ -17,8 +17,50 @@ export default function UserAvatarMenu({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isStandalone, setIsStandalone] = useState(false);
   const menuRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Detectar se já está instalado ou rodando como PWA standalone
+  useEffect(() => {
+    if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+      setIsStandalone(true);
+    }
+
+    const handleBeforeInstall = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        if (showToast) showToast('Aplicativo Betterdays instalado com sucesso!');
+      }
+      setDeferredPrompt(null);
+      setIsOpen(false);
+    } else {
+      // Dispositivos iOS ou navegadores sem prompt nativo
+      const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      if (isIos) {
+        if (showToast) {
+          showToast('Para instalar no iPhone/iPad: Toque no botão Compartilhar ⎋ e selecione "Adicionar à Tela de Início ⊞"');
+        }
+      } else {
+        if (showToast) {
+          showToast('Para instalar o Betterdays: Clique no ícone de instalar (⊕) na barra de endereços do seu navegador.');
+        }
+      }
+      setIsOpen(false);
+    }
+  };
 
   // Calcula as iniciais do nome quando não houver foto
   const getInitials = (name) => {
@@ -242,6 +284,26 @@ export default function UserAvatarMenu({
                 <span className="action-subtitle">Perfil e dados médicos</span>
               </div>
             </button>
+
+            {/* Opção PWA: Instalar Aplicativo */}
+            {!isStandalone && (
+              <button
+                type="button"
+                className="dropdown-action-item"
+                onClick={handleInstallPwa}
+              >
+                <div
+                  className="action-icon-circle pwa"
+                  style={{ backgroundColor: 'var(--color-primary-light)', color: 'var(--color-primary)' }}
+                >
+                  <i className="fa-solid fa-download"></i>
+                </div>
+                <div className="action-text">
+                  <span className="action-title">Instalar</span>
+                  <span className="action-subtitle">Adicionar à tela de início</span>
+                </div>
+              </button>
+            )}
 
             <div className="dropdown-divider"></div>
 
