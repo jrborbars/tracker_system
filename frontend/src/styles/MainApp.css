@@ -2553,6 +2553,52 @@
   font-size: 18px;
   color: var(--text-muted);
   cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.btn-close-modal:hover {
+  color: var(--color-danger);
+}
+
+/* Campos de Formulário (Modais & Telas) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.form-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.input-control {
+  width: 100%;
+  padding: 9px 12px;
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+textarea.input-control {
+  resize: vertical;
+  min-height: 64px;
+  line-height: 1.4;
 }
 
 /* ==========================================================================
@@ -5189,6 +5235,23 @@
   background-color: #0E1726;
   border-color: #24354D;
   color: #94A3B8;
+}
+
+[data-theme="dark"] .input-control {
+  background-color: #0E1726;
+  border-color: #24354D;
+  color: #E2E8F0;
+}
+
+[data-theme="dark"] .input-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.25);
+}
+
+[data-theme="dark"] .pairing-input {
+  background-color: #0B1320;
+  border-color: #0D9488;
+  color: #2DD4BF;
 }
 
 
