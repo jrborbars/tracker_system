@@ -501,13 +501,6 @@ export default function MainApp({ token, onLogout }) {
                 </div>
               </div>
               <div className="page-actions">
-                <button
-                  type="button"
-                  className="btn-locate-emergency"
-                  onClick={handleQuickLocate}
-                >
-                  <i className="fa-solid fa-crosshairs"></i> {t('dashboard.emergencyProtocol')}
-                </button>
                 <UserAvatarMenu
                   profile={profile}
                   onNavigateTab={setActiveTab}
