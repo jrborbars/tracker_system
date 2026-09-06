@@ -4,11 +4,13 @@
  * Suporte offline, cache de assets e instalação PWA no Android, iOS e Desktop.
  */
 
-const CACHE_NAME = 'betterdays-cache-v4';
+const CACHE_NAME = 'betterdays-cache-v5';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/favicon.ico',
+  '/favicon.png',
   '/favicon.svg',
   '/favicon-32x32.png',
   '/favicon-16x16.png',
