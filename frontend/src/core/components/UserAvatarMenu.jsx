@@ -137,50 +137,6 @@ export default function UserAvatarMenu({
           <div className="dropdown-divider"></div>
 
           {/* Seletor de Idioma */}
-          <div style={{ padding: '10px 14px 6px' }}>
-            <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-text-muted, #64748b)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <i className="fa-solid fa-globe" style={{ color: 'var(--color-primary)' }}></i>
-              {t('common.language')}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-              {supportedLanguages.map((lang) => {
-                const isSelected = language === lang;
-                const meta = languageMeta[lang];
-                return (
-                  <button
-                    key={lang}
-                    type="button"
-                    onClick={() => {
-                      changeLanguage(lang);
-                      if (showToast) showToast(`${meta.name} (${meta.region})`);
-                    }}
-                    style={{
-                      padding: '8px 4px',
-                      border: isSelected ? '1.5px solid var(--color-primary, #0D9488)' : '1px solid var(--color-border, #e2e8f0)',
-                      borderRadius: '8px',
-                      background: isSelected ? 'var(--color-primary-light, rgba(13, 148, 136, 0.12))' : 'transparent',
-                      color: isSelected ? 'var(--color-primary, #0D9488)' : 'var(--color-text, #1e293b)',
-                      fontSize: '12px',
-                      fontWeight: isSelected ? 700 : 500,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
-                      gap: '2px',
-                      transition: 'all 0.2s ease',
-                    }}
-                    title={`${meta.name} (${meta.region})`}
-                  >
-                    <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.5px' }}>{meta.code.toUpperCase()}</span>
-                    <span style={{ fontSize: '10px', color: isSelected ? 'var(--color-primary)' : 'var(--color-text-muted)' }}>{meta.name}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="dropdown-divider"></div>
-
           {/* Botão de Emergência Rápida SOS dentro do Menu */}
           {onEmergencySOS && (
             <div className="dropdown-sos-container">
@@ -300,6 +256,35 @@ export default function UserAvatarMenu({
                 <span className="action-subtitle">Encerrar sessão</span>
               </div>
             </button>
+          </div>
+
+          <div className="dropdown-divider"></div>
+
+          {/* Rodapé com Versão e Idiomas Discretos */}
+          <div className="dropdown-footer">
+            <span className="dropdown-version">Betterdays v1.2.0</span>
+            <div className="dropdown-lang-discrete-bar">
+              {supportedLanguages.map((lang, idx) => {
+                const isSelected = language === lang;
+                const meta = languageMeta[lang];
+                return (
+                  <React.Fragment key={lang}>
+                    {idx > 0 && <span className="lang-sep" aria-hidden="true">&bull;</span>}
+                    <button
+                      type="button"
+                      className={`btn-lang-discrete ${isSelected ? 'active' : ''}`}
+                      onClick={() => {
+                        changeLanguage(lang);
+                        if (showToast) showToast(`${meta.name} (${meta.region})`);
+                      }}
+                      title={`${meta.name} (${meta.region})`}
+                    >
+                      {meta.code.toUpperCase()}
+                    </button>
+                  </React.Fragment>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}
