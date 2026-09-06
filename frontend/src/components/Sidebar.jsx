@@ -68,33 +68,18 @@ export default function Sidebar({
         ))}
       </nav>
 
-      {/* Rodapé da Sidebar */}
+      {/* Rodapé da Sidebar com Versão da Aplicação */}
       <div className="sidebar-footer">
-        {/* Alternador de Modo Escuro / Claro */}
-        <button
-          type="button"
-          className="btn-sidebar-theme-toggle"
-          onClick={onToggleTheme}
-          title={theme === 'dark' ? 'Modo Claro' : 'Modo Escuro'}
-        >
-          <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`} style={{ color: theme === 'dark' ? '#FBBF24' : 'var(--color-primary)' }}></i>
-          {!isCollapsed && <span>{theme === 'dark' ? 'Claro' : 'Escuro'}</span>}
-        </button>
-
-        <div className="satellite-status" title="Satélite Conectado">
-          <i className="fa-solid fa-satellite-dish" style={{ color: 'var(--color-primary)' }}></i>
-          {!isCollapsed && <span>Satélite</span>}
+        <div className="sidebar-app-version" title="Betterdays v1.0.0">
+          {!isCollapsed ? (
+            <>
+              <span className="app-version-label">Versão</span>
+              <span className="app-version-number">v1.0.0</span>
+            </>
+          ) : (
+            <span className="app-version-number collapsed">v1.0</span>
+          )}
         </div>
-
-        <button
-          type="button"
-          className="btn-sidebar-logout"
-          onClick={onLogout}
-          title="Sair"
-        >
-          <i className="fa-solid fa-right-from-bracket"></i>
-          {!isCollapsed && <span>Sair</span>}
-        </button>
       </div>
     </aside>
   );
