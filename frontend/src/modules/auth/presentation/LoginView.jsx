@@ -134,32 +134,13 @@ export default function LoginView({ onLoginSuccess }) {
             <img src={logoTextSvg} alt="Betterdays" className="login-logo-text" />
           </div>
 
-          {/* Tabs Entrar / Cadastrar */}
-          <div className="auth-tabs">
-            <button
-              type="button"
-              className={`tab-btn ${!isRegister ? 'active' : ''}`}
-              onClick={() => { setIsRegister(false); setErrorMessage(''); }}
-            >
-              <i className="fa-solid fa-right-to-bracket"></i>
-              {t('auth.loginTab')}
-            </button>
-            <button
-              type="button"
-              className={`tab-btn ${isRegister ? 'active' : ''}`}
-              onClick={() => { setIsRegister(true); setErrorMessage(''); }}
-            >
-              <i className="fa-solid fa-user-plus"></i>
-              {t('auth.registerTab')}
-            </button>
-          </div>
-
+          {/* Cabeçalho do Card */}
           <div className="auth-header">
-            <h2>{isRegister ? t('auth.title') : t('auth.loginButton')}</h2>
+            <h2>{isRegister ? 'Criar Nova Conta' : t('auth.loginButton')}</h2>
             <p>
               {isRegister
-                ? t('auth.subtitle')
-                : t('auth.subtitle')}
+                ? 'Preencha seus dados para começar a monitorar seus familiares e dispositivos.'
+                : 'Acompanhe a localização e os sinais vitais de quem você ama em tempo real com segurança e apoio integrado.'}
             </p>
           </div>
 
@@ -296,8 +277,8 @@ export default function LoginView({ onLoginSuccess }) {
                 </>
               ) : isRegister ? (
                 <>
-                  <i className="fa-solid fa-user-check"></i>
-                  <span>{t('auth.registerButton')}</span>
+                  <i className="fa-solid fa-user-plus"></i>
+                  <span>Criar Minha Conta</span>
                 </>
               ) : (
                 <>
@@ -306,6 +287,52 @@ export default function LoginView({ onLoginSuccess }) {
                 </>
               )}
             </button>
+
+            {/* Links Secundários Abaixo do Botão de Entrar */}
+            <div className="auth-secondary-actions">
+              {!isRegister ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn-link-forgot"
+                    onClick={() => setModalType('forgot')}
+                  >
+                    <i className="fa-solid fa-key"></i>
+                    <span>Esqueci a senha</span>
+                  </button>
+
+                  <div className="auth-switch-prompt">
+                    <span>Não tem uma conta?</span>
+                    <button
+                      type="button"
+                      className="btn-link-switch"
+                      onClick={() => {
+                        setIsRegister(true);
+                        setErrorMessage('');
+                        setSuccessMessage('');
+                      }}
+                    >
+                      Cadastre-se
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="auth-switch-prompt">
+                  <span>Já possui uma conta?</span>
+                  <button
+                    type="button"
+                    className="btn-link-switch"
+                    onClick={() => {
+                      setIsRegister(false);
+                      setErrorMessage('');
+                      setSuccessMessage('');
+                    }}
+                  >
+                    Fazer Login
+                  </button>
+                </div>
+              )}
+            </div>
           </form>
 
           {/* Termos de Uso e Privacidade */}
@@ -331,6 +358,95 @@ export default function LoginView({ onLoginSuccess }) {
 
         </section>
       </main>
+
+      {/* Modal: Recuperação de Senha */}
+      {modalType === 'forgot' && (
+        <div className="login-modal-overlay" onClick={() => setModalType(null)}>
+          <div className="login-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="login-modal-header">
+              <div className="login-modal-icon">
+                <i className="fa-solid fa-key"></i>
+              </div>
+              <div>
+                <h3>Recuperação de Senha</h3>
+                <p>Enviaremos as instruções para seu e-mail cadastrado</p>
+              </div>
+              <button
+                type="button"
+                className="btn-modal-close"
+                onClick={() => setModalType(null)}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setSuccessMessage('Instruções de recuperação enviadas para o seu e-mail!');
+                setModalType(null);
+              }}
+            >
+              <div className="login-modal-body">
+                <div className="floating-group" style={{ marginBottom: '16px' }}>
+                  <div className="floating-input-wrapper">
+                    <i className="fa-solid fa-envelope floating-prefix-icon"></i>
+                    <input
+                      id="forgot-input-email"
+                      type="email"
+                      className="floating-input"
+                      placeholder=" "
+                      defaultValue={email}
+                      required
+                    />
+                    <label htmlFor="forgot-input-email" className="floating-label">
+                      E-mail cadastrado
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="login-modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setModalType(null)}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: 'transparent',
+                    color: 'var(--text-main)',
+                    cursor: 'pointer',
+                    fontWeight: 600,
+                  }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    background: 'var(--color-primary)',
+                    color: '#ffffff',
+                    cursor: 'pointer',
+                    fontWeight: 700,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}
+                >
+                  <i className="fa-solid fa-paper-plane"></i>
+                  Enviar Instruções
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
 
 

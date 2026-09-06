@@ -340,29 +340,64 @@
   background-color: var(--color-primary-light);
 }
 
-/* Linha "Esqueceu a senha?" */
-.auth-forgot-row {
+/* Ações Secundárias Abaixo do Botão Principal (Esqueci a Senha e Cadastrar) */
+.auth-secondary-actions {
   display: flex;
-  justify-content: flex-end;
-  margin-top: -6px;
-  margin-bottom: 4px;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
 }
 
-.btn-forgot-password {
+.btn-link-forgot {
   background: transparent;
   border: none;
-  color: var(--color-primary);
+  color: var(--text-muted);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
-  padding: 2px 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
 }
 
-.btn-forgot-password:hover {
-  color: var(--color-primary-dark);
+.btn-link-forgot i {
+  font-size: 12px;
+  color: var(--color-primary);
+}
+
+.btn-link-forgot:hover {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+.auth-switch-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+
+.btn-link-switch {
+  background: transparent;
+  border: none;
+  color: var(--color-primary);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 2px 4px;
   text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+
+.btn-link-switch:hover {
+  color: var(--color-primary-dark);
 }
 
 /* Alertas de Erro / Sucesso */
