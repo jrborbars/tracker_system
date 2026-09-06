@@ -15,10 +15,8 @@ export default function LoginView({ onLoginSuccess }) {
   // Controle de visibilidade de senha
   const [showPassword, setShowPassword] = useState(false);
 
-  // Modais de suporte
-  const [modalType, setModalType] = useState(null); // 'forgot' | 'terms' | 'privacy' | null
-  const [forgotEmail, setForgotEmail] = useState('');
-  const [forgotSuccess, setForgotSuccess] = useState(false);
+  // Modais de suporte (Termos e Privacidade)
+  const [modalType, setModalType] = useState(null); // 'terms' | 'privacy' | null
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -73,15 +71,7 @@ export default function LoginView({ onLoginSuccess }) {
     }
   };
 
-  const handleForgotSubmit = (e) => {
-    e.preventDefault();
-    setForgotSuccess(true);
-    setTimeout(() => {
-      setForgotSuccess(false);
-      setModalType(null);
-      setForgotEmail('');
-    }, 3000);
-  };
+
 
   return (
     <div className="login-screen-wrapper">
@@ -259,21 +249,7 @@ export default function LoginView({ onLoginSuccess }) {
               </div>
             </div>
 
-            {/* Esqueci a senha (apenas na aba Entrar) */}
-            {!isRegister && (
-              <div className="auth-forgot-row">
-                <button
-                  type="button"
-                  className="btn-forgot-password"
-                  onClick={() => {
-                    setForgotEmail(email);
-                    setModalType('forgot');
-                  }}
-                >
-                  Esqueceu a senha?
-                </button>
-              </div>
-            )}
+
 
             {/* Botão de Envio */}
             <button type="submit" className="btn-submit" disabled={loading}>
@@ -320,66 +296,7 @@ export default function LoginView({ onLoginSuccess }) {
         </section>
       </main>
 
-      {/* Modal: Esqueci a Senha */}
-      {modalType === 'forgot' && (
-        <div className="login-modal-overlay" onClick={() => setModalType(null)}>
-          <div className="login-modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="login-modal-header">
-              <div className="login-modal-icon">
-                <i className="fa-solid fa-key"></i>
-              </div>
-              <div>
-                <h3>Recuperação de Acesso</h3>
-                <p>Insira seu e-mail cadastrado para redefinir sua senha de acesso.</p>
-              </div>
-              <button
-                type="button"
-                className="btn-modal-close"
-                onClick={() => setModalType(null)}
-              >
-                <i className="fa-solid fa-xmark"></i>
-              </button>
-            </div>
 
-            {forgotSuccess ? (
-              <div className="feedback-alert success" style={{ margin: '16px 0' }}>
-                <i className="fa-solid fa-circle-check"></i>
-                <span>Instruções enviadas com sucesso para <strong>{forgotEmail}</strong>!</span>
-              </div>
-            ) : (
-              <form onSubmit={handleForgotSubmit} style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div className="floating-group">
-                  <div className="floating-input-wrapper">
-                    <i className="fa-solid fa-envelope floating-prefix-icon"></i>
-                    <input
-                      type="email"
-                      className="floating-input"
-                      placeholder=" "
-                      value={forgotEmail}
-                      onChange={(e) => setForgotEmail(e.target.value)}
-                      required
-                    />
-                    <label className="floating-label">E-mail Cadastrado</label>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '8px' }}>
-                  <button
-                    type="button"
-                    className="btn btn-outline"
-                    onClick={() => setModalType(null)}
-                  >
-                    Cancelar
-                  </button>
-                  <button type="submit" className="btn btn-primary">
-                    <i className="fa-solid fa-paper-plane"></i> Enviar Link
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Modal: Termos de Uso */}
       {modalType === 'terms' && (
