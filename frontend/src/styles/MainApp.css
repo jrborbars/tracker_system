@@ -293,6 +293,90 @@
   width: auto;
 }
 
+/* ==========================================================================
+   BARRA SEGMENTADA SUPERIOR NO MOBILE (Acima do Mapa: Mapa, Monitoramento, Notificações)
+   ========================================================================== */
+.mobile-segmented-bar-container {
+  display: none;
+  width: 100%;
+  background-color: var(--bg-surface);
+  padding: 4px 12px 8px;
+  border-bottom: 1px solid var(--border-color);
+  justify-content: center;
+  position: sticky;
+  top: 48px;
+  z-index: 1999;
+}
+
+.mobile-segmented-bar {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--color-bg-surface-subtle, rgba(0, 137, 123, 0.08));
+  border: 1px solid var(--color-border-subtle, rgba(0, 137, 123, 0.2));
+  border-radius: 9999px;
+  padding: 3px 4px;
+  gap: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.mobile-segmented-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text, #374151);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.mobile-segmented-tab i {
+  font-size: 13px;
+  color: var(--color-primary, #0D9488);
+  transition: color 0.2s ease;
+}
+
+.mobile-segmented-tab:hover {
+  color: var(--color-primary, #0D9488);
+}
+
+.mobile-segmented-tab.active {
+  background-color: var(--color-primary, #0D9488);
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+}
+
+.mobile-segmented-tab.active i {
+  color: #ffffff !important;
+}
+
+.mobile-tab-unread-badge {
+  background-color: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.mobile-segmented-tab.active .mobile-tab-unread-badge {
+  background-color: #ffffff;
+  color: #ef4444;
+}
+
 /* Header de Página (Topbar interno) */
 .page-header {
   background-color: var(--bg-surface);
@@ -3984,12 +4068,16 @@ textarea.input-control {
     justify-self: end;
   }
 
+  .mobile-segmented-bar-container {
+    display: flex !important;
+  }
+
   .mobile-bottom-nav {
-    display: flex;
+    display: none !important;
   }
 
   .main-content {
-    padding-bottom: 70px;
+    padding-bottom: 0px !important;
   }
 
   .tab-content-wrapper {
@@ -4009,8 +4097,8 @@ textarea.input-control {
   .tab-content-wrapper.map-tab-wrapper {
     padding: 0 !important;
     margin: 0 !important;
-    height: calc(100dvh - 124px);
-    height: calc(100vh - 124px);
+    height: calc(100dvh - 96px);
+    height: calc(100vh - 96px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -5666,6 +5754,35 @@ textarea.input-control {
 .network-status-btn-close:hover {
   background: rgba(255, 255, 255, 0.25);
   color: #ffffff;
+}
+
+/* Dark mode: Barra Segmentada Mobile */
+body.theme-dark .mobile-segmented-bar-container,
+[data-theme="dark"] .mobile-segmented-bar-container {
+  background-color: var(--bg-surface, #111115);
+  border-bottom-color: var(--border-color, #22222a);
+}
+
+body.theme-dark .mobile-segmented-bar,
+[data-theme="dark"] .mobile-segmented-bar {
+  background-color: #18181e;
+  border-color: #272732;
+}
+
+body.theme-dark .mobile-segmented-tab,
+[data-theme="dark"] .mobile-segmented-tab {
+  color: #a1a1aa;
+}
+
+body.theme-dark .mobile-segmented-tab:hover,
+[data-theme="dark"] .mobile-segmented-tab:hover {
+  color: #f4f4f5;
+}
+
+body.theme-dark .mobile-segmented-tab.active,
+[data-theme="dark"] .mobile-segmented-tab.active {
+  background-color: var(--color-primary, #0D9488);
+  color: #ffffff !important;
 }
 
 
