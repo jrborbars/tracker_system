@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import UserAvatarMenu from './UserAvatarMenu.jsx';
 
 // Ambientes monitorados (Residência / Clínica / Suíte Hospitalar)
 const DEFAULT_ROOMS = [
@@ -67,7 +68,19 @@ const DEFAULT_ROOMS = [
   },
 ];
 
-export default function IndoorMonitoringView({ showToast }) {
+export default function IndoorMonitoringView({
+  showToast,
+  profile,
+  onNavigateTab,
+  onLogout,
+  onProfileUpdated,
+  token,
+  devicesCount,
+  areasCount,
+  onEmergencySOS,
+  theme,
+  onToggleTheme,
+}) {
   const [currentRoomId, setCurrentRoomId] = useState('bathroom'); // Inicia simulando o banheiro para demonstrar o cronômetro e alerta
   const [secondsInRoom, setSecondsInRoom] = useState(874); // ~14 minutos e 34 segundos
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -186,6 +199,20 @@ export default function IndoorMonitoringView({ showToast }) {
               <i className="fa-solid fa-bed-pulse"></i> Suíte InCor
             </button>
           </div>
+
+          <UserAvatarMenu
+            profile={profile}
+            onNavigateTab={onNavigateTab}
+            onLogout={onLogout}
+            onProfileUpdated={onProfileUpdated}
+            token={token}
+            showToast={showToast}
+            devicesCount={devicesCount}
+            areasCount={areasCount}
+            onEmergencySOS={onEmergencySOS}
+            theme={theme}
+            onToggleTheme={onToggleTheme}
+          />
         </div>
       </div>
 

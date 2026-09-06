@@ -106,7 +106,7 @@ export default function UserAvatarMenu({
         style={{ display: 'none' }}
       />
 
-      {/* Botão Gatilho do Avatar */}
+      {/* Botão Gatilho do Avatar (Apenas o Círculo do Avatar) */}
       <button
         type="button"
         className={`btn-user-avatar-trigger ${isOpen ? 'active' : ''} ${isMobile ? 'mobile-trigger' : ''}`}
@@ -123,15 +123,6 @@ export default function UserAvatarMenu({
           )}
           <span className="avatar-online-dot" title="Sessão Ativa"></span>
         </div>
-
-        {!isMobile && (
-          <div className="avatar-text-details">
-            <span className="avatar-user-name">{userName}</span>
-            <span className="avatar-user-role">Cuidador Principal</span>
-          </div>
-        )}
-
-        <i className={`fa-solid fa-chevron-down avatar-chevron ${isOpen ? 'open' : ''}`}></i>
       </button>
 
       {/* Dropdown Menu Flutuante */}

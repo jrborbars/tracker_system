@@ -6,6 +6,7 @@ import LeafletMapView from './LeafletMapView.jsx';
 import IndoorMonitoringView from './IndoorMonitoringView.jsx';
 import CareGroupsChatView from './CareGroupsChatView.jsx';
 import UserAvatarMenu from './UserAvatarMenu.jsx';
+import ScreenFooterNav from './ScreenFooterNav.jsx';
 import logoIconSvg from '../assets/logo-icon.svg';
 import logoTextSvg from '../assets/logo-text.svg';
 import {
@@ -464,12 +465,20 @@ export default function MainApp({ token, onLogout }) {
             ABA INTERMEDIÁRIA: MONITORAMENTO INTERNO (SENSORES & CÔMODOS)
            ------------------------------------------------------------- */}
         {activeTab === 'indoor' && (
-          <IndoorMonitoringView showToast={showToast} />
+          <IndoorMonitoringView
+            showToast={showToast}
+            profile={profile}
+            onNavigateTab={setActiveTab}
+            onLogout={onLogout}
+            onProfileUpdated={setProfile}
+            token={token}
+            devicesCount={devices.length}
+            areasCount={areas.length || 3}
+            onEmergencySOS={handleQuickLocate}
+            theme={theme}
+            onToggleTheme={toggleTheme}
+          />
         )}
-
-        {/* -------------------------------------------------------------
-            ABA 3: MENSAGENS E ALERTAS
-           ------------------------------------------------------------- */}
 
         {/* -------------------------------------------------------------
             ABA 4: MENSAGENS & GRUPOS DE CUIDADO (ESTILO WHATSAPP)
@@ -514,7 +523,7 @@ export default function MainApp({ token, onLogout }) {
         )}
 
         {/* -------------------------------------------------------------
-            ABA 4: PERFIL FAMILIAR
+            ABA 5: PERFIL FAMILIAR
            ------------------------------------------------------------- */}
         {activeTab === 'profile' && (
           <>
@@ -534,6 +543,11 @@ export default function MainApp({ token, onLogout }) {
                   onProfileUpdated={setProfile}
                   token={token}
                   showToast={showToast}
+                  devicesCount={devices.length}
+                  areasCount={areas.length || 3}
+                  onEmergencySOS={handleQuickLocate}
+                  theme={theme}
+                  onToggleTheme={toggleTheme}
                 />
               </div>
             </div>
@@ -607,6 +621,14 @@ export default function MainApp({ token, onLogout }) {
             </main>
           </>
         )}
+
+        {/* -------------------------------------------------------------
+            RODAPÉ DE NAVEGAÇÃO & DETALHES DA TELA COM ATALHO AO DASHBOARD
+           ------------------------------------------------------------- */}
+        <ScreenFooterNav
+          activeTab={activeTab}
+          onNavigateTab={setActiveTab}
+        />
 
       </div>
 
