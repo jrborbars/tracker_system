@@ -5,6 +5,7 @@ import AddDeviceModal from './AddDeviceModal.jsx';
 import LeafletMapView from './LeafletMapView.jsx';
 import IndoorMonitoringView from './IndoorMonitoringView.jsx';
 import CareGroupsChatView from './CareGroupsChatView.jsx';
+import TrackerManagementView from './TrackerManagementView.jsx';
 import UserAvatarMenu from './UserAvatarMenu.jsx';
 import logoIconSvg from '../assets/logo-icon.svg';
 import logoTextSvg from '../assets/logo-text.svg';
@@ -531,6 +532,28 @@ export default function MainApp({ token, onLogout }) {
               />
             </main>
           </>
+        )}
+
+        {/* -------------------------------------------------------------
+            ABA: RASTREADOR (GERENCIAMENTO DE DISPOSITIVOS GPS)
+           ------------------------------------------------------------- */}
+        {activeTab === 'tracker' && (
+          <TrackerManagementView
+            devices={devices}
+            onNavigateTab={setActiveTab}
+            onOpenAddDevice={() => setIsAddModalOpen(true)}
+            onDeleteDevice={handleDeleteDevice}
+            onSelectDeviceForMap={(dev) => setSelectedDevice(dev)}
+            showToast={showToast}
+            profile={profile}
+            onLogout={onLogout}
+            setProfile={setProfile}
+            token={token}
+            areas={areas}
+            handleQuickLocate={handleQuickLocate}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
         )}
 
         {/* -------------------------------------------------------------

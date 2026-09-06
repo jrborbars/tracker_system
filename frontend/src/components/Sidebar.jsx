@@ -16,7 +16,7 @@ export default function Sidebar({
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fa-solid fa-table-columns' },
     { id: 'map', label: 'Mapa', icon: 'fa-solid fa-map-location-dot' },
-    { id: 'tracker', label: 'Rastreador', icon: 'fa-solid fa-microchip', action: onOpenAddDevice },
+    { id: 'tracker', label: 'Rastreador', icon: 'fa-solid fa-microchip' },
     { id: 'indoor', label: 'Interno', icon: 'fa-solid fa-house-signal' },
     { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-comments', badge: unreadCount },
     { id: 'profile', label: 'Perfil', icon: 'fa-solid fa-user-shield' },
