@@ -14,6 +14,7 @@ Bem-vindo ao diretório central de documentação técnica e guias de arquitetur
 | [**💬 Arquitetura de Mensageria & WebSockets**](./MESSAGING_ARCHITECTURE.md) | Especificação de comunicação em tempo real, tópicos de telemetria MQTT, salas Socket.io e protocolos de telemetria. |
 | [**📱 Progressive Web App (PWA)**](./PWA.md) | Guia de instalação PWA standalone, Service Workers, cache offline e suporte iOS/Android. |
 | [**🎨 Design System & Tokens Duais**](./DESIGN_SYSTEM.md) | Princípios visuais, paleta de cores para saúde/emergência, contraste noturno e tipografia. |
+| [**🔒 Arquitetura WebRTC P2P, E2EE & LGPD**](./WEBRTC_P2P_ARCHITECTURE.md) | Comunicação P2P para mensagens, arquivos, chamadas de voz/vídeo, armazenamento local no celular e conformidade com a LGPD. |
 | [**🌐 Showcase Visual Interativo (HTML)**](./design_system.html) | Demonstração interativa dos componentes em HTML puro com alternador de Modo Claro e Escuro. |
 
 ---
