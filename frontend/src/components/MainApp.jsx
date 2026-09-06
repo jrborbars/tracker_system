@@ -151,6 +151,7 @@ export default function MainApp({ token, onLogout }) {
         onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onOpenAddDevice={() => setIsAddModalOpen(true)}
       />
 
 
@@ -219,13 +220,6 @@ export default function MainApp({ token, onLogout }) {
                 </div>
               </div>
               <div className="page-actions">
-                <button
-                  type="button"
-                  className="btn-primary-action"
-                  onClick={() => setIsAddModalOpen(true)}
-                >
-                  <i className="fa-solid fa-plus"></i> Conectar Rastreador
-                </button>
                 <UserAvatarMenu
                   profile={profile}
                   onNavigateTab={setActiveTab}
@@ -655,6 +649,7 @@ export default function MainApp({ token, onLogout }) {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         unreadCount={messages.filter((m) => m.active).length}
+        onOpenAddDevice={() => setIsAddModalOpen(true)}
       />
 
       {/* 4. MODAL DE ADICIONAR DISPOSITIVO */}

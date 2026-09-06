@@ -1,9 +1,10 @@
 import React from 'react';
 
-export default function BottomNav({ activeTab, setActiveTab, unreadCount }) {
+export default function BottomNav({ activeTab, setActiveTab, unreadCount, onOpenAddDevice }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fa-solid fa-table-columns' },
     { id: 'map', label: 'Mapa', icon: 'fa-solid fa-map-location-dot' },
+    { id: 'tracker', label: 'Rastreador', icon: 'fa-solid fa-microchip', action: onOpenAddDevice },
     { id: 'indoor', label: 'Interno', icon: 'fa-solid fa-house-signal' },
     { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-bell', badge: unreadCount },
     { id: 'profile', label: 'Perfil', icon: 'fa-solid fa-user-shield' },
@@ -17,7 +18,13 @@ export default function BottomNav({ activeTab, setActiveTab, unreadCount }) {
           key={item.id}
           type="button"
           className={`bottom-nav-item ${activeTab === item.id ? 'active' : ''}`}
-          onClick={() => setActiveTab(item.id)}
+          onClick={() => {
+            if (item.action) {
+              item.action();
+            } else {
+              setActiveTab(item.id);
+            }
+          }}
         >
           <div style={{ position: 'relative' }}>
             <i className={item.icon}></i>

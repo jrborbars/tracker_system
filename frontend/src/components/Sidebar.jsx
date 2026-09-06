@@ -11,10 +11,12 @@ export default function Sidebar({
   onToggleCollapse,
   theme = 'light',
   onToggleTheme,
+  onOpenAddDevice,
 }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'fa-solid fa-table-columns' },
     { id: 'map', label: 'Mapa', icon: 'fa-solid fa-map-location-dot' },
+    { id: 'tracker', label: 'Rastreador', icon: 'fa-solid fa-microchip', action: onOpenAddDevice },
     { id: 'indoor', label: 'Interno', icon: 'fa-solid fa-house-signal' },
     { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-comments', badge: unreadCount },
     { id: 'profile', label: 'Perfil', icon: 'fa-solid fa-user-shield' },
@@ -50,7 +52,13 @@ export default function Sidebar({
             key={item.id}
             type="button"
             className={`nav-item ${activeTab === item.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(item.id)}
+            onClick={() => {
+              if (item.action) {
+                item.action();
+              } else {
+                setActiveTab(item.id);
+              }
+            }}
             title={item.label}
           >
             <div className="nav-item-icon-wrapper">
