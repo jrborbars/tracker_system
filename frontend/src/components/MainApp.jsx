@@ -6,7 +6,6 @@ import LeafletMapView from './LeafletMapView.jsx';
 import IndoorMonitoringView from './IndoorMonitoringView.jsx';
 import CareGroupsChatView from './CareGroupsChatView.jsx';
 import UserAvatarMenu from './UserAvatarMenu.jsx';
-import ScreenFooterNav from './ScreenFooterNav.jsx';
 import logoIconSvg from '../assets/logo-icon.svg';
 import logoTextSvg from '../assets/logo-text.svg';
 import {
@@ -213,6 +212,11 @@ export default function MainApp({ token, onLogout }) {
           <>
             <div className="page-header">
               <div className="page-title">
+                <div className="header-breadcrumbs">
+                  <span className="breadcrumb-current">
+                    <i className="fa-solid fa-house"></i> Dashboard
+                  </span>
+                </div>
                 <h1>
                   <i className="fa-solid fa-table-columns" style={{ color: 'var(--color-primary)' }}></i>
                   Painel de Monitoramento
@@ -398,6 +402,18 @@ export default function MainApp({ token, onLogout }) {
           <>
             <div className="page-header map-page-header">
               <div className="page-title">
+                <div className="header-breadcrumbs">
+                  <button
+                    type="button"
+                    className="breadcrumb-home-btn"
+                    onClick={() => setActiveTab('dashboard')}
+                    title="Voltar ao Dashboard"
+                  >
+                    <i className="fa-solid fa-house"></i> Dashboard
+                  </button>
+                  <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
+                  <span className="breadcrumb-current">Mapa Satelital & Cercas</span>
+                </div>
                 <h1>
                   <i className="fa-solid fa-map-location-dot" style={{ color: 'var(--color-primary)' }}></i>
                   Mapa Satelital & Cercas Virtuais
@@ -487,6 +503,18 @@ export default function MainApp({ token, onLogout }) {
           <>
             <div className="page-header messages-page-header">
               <div className="page-title">
+                <div className="header-breadcrumbs">
+                  <button
+                    type="button"
+                    className="breadcrumb-home-btn"
+                    onClick={() => setActiveTab('dashboard')}
+                    title="Voltar ao Dashboard"
+                  >
+                    <i className="fa-solid fa-house"></i> Dashboard
+                  </button>
+                  <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
+                  <span className="breadcrumb-current">Grupos & Mensagens</span>
+                </div>
                 <h1>
                   <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i>
                   Grupos de Cuidado & Mensagens
@@ -529,6 +557,18 @@ export default function MainApp({ token, onLogout }) {
           <>
             <div className="page-header">
               <div className="page-title">
+                <div className="header-breadcrumbs">
+                  <button
+                    type="button"
+                    className="breadcrumb-home-btn"
+                    onClick={() => setActiveTab('dashboard')}
+                    title="Voltar ao Dashboard"
+                  >
+                    <i className="fa-solid fa-house"></i> Dashboard
+                  </button>
+                  <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
+                  <span className="breadcrumb-current">Perfil do Cuidador</span>
+                </div>
                 <h1>
                   <i className="fa-solid fa-user-shield" style={{ color: 'var(--color-primary)' }}></i>
                   Perfil do Cuidador & Protocolo Médico
@@ -621,14 +661,6 @@ export default function MainApp({ token, onLogout }) {
             </main>
           </>
         )}
-
-        {/* -------------------------------------------------------------
-            RODAPÉ DE NAVEGAÇÃO & DETALHES DA TELA COM ATALHO AO DASHBOARD
-           ------------------------------------------------------------- */}
-        <ScreenFooterNav
-          activeTab={activeTab}
-          onNavigateTab={setActiveTab}
-        />
 
       </div>
 

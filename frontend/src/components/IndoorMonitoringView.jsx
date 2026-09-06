@@ -167,6 +167,18 @@ export default function IndoorMonitoringView({
       {/* 1. Header com Status de Presença e Seletor de Imóvel */}
       <div className="page-header">
         <div className="page-title">
+          <div className="header-breadcrumbs">
+            <button
+              type="button"
+              className="breadcrumb-home-btn"
+              onClick={() => onNavigateTab && onNavigateTab('dashboard')}
+              title="Voltar ao Dashboard"
+            >
+              <i className="fa-solid fa-house"></i> Dashboard
+            </button>
+            <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
+            <span className="breadcrumb-current">Monitoramento Interno</span>
+          </div>
           <h1>
             <i className="fa-solid fa-house-signal" style={{ color: 'var(--color-primary)' }}></i>
             Monitoramento Interno de Presença
