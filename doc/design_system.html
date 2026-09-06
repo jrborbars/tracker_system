@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design System — Betterdays</title>
+  <title>Design System Interativo — Betterdays Tracker</title>
   
-  <link rel="icon" type="image/svg+xml" href="./frontend/public/favicon.svg">
-  <link rel="icon" type="image/png" sizes="32x32" href="./frontend/public/favicon-32x32.png">
+  <link rel="icon" type="image/svg+xml" href="../frontend/public/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../frontend/public/favicon-32x32.png">
   
-  <!-- Tipografia Roboto (Google Fonts) -->
+  <!-- Tipografia Roboto + JetBrains Mono (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   
   <!-- FontAwesome 6 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -50,6 +50,11 @@
       --color-success-light: #E8F5E9;
       --color-success-subtle: #C8E6C9;
       --color-success-dark: #1B5E20;
+
+      /* Mercado Pago (Azul MP) */
+      --color-mp-blue: #009EE3;
+      --color-mp-light: #E0F7FF;
+      --color-mp-dark: #0074A6;
 
       /* Superfícies e Neutros */
       --bg-canvas: #F8FAFC;
@@ -111,6 +116,11 @@
       --color-success-subtle: #065F46;
       --color-success-dark: #BBF7D0;
 
+      /* Mercado Pago Dark */
+      --color-mp-blue: #38BDF8;
+      --color-mp-light: #0C4A6E;
+      --color-mp-dark: #7DD3FC;
+
       /* Superfícies e Neutros Dark (Deep Slate) */
       --bg-canvas: #0B0F17;
       --bg-surface: #151D2A;
@@ -143,7 +153,7 @@
       background-color: var(--bg-canvas);
       color: var(--text-main);
       line-height: 1.5;
-      padding: 32px 24px;
+      padding: 32px 24px 80px;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.25s ease, color 0.25s ease;
     }
@@ -151,6 +161,10 @@
     .container {
       max-width: 1280px;
       margin: 0 auto;
+    }
+
+    .code-font {
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* ==========================================================================
@@ -184,7 +198,7 @@
 
     .header-info p {
       color: var(--text-muted);
-      font-size: 15px;
+      font-size: 14px;
       margin-top: 6px;
     }
 
@@ -192,13 +206,14 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .btn-toggle-theme {
       background-color: var(--bg-surface-subtle);
       color: var(--text-main);
       border: 1px solid var(--border-color);
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: var(--radius-full);
       font-size: 13px;
       font-weight: 700;
@@ -242,14 +257,14 @@
       font-size: 20px;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
     .section-subtitle {
-      font-size: 14px;
+      font-size: 13.5px;
       color: var(--text-muted);
       margin-bottom: 24px;
     }
@@ -259,7 +274,7 @@
        ========================================================================== */
     .color-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
       gap: 16px;
     }
 
@@ -269,7 +284,6 @@
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-sm);
       transition: transform var(--transition-fast);
-      cursor: pointer;
       background: var(--bg-surface);
     }
 
@@ -279,7 +293,7 @@
     }
 
     .color-preview {
-      height: 75px;
+      height: 70px;
       display: flex;
       align-items: flex-end;
       padding: 8px 12px;
@@ -293,15 +307,15 @@
     }
 
     .color-name {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 13px;
+      font-weight: 600;
       color: var(--text-main);
     }
 
     .color-hex {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
-      font-family: monospace;
+      font-family: 'JetBrains Mono', monospace;
       margin-top: 2px;
     }
 
@@ -317,33 +331,44 @@
     .typography-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .typography-table th, .typography-table td {
-      padding: 12px 16px;
+      padding: 12px 14px;
       text-align: left;
       border-bottom: 1px solid var(--border-light);
     }
 
     .typography-table th {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
+    .icons-category-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 18px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .icons-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .icon-box {
       background-color: var(--bg-canvas);
       border-radius: var(--radius-md);
-      padding: 16px 12px;
+      padding: 14px 10px;
       text-align: center;
       border: 1px solid var(--border-light);
       transition: all var(--transition-fast);
@@ -356,16 +381,17 @@
     }
 
     .icon-box i {
-      font-size: 24px;
+      font-size: 22px;
       color: var(--color-primary);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .icon-box span {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--text-muted);
       font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* ==========================================================================
@@ -373,24 +399,194 @@
        ========================================================================== */
     .components-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
       gap: 24px;
     }
 
+    .component-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .component-card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 12px;
+    }
+
+    /* FLOATING INPUTS (MATERIAL / GMAIL STYLE) */
+    .floating-group {
+      position: relative;
+      width: 100%;
+    }
+
+    .floating-input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .floating-prefix-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-light);
+      font-size: 14px;
+      pointer-events: none;
+      transition: color var(--transition-fast);
+      z-index: 2;
+    }
+
+    .floating-input {
+      width: 100%;
+      height: 48px;
+      padding: 12px 14px 12px 42px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-color);
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text-main);
+      background-color: transparent;
+      transition: all var(--transition-fast);
+      box-sizing: border-box;
+    }
+
+    .floating-input.has-suffix {
+      padding-right: 44px;
+    }
+
+    .floating-label {
+      position: absolute;
+      left: 42px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13.5px;
+      color: var(--text-muted);
+      pointer-events: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      background-color: var(--bg-surface);
+      padding: 0 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    .floating-input:focus ~ .floating-label,
+    .floating-input:not(:placeholder-shown) ~ .floating-label {
+      top: 0;
+      left: 14px;
+      transform: translateY(-50%) scale(0.85);
+      transform-origin: left center;
+      font-weight: 600;
+      color: var(--color-primary);
+      background-color: var(--bg-surface);
+      z-index: 3;
+    }
+
+    .floating-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    .floating-input:focus ~ .floating-prefix-icon {
+      color: var(--color-primary);
+    }
+
+    .btn-toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      font-size: 14px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+
+    /* DEMO QUICKFILL BADGE */
+    .demo-quickfill-box {
+      background-color: var(--color-primary-light);
+      border: 1px dashed var(--color-primary-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .demo-quickfill-btn {
+      background-color: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* SECONDARY ACTIONS (LINKS) */
+    .auth-actions-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .link-forgot {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+    }
+
+    .link-register {
+      background: transparent;
+      border: none;
+      color: var(--color-primary);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* SOS QUICK LOCATE CARD */
     .emergency-card {
       background: linear-gradient(135deg, var(--bg-surface) 0%, var(--color-danger-light) 100%);
       border: 1px solid var(--color-danger-subtle);
       border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-md);
-      position: relative;
-    }
-
-    .emergency-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
     }
 
     .emergency-badge {
@@ -400,7 +596,7 @@
       font-weight: 700;
       padding: 4px 10px;
       border-radius: var(--radius-full);
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 6px;
     }
@@ -408,8 +604,8 @@
     .pulse-radar {
       position: relative;
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       background-color: var(--color-danger);
       border-radius: 50%;
     }
@@ -438,104 +634,221 @@
       color: #FFFFFF;
       border: none;
       border-radius: var(--radius-sm);
-      padding: 14px 20px;
-      font-size: 15px;
+      padding: 12px 18px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
-      transition: all var(--transition-normal);
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.25);
+      transition: all var(--transition-fast);
+      margin-top: 12px;
     }
 
     .btn-sos:hover {
       background-color: var(--color-danger-dark);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
     }
 
-    .patient-card {
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: 24px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .patient-header {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .patient-avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background-color: var(--color-primary-light);
-      color: var(--color-primary-dark);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      border: 2px solid var(--color-primary-subtle);
-    }
-
-    .patient-meta h3 {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .patient-meta p {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .telemetry-grid {
+    /* TELEMETRY & EISENMENGER VITALS */
+    .vitals-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 16px;
+      gap: 10px;
     }
 
-    .telemetry-item {
-      background-color: var(--bg-canvas);
-      padding: 12px 14px;
+    .vital-box {
+      background: var(--bg-canvas);
+      padding: 10px 12px;
       border-radius: var(--radius-sm);
+      border: 1px solid var(--border-light);
       display: flex;
       align-items: center;
-      gap: 12px;
-      border: 1px solid var(--border-light);
+      gap: 10px;
     }
 
-    .telemetry-icon { font-size: 18px; }
-    .telemetry-icon.battery-ok { color: var(--color-success); }
-    .telemetry-icon.satellite { color: var(--color-primary); }
+    .vital-icon {
+      font-size: 20px;
+    }
 
-    .telemetry-data .label {
+    .vital-icon.heart { color: var(--color-danger); }
+    .vital-icon.lungs { color: var(--color-primary); }
+    .vital-icon.battery { color: var(--color-success); }
+    .vital-icon.gps { color: var(--color-secondary); }
+
+    .vital-data .label {
       font-size: 11px;
       color: var(--text-muted);
       text-transform: uppercase;
-      font-weight: 500;
+      font-weight: 600;
     }
 
-    .telemetry-data .value {
-      font-size: 14px;
+    .vital-data .value {
+      font-size: 15px;
       font-weight: 700;
       color: var(--text-main);
     }
 
+    /* MOBILE APP SCREEN PREVIEW */
+    .mobile-screen-simulator {
+      max-width: 320px;
+      margin: 0 auto;
+      border: 6px solid var(--border-color);
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--bg-canvas);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+      position: relative;
+    }
+
+    .mobile-header-sim {
+      background: var(--bg-surface);
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .mobile-body-sim {
+      flex: 1;
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mobile-bottom-nav-sim {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 4px;
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .mobile-nav-item.active {
+      color: var(--color-primary);
+    }
+
+    .mobile-nav-item i {
+      font-size: 18px;
+    }
+
+    .nav-badge {
+      position: absolute;
+      top: -4px;
+      right: 4px;
+      background: var(--color-danger);
+      color: #fff;
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    /* MERCADO PAGO CHECKOUT SIMULATOR */
+    .mp-checkout-box {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      background: var(--bg-surface);
+    }
+
+    .mp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--color-mp-light);
+      color: var(--color-mp-blue);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      margin-bottom: 12px;
+    }
+
+    .pix-qr-demo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--bg-canvas);
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      border: 1px dashed var(--border-color);
+      margin-bottom: 12px;
+    }
+
+    .pix-qr-icon {
+      font-size: 48px;
+      color: var(--color-primary);
+    }
+
+    .btn-copy-pix {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* INDOOR ROOMS GRID */
+    .indoor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .room-card {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-sm);
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .room-card.active {
+      border-color: var(--color-primary);
+      background: var(--color-primary-light);
+      color: var(--color-primary-dark);
+    }
+
+    /* CHIPS */
     .chip {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 12px;
+      padding: 4px 10px;
       border-radius: var(--radius-full);
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
     }
 
     .chip-primary { background: var(--color-primary-light); color: var(--color-primary-dark); }
@@ -544,28 +857,22 @@
     .chip-warning { background: var(--color-warning-light); color: var(--color-warning-dark); }
     .chip-danger { background: var(--color-danger-light); color: var(--color-danger-dark); }
 
-    /* ==========================================================================
-       7. DEMONSTRAÇÃO DO CHAT DE CUIDADO ESTILO WHATSAPP
-       ========================================================================== */
-    .chat-preview-box {
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      background: var(--bg-canvas);
-    }
-
+    /* CHAT DEMO */
     .chat-bubble-demo {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      padding: 16px;
+      gap: 8px;
+      padding: 12px;
+      background: var(--bg-canvas);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-light);
     }
 
     .demo-bubble {
-      max-width: 80%;
-      padding: 10px 14px;
+      max-width: 85%;
+      padding: 8px 12px;
       border-radius: var(--radius-md);
-      font-size: 13px;
+      font-size: 12.5px;
     }
 
     .demo-bubble.other {
@@ -582,10 +889,10 @@
       color: var(--text-main);
     }
 
-    @media (max-width: 900px) {
-      .components-grid {
-        grid-template-columns: 1fr;
-      }
+    @media (max-width: 768px) {
+      body { padding: 16px 12px 60px; }
+      .section { padding: 20px 16px; }
+      .components-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -598,9 +905,9 @@
       <div class="header-info">
         <h1>
           <i class="fa-solid fa-heart-pulse" style="color: var(--color-danger);"></i>
-          Betterdays
+          Betterdays Design System
         </h1>
-        <p>Design System Oficial — Material Design Limpo, Dual Palettes (Light & Dark) & Grupos de Cuidado</p>
+        <p>Design System Oficial — Dual Themes (Light & Dark), Material Design Limpo, Ergonomia Mobile & Checkout Mercado Pago</p>
       </div>
       <div class="header-controls">
         <button type="button" class="btn-toggle-theme" id="themeBtn" onclick="toggleThemeDoc()">
@@ -608,8 +915,8 @@
           <span id="themeLabel">Modo Escuro</span>
         </button>
         <div class="header-badge">
-          <i class="fa-solid fa-satellite-dish"></i>
-          Versão 2.0 • Dual Theme
+          <i class="fa-solid fa-shield-halved"></i>
+          v2.4 • Healthcare Dual Tokens
         </div>
       </div>
     </header>
@@ -618,27 +925,27 @@
     <section class="section">
       <h2 class="section-title">
         <i class="fa-solid fa-palette" style="color: var(--color-primary);"></i>
-        1. Paleta de Cores e Tokens Duais (Light & Dark)
+        1. Tokens de Cores Duais (Light & Dark Mode)
       </h2>
-      <p class="section-subtitle">Tons suaves com contraste médico adequado para uso diurno e vigília noturna de cuidadores.</p>
+      <p class="section-subtitle">Tons suaves e balanceados com contraste médico certificado para uso diurno e vigília noturna de cuidadores.</p>
       
       <div class="color-grid">
         <!-- Primária -->
         <div class="color-card">
           <div class="color-preview" style="background-color: var(--color-primary); color: #fff;">Primary Teal</div>
           <div class="color-details">
-            <div class="color-name">Teal Saúde / Luminoso</div>
+            <div class="color-name">Teal Saúde</div>
             <div class="color-hex">--color-primary</div>
-            <div class="color-usage">Ações principais e seleção</div>
+            <div class="color-usage">Ações principais e rotas</div>
           </div>
         </div>
 
         <div class="color-card">
           <div class="color-preview" style="background-color: var(--color-primary-light); color: var(--color-primary-dark);">Pastel Teal Light</div>
           <div class="color-details">
-            <div class="color-name">Menta / Dark Container</div>
+            <div class="color-name">Menta Container</div>
             <div class="color-hex">--color-primary-light</div>
-            <div class="color-usage">Fundos de status e badges</div>
+            <div class="color-usage">Fundos ativos e chips</div>
           </div>
         </div>
 
@@ -648,7 +955,7 @@
           <div class="color-details">
             <div class="color-name">Lavanda Apoio</div>
             <div class="color-hex">--color-secondary</div>
-            <div class="color-usage">Recursos familiares e cuidadores</div>
+            <div class="color-usage">Módulo familiar & cuidadores</div>
           </div>
         </div>
 
@@ -657,7 +964,7 @@
           <div class="color-details">
             <div class="color-name">Lilás Acolhedor</div>
             <div class="color-hex">--color-secondary-light</div>
-            <div class="color-usage">Superfícies secundárias</div>
+            <div class="color-usage">Cards secundários</div>
           </div>
         </div>
 
@@ -665,18 +972,28 @@
         <div class="color-card">
           <div class="color-preview" style="background-color: var(--color-danger); color: #fff;">Emergency Coral</div>
           <div class="color-details">
-            <div class="color-name">Coral Emergência</div>
+            <div class="color-name">Coral SOS</div>
             <div class="color-hex">--color-danger</div>
-            <div class="color-usage">Botão SOS e alertas críticos</div>
+            <div class="color-usage">Botão SOS & alertas críticos</div>
           </div>
         </div>
 
         <div class="color-card">
           <div class="color-preview" style="background-color: var(--color-danger-light); color: var(--color-danger-dark);">Pastel Rose Light</div>
           <div class="color-details">
-            <div class="color-name">Rosa / Dark Red Container</div>
+            <div class="color-name">Rosa Container</div>
             <div class="color-hex">--color-danger-light</div>
-            <div class="color-usage">Fundo de alertas SOS</div>
+            <div class="color-usage">Banners de perigo</div>
+          </div>
+        </div>
+
+        <!-- Mercado Pago -->
+        <div class="color-card">
+          <div class="color-preview" style="background-color: var(--color-mp-blue); color: #fff;">Mercado Pago Blue</div>
+          <div class="color-details">
+            <div class="color-name">Azul Mercado Pago</div>
+            <div class="color-hex">--color-mp-blue</div>
+            <div class="color-usage">Checkout Pix & Cartões</div>
           </div>
         </div>
 
@@ -686,7 +1003,7 @@
           <div class="color-details">
             <div class="color-name">Âmbar Atenção</div>
             <div class="color-hex">--color-warning</div>
-            <div class="color-usage">Bateria fraca e avisos</div>
+            <div class="color-usage">Bateria baixa & satélite oscilando</div>
           </div>
         </div>
 
@@ -696,170 +1013,287 @@
           <div class="color-details">
             <div class="color-name">Verde Segurança</div>
             <div class="color-hex">--color-success</div>
-            <div class="color-usage">Dentro da zona segura</div>
+            <div class="color-usage">Dentro da cerca segura</div>
           </div>
         </div>
 
-        <!-- Superfície -->
+        <!-- Canvas -->
         <div class="color-card">
           <div class="color-preview" style="background-color: var(--bg-canvas); color: var(--text-main); border-bottom: 1px solid var(--border-color);">Canvas BG</div>
           <div class="color-details">
             <div class="color-name">Fundo Canvas</div>
             <div class="color-hex">--bg-canvas</div>
-            <div class="color-usage">Fundo geral da aplicação</div>
-          </div>
-        </div>
-
-        <div class="color-card">
-          <div class="color-preview" style="background-color: var(--bg-surface); color: var(--text-main); border-bottom: 1px solid var(--border-color);">Surface White/Slate</div>
-          <div class="color-details">
-            <div class="color-name">Superfície Elevada</div>
-            <div class="color-hex">--bg-surface</div>
-            <div class="color-usage">Cards, modais e menus</div>
+            <div class="color-usage">Fundo da aplicação</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 2. TIPOGRAFIA & ÍCONES -->
+    <!-- 2. TIPOGRAFIA & FONTES -->
     <section class="section">
       <h2 class="section-title">
         <i class="fa-solid fa-font" style="color: var(--color-primary);"></i>
-        2. Tipografia Roboto & Ícones
+        2. Tipografia Roboto & JetBrains Mono
       </h2>
-      <p class="section-subtitle">Hierarquia precisa para leitura rápida e sem esforço visual em emergências.</p>
+      <p class="section-subtitle">Hierarquia precisa para leitura sem esforço cognitivo em momentos críticos e telemetria monospaçada.</p>
 
       <table class="typography-table">
         <thead>
           <tr>
             <th>Nível</th>
-            <th>Tamanho / Peso</th>
+            <th>Fonte / Tamanho / Peso</th>
             <th>Exemplo Visual</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>Display H1</strong></td>
-            <td>26px / 700 Bold</td>
+            <td>Roboto • 26px / 700 Bold</td>
             <td style="font-size: 24px; font-weight: 700; color: var(--color-primary-dark);">Localizador Satelital de Emergência</td>
           </tr>
           <tr>
             <td><strong>Heading H2</strong></td>
-            <td>20px / 700 Bold</td>
+            <td>Roboto • 20px / 700 Bold</td>
             <td style="font-size: 18px; font-weight: 700;">Monitoramento de Zonas Seguras</td>
           </tr>
           <tr>
             <td><strong>Subheading H3</strong></td>
-            <td>16px / 500 Medium</td>
+            <td>Roboto • 16px / 500 Medium</td>
             <td style="font-size: 16px; font-weight: 500;">Mariana Silva — Pulseira TRCK-10001</td>
           </tr>
           <tr>
             <td><strong>Body Regular</strong></td>
-            <td>14px / 400 Regular</td>
-            <td style="font-size: 14px; color: var(--text-main);">O dispositivo reportou satélite estável via GPS/Galileo há 2 minutos.</td>
+            <td>Roboto • 14px / 400 Regular</td>
+            <td style="font-size: 14px; color: var(--text-main);">O dispositivo reportou satélite estável via GPS/Galileo com precisão de 3.2m.</td>
           </tr>
           <tr>
-            <td><strong>Badges & Chips</strong></td>
-            <td>11px / 700 Bold</td>
-            <td><span class="chip chip-primary"><i class="fa-solid fa-check"></i> SINAL SATELITAL NOMINAL</span></td>
+            <td><strong>Código / UUID / Pix</strong></td>
+            <td>JetBrains Mono • 13px / 600</td>
+            <td class="code-font" style="font-size: 13px; color: var(--color-primary); background: var(--bg-canvas); padding: 4px 8px; border-radius: 4px; display: inline-block;">00020126580014br.gov.bcb.pix0136bd-eisenmenger-2026</td>
           </tr>
         </tbody>
       </table>
     </section>
 
-    <!-- 3. COMPONENTES VITAIS DE EMERGÊNCIA & TELEMETRIA -->
+    <!-- 3. CATÁLOGO DE ÍCONES (FONTAWESOME 6) -->
     <section class="section">
       <h2 class="section-title">
-        <i class="fa-solid fa-cubes" style="color: var(--color-primary);"></i>
-        3. Componentes Clínicos & de Emergência
+        <i class="fa-solid fa-icons" style="color: var(--color-primary);"></i>
+        3. Catálogo de Ícones FontAwesome 6
       </h2>
-      <p class="section-subtitle">Elementos concebidos especificamente para a segurança do paciente com Síndrome de Eisenmenger.</p>
+      <p class="section-subtitle">Ícones vetoriais semânticos categorizados por domínio de aplicação.</p>
 
-      <div class="components-grid">
-        <!-- CARD SOS -->
-        <div class="emergency-card">
-          <div class="emergency-header">
-            <span class="emergency-badge">
-              <span class="pulse-radar"></span>
-              EMERGÊNCIA / SOS
-            </span>
-            <span style="font-size: 12px; color: var(--color-danger-dark); font-weight: 700;">
-              <i class="fa-solid fa-satellite"></i> GPS ATIVO
-            </span>
-          </div>
-          
-          <h3 style="font-size: 18px; font-weight: 700; color: var(--color-danger-dark); margin-bottom: 6px;">
-            Localizar Paciente Agora
-          </h3>
-          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-            Disparo instantâneo: centraliza o mapa e aciona o protocolo de apoio médico imediato.
-          </p>
+      <div class="icons-category-title"><i class="fa-solid fa-heart-pulse" style="color: var(--color-danger);"></i> Saúde & Emergência</div>
+      <div class="icons-grid">
+        <div class="icon-box"><i class="fa-solid fa-heart-pulse"></i><span>fa-heart-pulse</span></div>
+        <div class="icon-box"><i class="fa-solid fa-crosshairs"></i><span>fa-crosshairs</span></div>
+        <div class="icon-box"><i class="fa-solid fa-shield-halved"></i><span>fa-shield-halved</span></div>
+        <div class="icon-box"><i class="fa-solid fa-lungs"></i><span>fa-lungs</span></div>
+        <div class="icon-box"><i class="fa-solid fa-triangle-exclamation"></i><span>fa-triangle-excl.</span></div>
+      </div>
 
-          <button class="btn-sos" onclick="alert('Disparo de Localização de Emergência acionado com sucesso!')">
-            <i class="fa-solid fa-crosshairs"></i>
-            LOCALIZAR ENTE QUERIDO AGORA
-          </button>
-        </div>
+      <div class="icons-category-title"><i class="fa-solid fa-satellite-dish" style="color: var(--color-primary);"></i> Telemetria & Rastreamento</div>
+      <div class="icons-grid">
+        <div class="icon-box"><i class="fa-solid fa-satellite-dish"></i><span>fa-satellite-dish</span></div>
+        <div class="icon-box"><i class="fa-solid fa-location-dot"></i><span>fa-location-dot</span></div>
+        <div class="icon-box"><i class="fa-solid fa-house-signal"></i><span>fa-house-signal</span></div>
+        <div class="icon-box"><i class="fa-solid fa-battery-three-quarters"></i><span>fa-battery-3/4</span></div>
+        <div class="icon-box"><i class="fa-solid fa-route"></i><span>fa-route</span></div>
+      </div>
 
-        <!-- CARD STATUS PACIENTE -->
-        <div class="patient-card">
-          <div class="patient-header">
-            <div class="patient-avatar">
-              <i class="fa-solid fa-user"></i>
-            </div>
-            <div class="patient-meta">
-              <h3>Mariana Silva (Familiar)</h3>
-              <p>Rastreador: <strong>TRCK-10001</strong> (Pulseira Satelital)</p>
-            </div>
-          </div>
-
-          <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-            <span class="chip chip-success"><i class="fa-solid fa-shield-halved"></i> Zona Segura Ativa</span>
-            <span class="chip chip-secondary"><i class="fa-solid fa-satellite"></i> Satélite OK</span>
-          </div>
-
-          <div class="telemetry-grid">
-            <div class="telemetry-item">
-              <i class="fa-solid fa-battery-three-quarters telemetry-icon battery-ok"></i>
-              <div class="telemetry-data">
-                <div class="label">Bateria</div>
-                <div class="value">87%</div>
-              </div>
-            </div>
-            <div class="telemetry-item">
-              <i class="fa-solid fa-location-dot telemetry-icon satellite"></i>
-              <div class="telemetry-data">
-                <div class="label">Último Sinal</div>
-                <div class="value">Há 2 min</div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div class="icons-category-title"><i class="fa-solid fa-credit-card" style="color: var(--color-mp-blue);"></i> Pagamentos & Mercado Pago</div>
+      <div class="icons-grid">
+        <div class="icon-box"><i class="fa-brands fa-pix"></i><span>fa-pix</span></div>
+        <div class="icon-box"><i class="fa-solid fa-credit-card"></i><span>fa-credit-card</span></div>
+        <div class="icon-box"><i class="fa-solid fa-qrcode"></i><span>fa-qrcode</span></div>
+        <div class="icon-box"><i class="fa-solid fa-lock"></i><span>fa-lock</span></div>
+        <div class="icon-box"><i class="fa-solid fa-receipt"></i><span>fa-receipt</span></div>
       </div>
     </section>
 
-    <!-- 4. CHAT DE GRUPOS DE CUIDADO (ESTILO WHATSAPP) -->
+    <!-- 4. DEMO INTERATIVA DE COMPONENTES VITAIS -->
     <section class="section">
       <h2 class="section-title">
-        <i class="fa-solid fa-comments" style="color: var(--color-primary);"></i>
-        4. Grupos de Cuidado e Comunicação Familiar (Estilo WhatsApp)
+        <i class="fa-solid fa-cubes" style="color: var(--color-primary);"></i>
+        4. Componentes Interativos do Sistema
       </h2>
-      <p class="section-subtitle">Canais dedicados para familiares e médicos com balões de conversa e telemetria integrada.</p>
+      <p class="section-subtitle">Exemplos reais e funcionais dos novos componentes implementados.</p>
 
-      <div class="chat-preview-box">
-        <div style="padding: 10px 16px; background: var(--bg-surface); border-bottom: 1px solid var(--border-color); font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px;">
-          <i class="fa-solid fa-people-roof" style="color: var(--color-primary);"></i>
-          <span>👨‍👩‍👧‍👦 Família Mariana — Cuidado Geral</span>
-        </div>
-        <div class="chat-bubble-demo">
-          <div class="demo-bubble other">
-            <strong style="color: var(--color-secondary); font-size: 11px;">Carlos Silva (Familiar)</strong>
-            <p style="margin-top: 2px;">A saturação da Mariana acordou em 89% (dentro do habitual dela).</p>
+      <div class="components-grid">
+        
+        <!-- COMPONENTE: FORMULÁRIO COM FLOATING LABELS & AÇÕES -->
+        <div class="component-card">
+          <div class="component-card-title">
+            <i class="fa-solid fa-right-to-bracket" style="color: var(--color-primary);"></i>
+            Login com Floating Labels & Ações
           </div>
-          <div class="demo-bubble me">
-            <p>Perfeito! Já administrei a dose da manhã de Sildenafila 20mg.</p>
+
+          <div class="demo-quickfill-box">
+            <div style="font-size: 11.5px; color: var(--color-primary-dark);">
+              <strong>Acesso Demo Rápido</strong><br>Preenche credenciais de teste
+            </div>
+            <button type="button" class="demo-quickfill-btn" onclick="fillDemoForm()">
+              <i class="fa-solid fa-bolt"></i> Preencher
+            </button>
+          </div>
+
+          <div class="floating-group">
+            <div class="floating-input-wrapper">
+              <i class="fa-solid fa-envelope floating-prefix-icon"></i>
+              <input id="demo-email" type="email" class="floating-input" placeholder=" " />
+              <label for="demo-email" class="floating-label">Email de Acesso</label>
+            </div>
+          </div>
+
+          <div class="floating-group">
+            <div class="floating-input-wrapper">
+              <i class="fa-solid fa-lock floating-prefix-icon"></i>
+              <input id="demo-pass" type="password" class="floating-input has-suffix" placeholder=" " />
+              <label for="demo-pass" class="floating-label">Senha de Segurança</label>
+              <button type="button" class="btn-toggle-eye" onclick="toggleDemoPassword()">
+                <i id="eye-icon" class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="button" class="btn-sos" style="background: var(--color-primary); box-shadow: 0 4px 12px rgba(13,148,136,0.25);" onclick="alert('Login efetuado no simulador!')">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Acessar Painel Familiar
+          </button>
+
+          <div class="auth-actions-demo">
+            <button type="button" class="link-forgot" onclick="alert('Modal de Esqueci a Senha!')">
+              <i class="fa-solid fa-key" style="color: var(--color-primary);"></i> Esqueci a senha
+            </button>
+            <div style="font-size: 12.5px; color: var(--text-muted);">
+              Não tem conta? <button type="button" class="link-register" onclick="alert('Alternar para visualização de Cadastro!')">Cadastre-se</button>
+            </div>
           </div>
         </div>
+
+        <!-- COMPONENTE: EMERGÊNCIA SOS & VITAIS EISENMENGER -->
+        <div class="component-card">
+          <div class="component-card-title">
+            <i class="fa-solid fa-heart-pulse" style="color: var(--color-danger);"></i>
+            Emergência SOS & Telemetria Eisenmenger
+          </div>
+
+          <div class="emergency-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="emergency-badge"><span class="pulse-radar"></span> EMERGÊNCIA / SOS</span>
+              <span class="chip chip-success"><i class="fa-solid fa-shield-halved"></i> Perímetro Seguro</span>
+            </div>
+            
+            <button class="btn-sos" onclick="alert('Disparo de Localização de Emergência acionado com sucesso!')">
+              <i class="fa-solid fa-crosshairs"></i> LOCALIZAR ENTE QUERIDO AGORA
+            </button>
+          </div>
+
+          <div class="vitals-grid">
+            <div class="vital-box">
+              <i class="fa-solid fa-lungs vital-icon lungs"></i>
+              <div class="vital-data">
+                <div class="label">Saturação SpO2</div>
+                <div class="value">88% <span style="font-size: 10px; color: var(--color-success);">(Alvo InCor)</span></div>
+              </div>
+            </div>
+            <div class="vital-box">
+              <i class="fa-solid fa-heart-pulse vital-icon heart"></i>
+              <div class="vital-data">
+                <div class="label">Freq. Cardíaca</div>
+                <div class="value">78 bpm</div>
+              </div>
+            </div>
+            <div class="vital-box">
+              <i class="fa-solid fa-battery-three-quarters vital-icon battery"></i>
+              <div class="vital-data">
+                <div class="label">Bateria Rastreador</div>
+                <div class="value">87%</div>
+              </div>
+            </div>
+            <div class="vital-box">
+              <i class="fa-solid fa-satellite vital-icon gps"></i>
+              <div class="vital-data">
+                <div class="label">Satélites Fix</div>
+                <div class="value">11 visíveis</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMPONENTE: CHECKOUT MERCADO PAGO (PIX & CARTÃO) -->
+        <div class="component-card">
+          <div class="component-card-title">
+            <i class="fa-solid fa-credit-card" style="color: var(--color-mp-blue);"></i>
+            Checkout Mercado Pago (Pix & Cartão)
+          </div>
+
+          <div class="mp-checkout-box">
+            <span class="mp-badge"><i class="fa-solid fa-shield-halved"></i> Mercado Pago Oficial</span>
+            
+            <div class="pix-qr-demo">
+              <i class="fa-solid fa-qrcode pix-qr-icon"></i>
+              <div style="flex: 1;">
+                <strong style="font-size: 13px; color: var(--text-main);">Pix Instantâneo</strong>
+                <p style="font-size: 11px; color: var(--text-muted);">Aprovação em segundos</p>
+                <div class="code-font" style="font-size: 10px; color: var(--text-light); margin-top: 4px;">00020126580014br.gov.bcb.pix...</div>
+              </div>
+            </div>
+
+            <button type="button" class="btn-copy-pix" style="width: 100%; justify-content: center;" onclick="alert('Código Pix copiado para a área de transferência!')">
+              <i class="fa-solid fa-copy"></i> Copiar Código Pix
+            </button>
+          </div>
+        </div>
+
+        <!-- COMPONENTE: SIMULADOR MOBILE (BOTTOM NAV + HEADER AVATAR) -->
+        <div class="component-card">
+          <div class="component-card-title">
+            <i class="fa-solid fa-mobile-screen-button" style="color: var(--color-primary);"></i>
+            Ergonomia Mobile (Bottom Nav + Avatar Menu)
+          </div>
+
+          <div class="mobile-screen-simulator">
+            <div class="mobile-header-sim">
+              <span style="font-weight: 700; font-size: 13px; color: var(--color-primary);"><i class="fa-solid fa-heart-pulse"></i> Betterdays</span>
+              <button type="button" style="background: var(--color-danger); color: #fff; border: none; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 700;">SOS</button>
+              <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary-light); color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">V</div>
+            </div>
+
+            <div class="mobile-body-sim">
+              <div style="font-size: 12px; font-weight: 700; color: var(--text-main);">Presença Residencial (Indoor):</div>
+              <div class="indoor-grid">
+                <div class="room-card active"><i class="fa-solid fa-couch"></i><br>Sala</div>
+                <div class="room-card"><i class="fa-solid fa-bed"></i><br>Quarto</div>
+                <div class="room-card"><i class="fa-solid fa-bath"></i><br>Banheiro</div>
+                <div class="room-card"><i class="fa-solid fa-kitchen-set"></i><br>Cozinha</div>
+                <div class="room-card"><i class="fa-solid fa-tree"></i><br>Jardim</div>
+                <div class="room-card"><i class="fa-solid fa-door-open"></i><br>Entrada</div>
+              </div>
+
+              <div class="chat-bubble-demo" style="margin-top: 6px;">
+                <div class="demo-bubble other"><strong>InCor Cardio:</strong> Mariana acordou bem hoje?</div>
+                <div class="demo-bubble me">Sim! Saturação 88%, sem síncope.</div>
+              </div>
+            </div>
+
+            <div class="mobile-bottom-nav-sim">
+              <div class="mobile-nav-item active">
+                <i class="fa-solid fa-map-location-dot"></i>
+                <span>Mapa</span>
+              </div>
+              <div class="mobile-nav-item">
+                <i class="fa-solid fa-house-signal"></i>
+                <span>Indoor</span>
+              </div>
+              <div class="mobile-nav-item">
+                <i class="fa-solid fa-bell"></i>
+                <span>Alertas</span>
+                <span class="nav-badge">2</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -884,6 +1318,23 @@
         themeLabel.textContent = 'Modo Escuro';
         themeIcon.className = 'fa-solid fa-moon';
         themeIcon.style.color = '';
+      }
+    }
+
+    function fillDemoForm() {
+      document.getElementById('demo-email').value = 'demo@betterdays.com';
+      document.getElementById('demo-pass').value = 'bdCare2026!Demo';
+    }
+
+    function toggleDemoPassword() {
+      const input = document.getElementById('demo-pass');
+      const icon = document.getElementById('eye-icon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.className = 'fa-solid fa-eye-slash';
+      } else {
+        input.type = 'password';
+        icon.className = 'fa-solid fa-eye';
       }
     }
   </script>

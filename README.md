@@ -16,7 +16,7 @@ O Betterdays utiliza **WebSockets via Socket.io** para comunicação bidireciona
 * 🚨 **Disparo de Emergência SOS Global:** Broadcast instantâneo para todos os cuidadores conectados ao acionar o botão de socorro.
 * 📍 **Telemetria Satelital Contínua:** Transmissão de coordenadas GPS e nível de bateria sem necessidade de recarregamento de página.
 
-> 📖 **Documentação Técnica Completa:** Veja [`MESSAGING_ARCHITECTURE.md`](./MESSAGING_ARCHITECTURE.md) para o dicionário de eventos, payloads, hooks React e estratégias de reconexão.
+> 📖 **Documentação Técnica Completa:** Veja [`doc/MESSAGING_ARCHITECTURE.md`](./doc/MESSAGING_ARCHITECTURE.md) para o dicionário de eventos, payloads, hooks React e estratégias de reconexão.
 
 ---
 
@@ -27,7 +27,7 @@ O sistema conta com suporte a **PWA instalável** em Desktop (Windows, macOS, Li
 * ⚡ **Service Worker Inteligente:** Estratégia de cache híbrida (*Stale-While-Revalidate* e fallback offline).
 * 🎯 **Atalhos Rápidos:** Acesso direto via menu de contexto no ícone (Mapa, Rastreadores, Monitoramento Interno).
 
-> 📖 **Guia & Documentação PWA:** Veja [`PWA.md`](./PWA.md) para detalhes de arquitetura, Service Worker, manifesto e instruções de instalação.
+> 📖 **Guia & Documentação PWA:** Veja [`doc/PWA.md`](./doc/PWA.md) para detalhes de arquitetura, Service Worker, manifesto e instruções de instalação.
 
 ---
 

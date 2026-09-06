@@ -134,15 +134,6 @@ export default function LoginView({ onLoginSuccess }) {
             <img src={logoTextSvg} alt="Betterdays" className="login-logo-text" />
           </div>
 
-          {/* Cabeçalho do Card */}
-          <div className="auth-header">
-            <h2>{isRegister ? 'Criar Nova Conta' : t('auth.loginButton')}</h2>
-            <p>
-              {isRegister
-                ? 'Preencha seus dados para começar a monitorar seus familiares e dispositivos.'
-                : 'Acompanhe a localização e os sinais vitais de quem você ama em tempo real com segurança e apoio integrado.'}
-            </p>
-          </div>
 
           {/* Atalho Demo */}
           {!isRegister && (

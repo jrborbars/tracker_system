@@ -13,6 +13,8 @@ O **Betterdays** é uma plataforma concebida para **familiares, cuidadores e pro
 3. **Grupos de Cuidado estilo WhatsApp**: Comunicação em tempo real em grupos dedicados (*Família*, *Cardiologia InCor*, *Plantão SOS*, *Oxigenioterapia*).
 4. **Modo Claro & Modo Escuro (*Dark Mode Dual Tokens*)**: Acolhimento visual tanto para uso diurno quanto para vigília noturna de cuidadores, reduzindo a fadiga ocular.
 5. **Protocolo Clínico em 1 Clique**: Acesso imediato a contatos médicos de urgência, histórico de oxigenioterapia e orientações em caso de emergência.
+6. **Planos & Pagamentos Integrados**: Assinaturas integradas ao **Mercado Pago** com suporte a Pix Instantâneo (QR Code EMV) e Cartão de Crédito/Débito.
+7. **Ergonomia Mobile-First**: Bottom Navigation Bar nativa com 3 abas essenciais no rodapé e menu de utilidades acessível via avatar.
 
 ---
 
@@ -32,7 +34,7 @@ O **Betterdays** é uma plataforma concebida para **familiares, cuidadores e pro
 
 4. **Responsividade & Adaptabilidade de Navegação:**
    - **Desktop**: Sidebar expansível/compacta (260px ↔ 78px) com alternador de tema e status de GPS.
-   - **Mobile / Tablet**: Bottom Navigation bar ergonômica com foco nos dedos e mapas em evidência total (*full-bleed*).
+   - **Mobile / Tablet**: Bottom Navigation bar ergonômica com 3 opções principais no rodapé (*Mapa*, *Indoor*, *Notificações*) e menu popover/gaveta no avatar do topo.
 
 ---
 
@@ -62,6 +64,8 @@ O sistema utiliza a variável `[data-theme="dark"]` na raiz do documento HTML pa
 | | `--color-success-light` | `#E8F5E9` | `#064E3B` | Badges de status normal e conexões |
 | | `--color-success-subtle` | `#C8E6C9` | `#065F46` | Bordas de confirmação de status |
 | | `--color-success-dark` | `#1B5E20` | `#BBF7D0` | Textos de confirmação de segurança |
+| **Mercado Pago (Azul MP)** | `--color-mp-blue` | `#009EE3` | `#38BDF8` | Badges de checkout, botões Pix e MP |
+| | `--color-mp-light` | `#E0F7FF` | `#0C4A6E` | Fundo de instruções Pix e QR Code |
 | **Neutros & Superfícies** | `--bg-canvas` | `#F8FAFC` | `#0B0F17` | Fundo geral da aplicação |
 | | `--bg-surface` | `#FFFFFF` | `#151D2A` | Cartões, gavetas laterais e modais |
 | | `--bg-surface-subtle` | `#F1F5F9` | `#1E293B` | Inputs, divisores e fundos de tabelas |
@@ -73,51 +77,124 @@ O sistema utiliza a variável `[data-theme="dark"]` na raiz do documento HTML pa
 
 ---
 
-## 4. 🔤 Tipografia — Roboto
+## 4. 🔤 Tipografia & Fontes
 
-* **Família Principal:** `'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`
-* **Escala Modular de Texto:**
-  * **Display / Título Principal (H1):** `24px - 28px` | Peso `700 (Bold)`
-  * **Seções / Cabeçalhos (H2):** `18px - 20px` | Peso `700 / 500`
-  * **Subtítulos / Card Titles (H3):** `15px - 16px` | Peso `700 / 500`
-  * **Corpo / Leitura (Body):** `14px - 15px` | Peso `400 (Regular)`
-  * **Legendas / Metadados (Caption):** `12px - 13px` | Peso `400 / 500`
-  * **Badges / Chips:** `11px - 12px` | Peso `700 (Bold)` com `letter-spacing: 0.5px`
+### 4.1. Famílias Tipográficas
+* **Fonte Principal (UI & Textos):** `'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`
+  * Carregada via Google Fonts nos pesos `300 (Light)`, `400 (Regular)`, `500 (Medium)`, `700 (Bold)`, `900 (Black)`.
+* **Fonte Monospaçada (Telemetria, UUIDs & Chaves Pix):** `'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace`
+  * Utilizada para coordenadas GPS, tokens de sessão, códigos IMEI de rastreadores e payloads EMV Pix.
+
+### 4.2. Escala Modular de Texto
+* **Display / Título Principal (H1):** `24px - 28px` | Peso `700 (Bold)`
+* **Seções / Cabeçalhos (H2):** `18px - 20px` | Peso `700 / 500`
+* **Subtítulos / Card Titles (H3):** `15px - 16px` | Peso `700 / 500`
+* **Corpo / Leitura (Body):** `14px - 15px` | Peso `400 (Regular)`
+* **Legendas / Metadados (Caption):** `12px - 13px` | Peso `400 / 500`
+* **Badges / Chips:** `11px - 12px` | Peso `700 (Bold)` com `letter-spacing: 0.5px`
 
 ---
 
-## 5. 📐 Sistema de Layout & Navegação
+## 5. 🏷️ Catálogo de Ícones (FontAwesome 6)
 
-### 5.1. Sidebar Desdobrável (Expandida vs. Compacta)
-* **Modo Expandido (`260px`):** Exibe logotipo completo, rótulos completos de abas, contadores de notificações, botão de tema (☀️/🌙) e status de GPS no rodapé.
+O sistema utiliza **FontAwesome 6 Free** com ícones padronizados semanticamente:
+
+### 5.1. Saúde & Emergência
+* `fa-heart-pulse`: Logo do sistema e sinais vitais cardíacos.
+* `fa-triangle-exclamation`: Alerta de saída de cerca ou queda detectada.
+* `fa-crosshairs`: Botão Quick SOS e centralização de emergência.
+* `fa-shield-halved`: Zona segura ativa e proteção LGPD.
+* `fa-lungs`: Monitor de oximetria e protocolo de oxigênio.
+
+### 5.2. Telemetria & Rastreamento
+* `fa-satellite-dish` / `fa-satellite`: Sinal satelital GPS/GLONASS.
+* `fa-location-dot`: Ponto geográfico do paciente / marcador no mapa.
+* `fa-house-signal` / `fa-wifi`: Presença Indoor e Beacons BLE RSSI.
+* `fa-battery-full` / `fa-battery-three-quarters` / `fa-battery-quarter`: Níveis de carga do rastreador.
+* `fa-route`: Histórico de trajeto e trilha de deslocamento.
+
+### 5.3. Pagamento & Mercado Pago
+* `fa-pix`: Pagamento Pix instantâneo com QR Code.
+* `fa-credit-card`: Cartão de Crédito e Débito.
+* `fa-qrcode`: Código QR para leitura no app bancário.
+* `fa-lock`: Segurança SSL e tokenização Mercado Pago.
+* `fa-receipt`: Comprovante e confirmação de webhook.
+
+### 5.4. Interface & Ações
+* `fa-sun` / `fa-moon`: Alternador de Modo Claro e Escuro.
+* `fa-eye` / `fa-eye-slash`: Revelador/ocultador de senha nos formulários.
+* `fa-bolt`: Atalho de preenchimento de conta de demonstração.
+* `fa-key`: Recuperação de senha ("Esqueci a senha").
+* `fa-arrow-right-from-bracket`: Logout seguro da sessão.
+
+---
+
+## 6. 📐 Sistema de Layout & Navegação
+
+### 6.1. Desktop: Sidebar Desdobrável (Expandida vs. Compacta)
+* **Modo Expandido (`260px`):** Exibe logotipo completo, rótulos de navegação, contadores de notificações, botão de tema (☀️/🌙) e status de GPS no rodapé.
 * **Modo Compacto (`78px`):** Otimiza o espaço na tela com foco no mapa, ícones centralizados e botões de toque direto.
 
-### 5.2. Visualização Indoor (Planta Baixa & Beacons)
-* Grade representativa dos cômodos da residência (Sala de Estar, Quarto Principal, Banheiro, Cozinha, etc.).
-* Sensores RSSI / BLE com status de presença em tempo real e sensor anti-queda.
-
-### 5.3. Visualização Outdoor (Mapa Satelital Leaflet)
-* Camadas alternáveis: **CartoDB Positron (Light)** / **CartoDB Dark Matter (Dark)** / **Satélite Esri**.
-* Marcadores concêntricos pulsantes indicando precisão do sinal em metros.
-
-### 5.4. Chat de Grupos de Cuidado (Estilo WhatsApp)
-* Comunicação segmentada por canais: *Família Mariana*, *Cardiologia InCor*, *Plantão SOS*, *Farmácia & Oxigênio*.
-* Balões de mensagem com duplo check (`✓✓`), cards de telemetria GPS e botões de disparo de ação em 1 toque.
+### 6.2. Mobile: Bottom Navigation Bar + Header Avatar Menu
+* **Rodapé Fixo (Bottom Bar):** Contém as **3 abas essenciais**:
+  1. 🗺️ **Mapa Satelital** (`fa-map-location-dot`)
+  2. 🏠 **Monitoramento Indoor** (`fa-house-signal`)
+  3. 🔔 **Notificações & Alertas** (`fa-bell` com badge numérico)
+* **Topo Mobile (Header):**
+  - Logotipo Betterdays.
+  - Botão de Emergência **Quick SOS**.
+  - Avatar do Cuidador com badge de status.
+* **Menu do Avatar (Drawer/Popover):**
+  - Alternador de **Modo Escuro / Claro**.
+  - **Perfil do Cuidador & Protocolo Clínico**.
+  - **Planos & Assinatura (Mercado Pago)**.
+  - **Gerenciar Rastreadores**.
+  - **Chat da Família (Grupos de Cuidado)**.
+  - **Sair com Segurança**.
 
 ---
 
-## 6. 🧩 Componentes Vitais do Sistema
+## 7. 🧩 Catálogo Completo de Componentes
 
-1. **Botão de Emergência Rápida (SOS Quick Locate):**
-   - Botão de alta visibilidade com animação pulsante concêntrica (`@keyframes pulse-ring`).
-   - Centraliza o mapa instantaneamente nas últimas coordenadas e aciona rota de socorro.
-2. **Cartão de Protocolo Clínico Eisenmenger:**
-   - Exibe cardiologista responsável, diretrizes de oxigenioterapia e tipo sanguíneo.
-3. **Indicador de Telemetria e Bateria:**
-   - Barra de bateria inteligente com coloração contextual (Verde > 50%, Âmbar 20-50%, Vermelho < 20%).
-4. **Badges de Zonas Seguras (*Geofence Chips*):**
-   - Identificadores visuais com ícones para indicar se o paciente está em casa, na clínica ou fora de perímetro seguro.
-5. **Modal de Cadastro de Rastreador:**
-   - Formulário com validação de código UUID / IMEI e vínculo de canal de telemetria.
-6. **Menu do Usuário / Cuidador:**
-   - Drawer com foto de perfil, alternador de Modo Escuro, dados de conta e atalhos rápidos de configuração e logout seguro.
+### 7.1. Módulo de Autenticação (Login & Cadastro)
+* **Floating Labels (Estilo Material Design / Gmail):** O rótulo flutua suavemente para a borda superior ao focar ou preencher o campo.
+* **Olho de Visibilidade da Senha:** Alterna entre `password` e `text` em um clique.
+* **Atalho de Demonstração Rápida:** Botão com ícone de raio que preenche as credenciais demo com 1 toque.
+* **Ações Secundárias Limpas:**
+  - Link *Esqueci a senha* abrindo modal de instruções.
+  - Link *Não tem uma conta? Cadastre-se* que alterna instantaneamente para os campos de cadastro (*Nome*, *Telefone*, *E-mail*, *Senha*).
+* **Modais de Termos de Uso e Política de Privacidade (LGPD).**
+
+### 7.2. Módulo de Mapa Satelital (`LeafletMapView`)
+* **Seletor de Camadas:** CartoDB Positron (Claro), CartoDB Dark Matter (Escuro) e Satélite Esri.
+* **Marcador Concêntrico Pulsante (`@keyframes pulse-ring`):** Indica precisão do GPS e status ativo.
+* **Cercas Virtuais (Geofences):** Círculos e polígonos com edição de raio em tempo real e avisos de entrada/saída.
+* **Cartão de Telemetria:** Bateria com indicador contextual por cor, velocidade, altitude, precisão em metros e satélites visíveis.
+
+### 7.3. Módulo de Monitoramento Indoor (`IndoorMonitoringView`)
+* **Planta Baixa Residencial Interativa:** Grade representativa dos cômodos (Sala, Quarto, Banheiro, Cozinha, Varanda).
+* **Sensor RSSI / BLE:** Barra de força de sinal por cômodo e detecção de presença.
+* **Detector Anti-Queda (*Fall Detection*):** Alerta sonoro/visual em caso de impacto ou síncope súbita.
+* **Painel de Sinais Vitais:** Frequência Cardíaca (bpm) e Saturação de Oxigênio (SpO2 %) ajustada para Síndrome de Eisenmenger.
+
+### 7.4. Módulo de Grupos de Cuidado (`CareGroupsChatView`)
+* **Interface Estilo WhatsApp:** Balões de conversa do remetente e destinatário com duplo check (`✓✓`).
+* **Canais Especializados:** *Família Mariana*, *Cardiologia InCor*, *Plantão SOS*, *Farmácia & Oxigênio*.
+* **Compartilhamento de Localização GPS em 1 Toque:** Envio de mapa estático e coordenadas diretamente no chat.
+
+### 7.5. Módulo de Planos & Checkout Mercado Pago (`SubscriptionPlansModal`)
+* **3 Níveis de Assinatura:**
+  1. **Essencial (Gratuito):** 1 rastreador, 1 cerca virtual, histórico 24h.
+  2. **Familiar Pro (R$ 49,90/mês):** Rastreadores ilimitados, cercas ilimitadas, IA preditiva, histórico 30 dias.
+  3. **Hospital / Clínica (R$ 149,90/mês):** Multi-pacientes, integração InCor e telemetria avançada.
+* **Checkout Pix Instantâneo:** QR Code dinâmico, código Pix Copia e Cola, chave EMV e contador regressivo de 15 minutos.
+* **Checkout Cartão de Crédito/Débito:** Formatação automática (16 dígitos), detecção inteligente de bandeira (Visa, Mastercard, Elo, Amex), CVV e parcelamento até 12x.
+
+---
+
+## 8. ♿ Acessibilidade & Contraste
+
+* Todos os textos respeitam a taxa mínima de contraste **WCAG 2.1 AA** (mínimo `4.5:1` para texto padrão e `3.0:1` para elementos grandes e ícones ativos).
+* Navegação por teclado completa em formulários flutuantes e modais.
+* Indicadores de foco visíveis em botões (`:focus-visible`).
+* Notificações e alertas sonoros acompanhados sempre de feedback visual duplo (ícone + cor de status + texto explícito).
