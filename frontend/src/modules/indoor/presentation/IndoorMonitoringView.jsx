@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import HeaderActions from '../../../core/components/HeaderActions.jsx';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 // Ambientes monitorados (Residência / Clínica / Suíte Hospitalar)
@@ -89,6 +89,7 @@ export default function IndoorMonitoringView({
   toggleTheme,
   subscription,
   onOpenSubscription,
+  messages = [],
 }) {
   const { t, locale } = useI18n();
   const [currentRoomId, setCurrentRoomId] = useState('bathroom'); // Inicia simulando o banheiro para demonstrar o cronômetro e alerta
@@ -225,7 +226,7 @@ export default function IndoorMonitoringView({
             </button>
           </div>
 
-          <UserAvatarMenu
+          <HeaderActions
             profile={profile}
             onNavigateTab={onNavigateTab}
             onLogout={onLogout}
@@ -239,6 +240,7 @@ export default function IndoorMonitoringView({
             onToggleTheme={onToggleTheme || toggleTheme}
             subscription={subscription}
             onOpenSubscription={onOpenSubscription}
+            messages={messages}
           />
         </div>
       </div>

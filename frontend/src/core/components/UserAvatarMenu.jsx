@@ -137,27 +137,6 @@ export default function UserAvatarMenu({
           <div className="dropdown-divider"></div>
 
           <div className="dropdown-actions-list">
-            {/* Opção Tema: Alternar Modo Escuro / Claro */}
-            {onToggleTheme && (
-              <button
-                type="button"
-                className="dropdown-action-item"
-                onClick={() => {
-                  onToggleTheme();
-                }}
-              >
-                <div className="action-icon-circle theme">
-                  <i className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}></i>
-                </div>
-                <div className="action-text">
-                  <span className="action-title">
-                    {theme === 'dark' ? t('common.themeLight') : t('common.themeDark')}
-                  </span>
-                  <span className="action-subtitle">Alternar tema visual</span>
-                </div>
-              </button>
-            )}
-
             {/* Opção: Meu Plano & Assinatura (Mercado Pago) */}
             <button
               type="button"

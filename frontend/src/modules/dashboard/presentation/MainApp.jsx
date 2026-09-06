@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import Sidebar from '../../../core/components/Sidebar.jsx';
 import BottomNav from '../../../core/components/BottomNav.jsx';
-import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import HeaderActions from '../../../core/components/HeaderActions.jsx';
 import NetworkStatusBar from '../../../core/components/NetworkStatusBar.jsx';
 import logoIconSvg from '../../../assets/logo-icon.svg';
 import logoTextSvg from '../../../assets/logo-text.svg';
@@ -258,7 +258,7 @@ export default function MainApp({ token, onLogout }) {
             <img src={logoIconSvg} alt="Betterdays" className="mobile-logo-icon" />
             <img src={logoTextSvg} alt="Betterdays" className="mobile-logo-text" />
           </div>
-          <UserAvatarMenu
+          <HeaderActions
             profile={profile}
             onNavigateTab={setActiveTab}
             onLogout={onLogout}
@@ -273,6 +273,7 @@ export default function MainApp({ token, onLogout }) {
             onToggleTheme={toggleTheme}
             subscription={subscription}
             onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+            messages={messages}
           />
         </header>
 
@@ -315,7 +316,7 @@ export default function MainApp({ token, onLogout }) {
                 </div>
               </div>
               <div className="page-actions">
-                <UserAvatarMenu
+                <HeaderActions
                   profile={profile}
                   onNavigateTab={setActiveTab}
                   onLogout={onLogout}
@@ -329,6 +330,7 @@ export default function MainApp({ token, onLogout }) {
                   onToggleTheme={toggleTheme}
                   subscription={subscription}
                   onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+                  messages={messages}
                 />
               </div>
             </div>
@@ -501,7 +503,7 @@ export default function MainApp({ token, onLogout }) {
                 </div>
               </div>
               <div className="page-actions">
-                <UserAvatarMenu
+                <HeaderActions
                   profile={profile}
                   onNavigateTab={setActiveTab}
                   onLogout={onLogout}
@@ -515,6 +517,7 @@ export default function MainApp({ token, onLogout }) {
                   onToggleTheme={toggleTheme}
                   subscription={subscription}
                   onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+                  messages={messages}
                 />
               </div>
             </div>
@@ -572,6 +575,7 @@ export default function MainApp({ token, onLogout }) {
               onToggleTheme={toggleTheme}
               subscription={subscription}
               onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+              messages={messages}
             />
           </Suspense>
         )}
@@ -599,7 +603,7 @@ export default function MainApp({ token, onLogout }) {
                 </div>
               </div>
               <div className="page-actions">
-                <UserAvatarMenu
+                <HeaderActions
                   profile={profile}
                   onNavigateTab={setActiveTab}
                   onLogout={onLogout}
@@ -613,6 +617,7 @@ export default function MainApp({ token, onLogout }) {
                   onToggleTheme={toggleTheme}
                   subscription={subscription}
                   onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+                  messages={messages}
                 />
               </div>
             </div>
@@ -653,6 +658,7 @@ export default function MainApp({ token, onLogout }) {
               toggleTheme={toggleTheme}
               subscription={subscription}
               onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+              messages={messages}
             />
           </Suspense>
         )}
@@ -676,6 +682,7 @@ export default function MainApp({ token, onLogout }) {
               toggleTheme={toggleTheme}
               subscription={subscription}
               onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+              messages={messages}
             />
           </Suspense>
         )}

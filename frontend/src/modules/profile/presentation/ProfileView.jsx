@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import HeaderActions from '../../../core/components/HeaderActions.jsx';
 import profileRepository from '../infrastructure/profileRepository.js';
 import { getUserInitials, getAbsolutePhotoUrl } from '../domain/profileModel.js';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
@@ -18,6 +18,7 @@ export default function ProfileView({
   toggleTheme,
   subscription,
   onOpenSubscription,
+  messages = [],
 }) {
   const { t } = useI18n();
   const [name, setName] = useState('');
@@ -151,7 +152,7 @@ export default function ProfileView({
         </div>
 
         <div className="page-actions">
-          <UserAvatarMenu
+          <HeaderActions
             profile={profile}
             onNavigateTab={onNavigateTab}
             onLogout={onLogout}
@@ -162,9 +163,10 @@ export default function ProfileView({
             areasCount={areasCount}
             onEmergencySOS={handleQuickLocate}
             theme={theme}
-            onToggleTheme={toggleTheme}
+            toggleTheme={toggleTheme}
             subscription={subscription}
             onOpenSubscription={onOpenSubscription}
+            messages={messages}
           />
         </div>
       </div>

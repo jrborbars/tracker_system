@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import HeaderActions from '../../../core/components/HeaderActions.jsx';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 export default function TrackerManagementView({
@@ -19,6 +19,7 @@ export default function TrackerManagementView({
   toggleTheme,
   subscription,
   onOpenSubscription,
+  messages = [],
 }) {
   const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
@@ -96,7 +97,7 @@ export default function TrackerManagementView({
         </div>
 
         <div className="page-actions">
-          <UserAvatarMenu
+          <HeaderActions
             profile={profile}
             onNavigateTab={onNavigateTab}
             onLogout={onLogout}
@@ -110,6 +111,7 @@ export default function TrackerManagementView({
             onToggleTheme={toggleTheme}
             subscription={subscription}
             onOpenSubscription={onOpenSubscription}
+            messages={messages}
           />
         </div>
       </div>
