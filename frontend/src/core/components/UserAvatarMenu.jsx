@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getUserInitials, getAbsolutePhotoUrl } from '../../modules/profile/domain/profileModel.js';
 import { useI18n } from '../i18n/presentation/useI18n.js';
+import './UserAvatarMenu.css';
 
 export default function UserAvatarMenu({
   profile,
