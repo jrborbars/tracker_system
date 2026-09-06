@@ -140,6 +140,7 @@ tracker_system/
 │       │   └── dashboard/     # Orquestrador das views (MainApp)
 │       ├── api/               # Façade retrocompatível delegando aos repositórios
 │       └── styles/            # Estilos globais (theme.css, index.css)
+├── JSON_DATA_ARCHITECTURE.md   # Arquitetura de Dados, Contratos JSON e Schemas REST/WS
 ├── MESSAGING_ARCHITECTURE.md  # Arquitetura detalhada de WebSockets / Mensageria
 ├── PWA.md                     # Documentação técnica e guia do Progressive Web App
 ├── DESIGN_SYSTEM.md           # Definição e decisões do Design System
