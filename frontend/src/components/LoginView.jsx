@@ -41,7 +41,7 @@ export default function LoginView({ onLoginSuccess }) {
   const handleQuickFill = () => {
     setIsRegister(false);
     setEmail('demo@betterdays.com');
-    setPassword('password123');
+    setPassword('bdCare2026!Demo');
     setErrorMessage('');
   };
 
@@ -159,7 +159,7 @@ export default function LoginView({ onLoginSuccess }) {
           )}
 
           {/* Formulário com Floating Labels (Estilo Gmail) */}
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form className="auth-form" onSubmit={handleSubmit} autoComplete="off">
             {isRegister && (
               <>
                 {/* Nome Completo */}
@@ -173,6 +173,7 @@ export default function LoginView({ onLoginSuccess }) {
                       placeholder=" "
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      autoComplete="off"
                       required
                     />
                     <label htmlFor="input-name" className="floating-label">
@@ -192,6 +193,7 @@ export default function LoginView({ onLoginSuccess }) {
                       placeholder=" "
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      autoComplete="off"
                       required
                     />
                     <label htmlFor="input-phone" className="floating-label">
@@ -213,6 +215,7 @@ export default function LoginView({ onLoginSuccess }) {
                   placeholder=" "
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="username"
                   required
                 />
                 <label htmlFor="input-email" className="floating-label">
@@ -232,6 +235,8 @@ export default function LoginView({ onLoginSuccess }) {
                   placeholder=" "
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="new-password"
+                  data-lpignore="true"
                   required
                 />
                 <label htmlFor="input-password" className="floating-label">

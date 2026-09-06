@@ -32,8 +32,8 @@ export function buildSeed() {
         email: 'demo@betterdays.com',
         name: 'Demo User',
         phone: '+1 555 0100',
-        // Mock-only plaintext password (the mock has no Argon2).
-        password: 'password123',
+        // Mock-only secure demo password to avoid browser password leak alerts
+        password: 'bdCare2026!Demo',
       },
     ],
     devices: [
