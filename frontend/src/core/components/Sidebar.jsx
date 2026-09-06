@@ -1,6 +1,7 @@
 import React from 'react';
 import logoIconSvg from '../../assets/logo-icon.svg';
 import logoTextSvg from '../../assets/logo-text.svg';
+import { useI18n } from '../i18n/presentation/useI18n.js';
 
 export default function Sidebar({
   activeTab,
@@ -13,12 +14,14 @@ export default function Sidebar({
   onToggleTheme,
   onOpenAddDevice,
 }) {
+  const { t } = useI18n();
+
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'fa-solid fa-table-columns' },
-    { id: 'map', label: 'Mapa', icon: 'fa-solid fa-map-location-dot' },
-    { id: 'tracker', label: 'Rastreador', icon: 'fa-solid fa-microchip' },
-    { id: 'indoor', label: 'Interno', icon: 'fa-solid fa-house-signal' },
-    { id: 'messages', label: 'Mensagens', icon: 'fa-solid fa-comments', badge: unreadCount },
+    { id: 'dashboard', label: t('nav.dashboard'), icon: 'fa-solid fa-table-columns' },
+    { id: 'map', label: t('nav.map'), icon: 'fa-solid fa-map-location-dot' },
+    { id: 'tracker', label: t('nav.tracker'), icon: 'fa-solid fa-microchip' },
+    { id: 'indoor', label: t('nav.indoor'), icon: 'fa-solid fa-house-signal' },
+    { id: 'messages', label: t('nav.messages'), icon: 'fa-solid fa-comments', badge: unreadCount },
   ];
 
   return (

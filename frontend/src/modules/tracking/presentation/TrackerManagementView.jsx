@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 export default function TrackerManagementView({
   devices = [],
@@ -17,6 +18,7 @@ export default function TrackerManagementView({
   theme,
   toggleTheme,
 }) {
+  const { t } = useI18n();
   const [searchTerm, setSearchTerm] = useState('');
   const [wearModeFilter, setWearModeFilter] = useState('all'); // 'all' | 'pulso' | 'roupa' | 'low_battery'
   const [pingingId, setPingingId] = useState(null);
@@ -46,19 +48,19 @@ export default function TrackerManagementView({
 
   const handlePingDevice = (device) => {
     setPingingId(device.id);
-    if (showToast) showToast(`Atualizando telemetria do relógio ${device.name}...`);
+    if (showToast) showToast(t('tracker.pingingToast', { name: device.name }));
     setTimeout(() => {
       setPingingId(null);
-      if (showToast) showToast(`Sinal do relógio ${device.name} recebido com sucesso (WearOS GPS 100%).`);
+      if (showToast) showToast(t('tracker.pingSuccessToast', { name: device.name }));
     }, 1200);
   };
 
   const handleVibrateDevice = (device) => {
     setVibratingId(device.id);
-    if (showToast) showToast(`Enviando comando de vibração e alarme sonoro para o relógio ${device.name}...`);
+    if (showToast) showToast(t('tracker.vibratingToast', { name: device.name }));
     setTimeout(() => {
       setVibratingId(null);
-      if (showToast) showToast(`Alerta emitido na tela e vibração ativada no relógio ${device.name}.`);
+      if (showToast) showToast(t('tracker.vibrateSuccessToast', { name: device.name }));
     }, 2000);
   };
 
@@ -80,13 +82,13 @@ export default function TrackerManagementView({
               type="button"
               className="breadcrumb-home-btn"
               onClick={() => onNavigateTab('dashboard')}
-              title="Voltar ao Dashboard"
+              title={t('common.back')}
             >
-              <i className="fa-solid fa-house"></i> Dashboard
+              <i className="fa-solid fa-house"></i> {t('nav.dashboard')}
             </button>
             <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
             <span className="breadcrumb-current">
-              <i className="fa-solid fa-clock" style={{ color: 'var(--color-primary)' }}></i> Rastreador
+              <i className="fa-solid fa-clock" style={{ color: 'var(--color-primary)' }}></i> {t('tracker.breadcrumb')}
             </span>
           </div>
         </div>
@@ -119,7 +121,7 @@ export default function TrackerManagementView({
               </div>
               <div className="tracker-stat-info">
                 <span className="tracker-stat-number">{devices.length}</span>
-                <span className="tracker-stat-title">Relógios Pareados</span>
+                <span className="tracker-stat-title">{t('tracker.pairedWatches')}</span>
               </div>
             </div>
 
@@ -129,7 +131,7 @@ export default function TrackerManagementView({
               </div>
               <div className="tracker-stat-info">
                 <span className="tracker-stat-number">{wristDevicesCount}</span>
-                <span className="tracker-stat-title">No Pulso</span>
+                <span className="tracker-stat-title">{t('tracker.onWrist')}</span>
               </div>
             </div>
 
@@ -139,7 +141,7 @@ export default function TrackerManagementView({
               </div>
               <div className="tracker-stat-info">
                 <span className="tracker-stat-number">{clothingDevicesCount}</span>
-                <span className="tracker-stat-title">Na Roupa (Clip)</span>
+                <span className="tracker-stat-title">{t('tracker.onClothing')}</span>
               </div>
             </div>
           </div>
@@ -150,7 +152,7 @@ export default function TrackerManagementView({
             onClick={onOpenAddDevice}
           >
             <i className="fa-brands fa-android"></i>
-            <span>Parear Relógio Android</span>
+            <span>{t('tracker.pairAndroidWatch')}</span>
           </button>
         </div>
 
@@ -160,7 +162,7 @@ export default function TrackerManagementView({
             <i className="fa-solid fa-magnifying-glass tracker-search-icon"></i>
             <input
               type="text"
-              placeholder="Buscar por paciente, código token (ex: BD-7492) ou observações..."
+              placeholder={t('tracker.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="tracker-search-input"
@@ -170,7 +172,7 @@ export default function TrackerManagementView({
                 type="button"
                 className="btn-clear-search"
                 onClick={() => setSearchTerm('')}
-                title="Limpar busca"
+                title={t('common.close')}
               >
                 <i className="fa-solid fa-xmark"></i>
               </button>
@@ -183,7 +185,7 @@ export default function TrackerManagementView({
               className={`filter-pill-btn ${wearModeFilter === 'all' ? 'active' : ''}`}
               onClick={() => setWearModeFilter('all')}
             >
-              Todos ({devices.length})
+              {t('tracker.filterAll', { count: devices.length })}
             </button>
             <button
               type="button"
@@ -191,7 +193,7 @@ export default function TrackerManagementView({
               onClick={() => setWearModeFilter('pulso')}
             >
               <i className="fa-solid fa-hand-holding-hand" style={{ fontSize: '11px' }}></i>
-              No Pulso ({wristDevicesCount})
+              {t('tracker.filterWrist', { count: wristDevicesCount })}
             </button>
             <button
               type="button"
@@ -199,7 +201,7 @@ export default function TrackerManagementView({
               onClick={() => setWearModeFilter('roupa')}
             >
               <i className="fa-solid fa-shirt" style={{ fontSize: '11px' }}></i>
-              Na Roupa ({clothingDevicesCount})
+              {t('tracker.filterClothing', { count: clothingDevicesCount })}
             </button>
             {lowBatteryCount > 0 && (
               <button
@@ -208,7 +210,7 @@ export default function TrackerManagementView({
                 onClick={() => setWearModeFilter('low_battery')}
               >
                 <span className="dot-indicator red"></span>
-                Bateria Baixa ({lowBatteryCount})
+                {t('tracker.filterLowBattery', { count: lowBatteryCount })}
               </button>
             )}
           </div>
@@ -220,11 +222,11 @@ export default function TrackerManagementView({
             <div className="tracker-empty-icon">
               <i className="fa-solid fa-clock"></i>
             </div>
-            <h3>Nenhum relógio encontrado</h3>
+            <h3>{t('tracker.emptyTitle')}</h3>
             <p>
               {searchTerm || wearModeFilter !== 'all'
-                ? 'Nenhum dispositivo wearable corresponde aos filtros aplicados.'
-                : 'Pareie o relógio Android do paciente via código token para acompanhar batimentos, quedas e localização 24 horas.'}
+                ? t('tracker.emptyFilterDesc')
+                : t('tracker.emptyPairDesc')}
             </p>
             {searchTerm || wearModeFilter !== 'all' ? (
               <button
@@ -235,7 +237,7 @@ export default function TrackerManagementView({
                   setWearModeFilter('all');
                 }}
               >
-                Limpar Filtros
+                {t('tracker.clearFilters')}
               </button>
             ) : (
               <button
@@ -243,7 +245,7 @@ export default function TrackerManagementView({
                 className="btn-connect-tracker"
                 onClick={onOpenAddDevice}
               >
-                <i className="fa-brands fa-android"></i> Parear Primeiro Relógio
+                <i className="fa-brands fa-android"></i> {t('tracker.pairFirstWatch')}
               </button>
             )}
           </div>
@@ -272,9 +274,9 @@ export default function TrackerManagementView({
                         <div className="tracker-id-badge">
                           <span className={`wear-mode-pill ${isWrist ? 'wrist' : 'clothing'}`}>
                             <i className={isWrist ? 'fa-solid fa-hand-holding-hand' : 'fa-solid fa-shirt'}></i>
-                            {isWrist ? 'No Pulso' : 'Na Roupa'}
+                            {isWrist ? t('tracker.onWrist') : t('tracker.onClothing')}
                           </span>
-                          <span className="pairing-token-pill" title="Token de pareamento com aplicativo Android">
+                          <span className="pairing-token-pill" title="Token de pareamento">
                             <i className="fa-brands fa-android" style={{ color: '#3DDC84' }}></i>
                             <code>{pairingCode}</code>
                           </span>
@@ -284,7 +286,7 @@ export default function TrackerManagementView({
 
                     <div className="tracker-status-tag-live">
                       <i className="fa-solid fa-wifi"></i>
-                      <span>WearOS Ativo</span>
+                      <span>{t('tracker.wearOsActive')}</span>
                     </div>
                   </div>
 
@@ -299,10 +301,10 @@ export default function TrackerManagementView({
                     <div className="sensor-metric-box">
                       <div className="sensor-metric-header">
                         <i className="fa-solid fa-heart-pulse sensor-icon heart fa-beat" style={{ animationDuration: '1.2s' }}></i>
-                        <span className="sensor-metric-label">Batimentos</span>
+                        <span className="sensor-metric-label">{t('tracker.heartRateLabel')}</span>
                       </div>
                       <span className="sensor-metric-value">
-                        {heartRate ? `${heartRate} BPM` : 'Sensor Clip'}
+                        {heartRate ? `${heartRate} BPM` : t('tracker.sensorClip')}
                       </span>
                     </div>
 
@@ -310,10 +312,10 @@ export default function TrackerManagementView({
                     <div className="sensor-metric-box">
                       <div className="sensor-metric-header">
                         <i className="fa-solid fa-person-falling sensor-icon fall"></i>
-                        <span className="sensor-metric-label">Sensor Queda</span>
+                        <span className="sensor-metric-label">{t('tracker.fallSensor')}</span>
                       </div>
                       <span className="sensor-metric-value ok">
-                        Protegido
+                        {t('tracker.protected')}
                       </span>
                     </div>
 
@@ -321,7 +323,7 @@ export default function TrackerManagementView({
                     <div className="sensor-metric-box">
                       <div className="sensor-metric-header">
                         <i className={`fa-solid ${isLowBat ? 'fa-battery-quarter' : 'fa-battery-full'} sensor-icon battery ${isLowBat ? 'low' : 'ok'}`}></i>
-                        <span className="sensor-metric-label">Bateria</span>
+                        <span className="sensor-metric-label">{t('tracker.battery')}</span>
                       </div>
                       <span className={`sensor-metric-value ${isLowBat ? 'low' : 'ok'}`}>
                         {device.battery_level || 0}%
@@ -343,7 +345,7 @@ export default function TrackerManagementView({
                   <div className="tracker-telemetry-box">
                     <div className="tracker-telemetry-row">
                       <span className="telemetry-label">
-                        <i className="fa-solid fa-location-crosshairs"></i> Satélite GPS:
+                        <i className="fa-solid fa-location-crosshairs"></i> {t('tracker.gpsSatellite')}
                       </span>
                       <span className="telemetry-val">
                         {device.lat ? device.lat.toFixed(5) : '-23.5505'}, {device.lng ? device.lng.toFixed(5) : '-46.6333'}
@@ -351,10 +353,10 @@ export default function TrackerManagementView({
                     </div>
                     <div className="tracker-telemetry-row">
                       <span className="telemetry-label">
-                        <i className="fa-solid fa-shield-heart"></i> Segurança:
+                        <i className="fa-solid fa-shield-heart"></i> {t('tracker.security')}
                       </span>
                       <span className="telemetry-val safe">
-                        3 Cercas Ativas (InCor, Casa, Parque)
+                        {t('tracker.activeFences')}
                       </span>
                     </div>
                   </div>
@@ -368,28 +370,28 @@ export default function TrackerManagementView({
                         if (onSelectDeviceForMap) onSelectDeviceForMap(device);
                         onNavigateTab('map');
                       }}
-                      title="Ver localização do relógio no mapa"
+                      title={t('tracker.viewOnMap')}
                     >
                       <i className="fa-solid fa-map-location-dot"></i>
-                      <span>Ver no Mapa</span>
+                      <span>{t('tracker.viewOnMap')}</span>
                     </button>
 
                     <button
                       type="button"
                       className={`btn-tracker-action sound ${isVibrating ? 'active' : ''}`}
                       onClick={() => handleVibrateDevice(device)}
-                      title="Fazer o relógio vibrar e emitir alerta sonoro"
+                      title={t('tracker.vibrateBeep')}
                       disabled={isVibrating}
                     >
                       <i className={`fa-solid ${isVibrating ? 'fa-mobile-screen-button fa-shake' : 'fa-mobile-screen-button'}`}></i>
-                      <span>{isVibrating ? 'Vibrando...' : 'Vibrar / Bipar'}</span>
+                      <span>{isVibrating ? t('tracker.vibrating') : t('tracker.vibrateBeep')}</span>
                     </button>
 
                     <button
                       type="button"
                       className="btn-tracker-action refresh"
                       onClick={() => handlePingDevice(device)}
-                      title="Sincronizar telemetria do relógio"
+                      title={t('tracker.syncTelemetry')}
                       disabled={isPinging}
                     >
                       <i className={`fa-solid ${isPinging ? 'fa-arrows-rotate fa-spin' : 'fa-arrows-rotate'}`}></i>
@@ -399,7 +401,7 @@ export default function TrackerManagementView({
                       type="button"
                       className="btn-tracker-action danger"
                       onClick={() => onDeleteDevice(device.id, device.name)}
-                      title="Desparear relógio"
+                      title={t('tracker.unpairDevice')}
                     >
                       <i className="fa-solid fa-trash-can"></i>
                     </button>

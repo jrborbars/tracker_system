@@ -1,8 +1,10 @@
 import React from 'react';
 import useNetworkStatus from '../hooks/useNetworkStatus';
+import { useI18n } from '../i18n/presentation/useI18n.js';
 
 export default function NetworkStatusBar() {
   const { isOnline, showReconnected, isDismissed, dismiss, checkConnectivity } = useNetworkStatus();
+  const { t } = useI18n();
 
   if ((isOnline && !showReconnected) || isDismissed) {
     return null;
@@ -19,22 +21,22 @@ export default function NetworkStatusBar() {
           <>
             <i className="fa-solid fa-wifi-slash network-status-icon" aria-hidden="true"></i>
             <span className="network-status-text">
-              <strong>Modo Offline</strong> — Sem conexão com a internet. Exibindo dados locais em cache.
+              <strong>{t('pwa.offlineMode')}</strong> — {t('pwa.offlineDesc')}
             </span>
             <div className="network-status-actions">
               <button
                 type="button"
                 className="network-status-btn-retry"
                 onClick={() => checkConnectivity()}
-                title="Testar conexão com o servidor local"
+                title={t('pwa.retry')}
               >
-                <i className="fa-solid fa-rotate-right"></i> Reconectar
+                <i className="fa-solid fa-rotate-right"></i> {t('pwa.retry')}
               </button>
               <button
                 type="button"
                 className="network-status-btn-close"
                 onClick={dismiss}
-                title="Dispensar aviso"
+                title={t('pwa.dismiss')}
               >
                 <i className="fa-solid fa-xmark"></i>
               </button>
@@ -44,13 +46,13 @@ export default function NetworkStatusBar() {
           <>
             <i className="fa-solid fa-circle-check network-status-icon" aria-hidden="true"></i>
             <span className="network-status-text">
-              <strong>Conexão restabelecida!</strong> Sincronizando telemetria e mensagens...
+              <strong>{t('pwa.reconnected')}</strong> {t('pwa.reconnectedDesc')}
             </span>
             <button
               type="button"
               className="network-status-btn-close"
               onClick={dismiss}
-              title="Dispensar aviso"
+              title={t('pwa.dismiss')}
             >
               <i className="fa-solid fa-xmark"></i>
             </button>

@@ -10,6 +10,7 @@ import trackingRepository from '../../tracking/infrastructure/trackingRepository
 import chatRepository from '../../care-chat/infrastructure/chatRepository.js';
 import socketService from '../../../core/services/socketService.js';
 import notificationService from '../../../core/services/notificationService.js';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 import '../../../styles/MainApp.css';
 
 // Code Splitting sob demanda para carregamento instantâneo do bundle
@@ -21,6 +22,7 @@ const CareGroupsChatView = lazy(() => import('../../care-chat/presentation/CareG
 const ProfileView = lazy(() => import('../../profile/presentation/ProfileView.jsx'));
 
 function TabLoadingFallback() {
+  const { t } = useI18n();
   return (
     <div
       className="tab-loading-fallback"
@@ -46,13 +48,14 @@ function TabLoadingFallback() {
         }}
       />
       <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-text, #1e293b)' }}>
-        Carregando módulo...
+        {t('common.loadingModule')}
       </span>
     </div>
   );
 }
 
 export default function MainApp({ token, onLogout }) {
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState(() => {
     try {
       return sessionStorage.getItem('betterdays_active_tab') || 'dashboard';
@@ -177,27 +180,25 @@ export default function MainApp({ token, onLogout }) {
   const handleQuickLocate = () => {
     setSosActive(true);
     setActiveTab('map');
-    showToast('🚨 Protocolo SOS Ativado! Localizando familiar via satélite e traçando rotas de socorro.');
-    notificationService.notifyEmergencySOS(
-      profile?.name || 'Familiar',
-      'Protocolo SOS Ativado! Rastreamento de emergência iniciado.'
-    );
-    setTimeout(() => setSosActive(false), 8000);
+    showToast(t('dashboard.emergencyActive'));
   };
 
-  // Cadastrar Dispositivo
   const handleAddDevice = async (deviceData) => {
-    await trackingRepository.createDevice(token, deviceData);
-    await loadData();
-    showToast(`Rastreador "${deviceData.name}" conectado com sucesso!`);
+    try {
+      const created = await trackingRepository.createDevice(token, deviceData);
+      setDevices((prev) => [...prev, created]);
+      showToast(t('tracking.addSuccess'));
+      setIsAddModalOpen(false);
+    } catch (err) {
+      showToast(err.message || 'Erro ao parear dispositivo.');
+    }
   };
 
-  // Excluir Dispositivo
   const handleDeleteDevice = async (id, name) => {
-    if (window.confirm(`Deseja realmente remover o rastreador "${name}"?`)) {
+    if (window.confirm(t('tracking.deleteConfirm'))) {
       await trackingRepository.deleteDevice(token, id);
-      await loadData();
-      showToast(`Rastreador "${name}" removido.`);
+      setDevices((prev) => prev.filter((d) => d.id !== id));
+      showToast(t('tracking.deleteSuccess'));
     }
   };
 
@@ -284,7 +285,7 @@ export default function MainApp({ token, onLogout }) {
               <div className="page-title">
                 <div className="header-breadcrumbs">
                   <span className="breadcrumb-current">
-                    <i className="fa-solid fa-house"></i> Dashboard
+                    <i className="fa-solid fa-house"></i> {t('dashboard.breadcrumb')}
                   </span>
                 </div>
               </div>
@@ -313,9 +314,9 @@ export default function MainApp({ token, onLogout }) {
                     <i className="fa-solid fa-heart-pulse"></i>
                   </div>
                   <div className="sos-text">
-                    <h3>Localização Rápida de Emergência (SOS)</h3>
+                    <h3>{t('dashboard.sosTitle')}</h3>
                     <p>
-                      Rastreio e socorro imediato via satélite em caso de emergência.
+                      {t('dashboard.sosDesc')}
                     </p>
                   </div>
                 </div>
@@ -324,7 +325,7 @@ export default function MainApp({ token, onLogout }) {
                   className="btn-locate-emergency"
                   onClick={handleQuickLocate}
                 >
-                  <i className="fa-solid fa-crosshairs"></i> LOCALIZAR AGORA
+                  <i className="fa-solid fa-crosshairs"></i> {t('dashboard.locateNow')}
                 </button>
               </div>
 
@@ -336,7 +337,7 @@ export default function MainApp({ token, onLogout }) {
                   </div>
                   <div className="stat-data">
                     <div className="stat-value">{devices.length}</div>
-                    <div className="stat-label">Familiares Conectados</div>
+                    <div className="stat-label">{t('dashboard.stats.trackersOnline')}</div>
                   </div>
                 </div>
 
@@ -346,7 +347,7 @@ export default function MainApp({ token, onLogout }) {
                   </div>
                   <div className="stat-data">
                     <div className="stat-value">{avgBattery}%</div>
-                    <div className="stat-label">Bateria Média dos Dispositivos</div>
+                    <div className="stat-label">{t('dashboard.devicesList.battery')}</div>
                   </div>
                 </div>
 
@@ -356,7 +357,7 @@ export default function MainApp({ token, onLogout }) {
                   </div>
                   <div className="stat-data">
                     <div className="stat-value">{areas.length}</div>
-                    <div className="stat-label">Zonas Seguras Configuradas</div>
+                    <div className="stat-label">{t('dashboard.stats.geofencesActive')}</div>
                   </div>
                 </div>
 
@@ -366,7 +367,7 @@ export default function MainApp({ token, onLogout }) {
                   </div>
                   <div className="stat-data">
                     <div className="stat-value">{messages.length}</div>
-                    <div className="stat-label">Alertas Registrados</div>
+                    <div className="stat-label">{t('dashboard.stats.unreadAlerts')}</div>
                   </div>
                 </div>
               </div>
@@ -375,22 +376,22 @@ export default function MainApp({ token, onLogout }) {
               <div className="section-heading">
                 <h2>
                   <i className="fa-solid fa-satellite-dish" style={{ color: 'var(--color-primary)' }}></i>
-                  Status dos Rastreadores Satelitais
+                  {t('dashboard.devicesList.title')}
                 </h2>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  Atualização contínua via constelação GPS
+                  {t('dashboard.devicesList.subtitle')}
                 </span>
               </div>
 
               {devices.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--bg-surface)', borderRadius: 'var(--radius-lg)', border: '1px dashed var(--border-color)' }}>
                   <i className="fa-solid fa-satellite" style={{ fontSize: '36px', color: 'var(--color-primary-subtle)', marginBottom: '12px' }}></i>
-                  <h3 style={{ fontSize: '16px', color: 'var(--text-main)' }}>Nenhum rastreador conectado</h3>
+                  <h3 style={{ fontSize: '16px', color: 'var(--text-main)' }}>{t('dashboard.devicesList.noDevices')}</h3>
                   <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px', marginBottom: '16px' }}>
-                    Conecte a primeira pulseira ou dispositivo satelital para iniciar o acompanhamento.
+                    {t('tracking.addDeviceSubtitle')}
                   </p>
                   <button type="button" className="btn-primary-action" style={{ margin: '0 auto' }} onClick={() => setIsAddModalOpen(true)}>
-                    <i className="fa-solid fa-plus"></i> Conectar Primeiro Dispositivo
+                    <i className="fa-solid fa-plus"></i> {t('tracking.addDeviceTitle')}
                   </button>
                 </div>
               ) : (
@@ -409,7 +410,7 @@ export default function MainApp({ token, onLogout }) {
 
                       <div className="device-badge-row">
                         <span className="badge-chip safe">
-                          <i className="fa-solid fa-shield-halved"></i> Zona Segura Ativa
+                          <i className="fa-solid fa-shield-halved"></i> {t('dashboard.stats.geofencesActive')}
                         </span>
                         <span className={`badge-chip ${device.battery_level < 25 ? 'battery-low' : 'battery-ok'}`}>
                           <i className="fa-solid fa-battery-three-quarters"></i> {device.battery_level}%
@@ -421,8 +422,8 @@ export default function MainApp({ token, onLogout }) {
                       </p>
 
                       <div style={{ fontSize: '11px', color: 'var(--text-light)', display: 'flex', justifyContent: 'space-between' }}>
-                        <span>Lat: {device.lat ? device.lat.toFixed(4) : 'Simulado'}</span>
-                        <span>Lng: {device.lng ? device.lng.toFixed(4) : 'Simulado'}</span>
+                        <span>Lat: {device.lat ? device.lat.toFixed(4) : '—'}</span>
+                        <span>Lng: {device.lng ? device.lng.toFixed(4) : '—'}</span>
                       </div>
 
                       <div className="device-actions">
@@ -434,13 +435,13 @@ export default function MainApp({ token, onLogout }) {
                             setActiveTab('map');
                           }}
                         >
-                          <i className="fa-solid fa-map-pin"></i> Ver no Mapa
+                          <i className="fa-solid fa-map-pin"></i> {t('dashboard.devicesList.viewOnMap')}
                         </button>
                         <button
                           type="button"
                           className="btn-card-action danger"
                           onClick={() => handleDeleteDevice(device.id, device.name)}
-                          title="Remover Dispositivo"
+                          title={t('common.delete')}
                         >
                           <i className="fa-solid fa-trash-can"></i>
                         </button>
@@ -465,13 +466,13 @@ export default function MainApp({ token, onLogout }) {
                     type="button"
                     className="breadcrumb-home-btn"
                     onClick={() => setActiveTab('dashboard')}
-                    title="Voltar ao Dashboard"
+                    title={t('nav.dashboard')}
                   >
-                    <i className="fa-solid fa-house"></i> Dashboard
+                    <i className="fa-solid fa-house"></i> {t('nav.dashboard')}
                   </button>
                   <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
                   <span className="breadcrumb-current">
-                    <i className="fa-solid fa-map-location-dot" style={{ color: 'var(--color-primary)' }}></i> Mapa Satelital & Cercas
+                    <i className="fa-solid fa-map-location-dot" style={{ color: 'var(--color-primary)' }}></i> {t('tracking.breadcrumb')}
                   </span>
                 </div>
               </div>
@@ -481,7 +482,7 @@ export default function MainApp({ token, onLogout }) {
                   className="btn-locate-emergency"
                   onClick={handleQuickLocate}
                 >
-                  <i className="fa-solid fa-crosshairs"></i> Protocolo SOS
+                  <i className="fa-solid fa-crosshairs"></i> {t('dashboard.emergencyProtocol')}
                 </button>
                 <UserAvatarMenu
                   profile={profile}
@@ -504,14 +505,14 @@ export default function MainApp({ token, onLogout }) {
                 <div className="map-header-bar">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 700, color: 'var(--color-primary-dark)' }}>
                     <i className="fa-solid fa-satellite" style={{ color: 'var(--color-primary)' }}></i>
-                    Sinal GPS Satelital: <span style={{ color: 'var(--color-success-dark)', fontWeight: 700 }}>Conectado (Alta Precisão Leaflet)</span>
+                    {t('tracking.gpsSignal')} <span style={{ color: 'var(--color-success-dark)', fontWeight: 700 }}>{t('tracking.gpsConnected')}</span>
                   </div>
                   <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                     <span className="badge-chip safe">
-                      <i className="fa-solid fa-draw-polygon"></i> 3 Cercas Ativas (InCor, Casa, Parque)
+                      <i className="fa-solid fa-draw-polygon"></i> {t('tracking.geofencesCount', { count: areas.length || 3 })}
                     </span>
                     <span className="badge-chip battery-ok">
-                      <i className="fa-solid fa-user-check"></i> {devices.length} Rastreadores no Radar
+                      <i className="fa-solid fa-user-check"></i> {t('tracking.trackersRadar', { count: devices.length })}
                     </span>
                   </div>
                 </div>
@@ -566,13 +567,13 @@ export default function MainApp({ token, onLogout }) {
                     type="button"
                     className="breadcrumb-home-btn"
                     onClick={() => setActiveTab('dashboard')}
-                    title="Voltar ao Dashboard"
+                    title={t('nav.dashboard')}
                   >
-                    <i className="fa-solid fa-house"></i> Dashboard
+                    <i className="fa-solid fa-house"></i> {t('nav.dashboard')}
                   </button>
                   <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
                   <span className="breadcrumb-current">
-                    <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i> Grupos & Mensagens
+                    <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i> {t('chat.breadcrumb')}
                   </span>
                 </div>
               </div>

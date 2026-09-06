@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getUserInitials, getAbsolutePhotoUrl } from '../../modules/profile/domain/profileModel.js';
+import { useI18n } from '../i18n/presentation/useI18n.js';
 
 export default function UserAvatarMenu({
   profile,
@@ -19,6 +20,7 @@ export default function UserAvatarMenu({
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const menuRef = useRef(null);
+  const { t, language, changeLanguage, supportedLanguages, languageMeta } = useI18n();
 
   // Detectar se já está instalado ou rodando como PWA standalone
   useEffect(() => {
@@ -40,7 +42,7 @@ export default function UserAvatarMenu({
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
-        if (showToast) showToast('Aplicativo Betterdays instalado com sucesso!');
+        if (showToast) showToast(t('pwa.successInstalled'));
       }
       setDeferredPrompt(null);
       setIsOpen(false);
@@ -49,21 +51,16 @@ export default function UserAvatarMenu({
       const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
       if (isIos) {
         if (showToast) {
-          showToast('Para instalar no iPhone/iPad: Toque no botão Compartilhar ⎋ e selecione "Adicionar à Tela de Início ⊞"');
+          showToast(t('pwa.iosInstallHint'));
         }
       } else {
         if (showToast) {
-          showToast('Para instalar o Betterdays: Clique no ícone de instalar (⊕) na barra de endereços do seu navegador.');
+          showToast(t('pwa.browserInstallHint'));
         }
       }
       setIsOpen(false);
     }
   };
-
-  const userName = profile?.name || 'Demo User';
-  const userEmail = profile?.email || 'familiar@betterdays.com';
-  const initials = getUserInitials(userName);
-  const avatarUrl = getAbsolutePhotoUrl(profile?.photo_url);
 
   // Fechar menu ao clicar fora
   useEffect(() => {
@@ -72,56 +69,134 @@ export default function UserAvatarMenu({
         setIsOpen(false);
       }
     };
-
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
+  const avatarUrl = getAbsolutePhotoUrl(profile?.photo_url);
+
   return (
-    <div className={`user-avatar-menu-wrapper ${isMobile ? 'mobile' : ''}`} ref={menuRef}>
-      {/* Botão Gatilho do Avatar (Apenas o Círculo do Avatar) */}
+    <div className={`user-avatar-menu-container ${isMobile ? 'mobile-mode' : ''}`} ref={menuRef}>
+      {/* Botão Gatilho do Avatar */}
       <button
         type="button"
-        className={`btn-user-avatar-trigger ${isOpen ? 'active' : ''} ${isMobile ? 'mobile-trigger' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        title={`Menu do Usuário (${userName})`}
+        className="user-avatar-trigger-btn"
+        onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
-        aria-haspopup="true"
+        aria-label={t('nav.menu')}
+        title={profile?.name || 'Perfil Familiar'}
       >
-        <div className="avatar-circle">
+        <div className="avatar-circle-sm">
           {avatarUrl ? (
-            <img src={avatarUrl} alt={userName} className="avatar-img" />
+            <img
+              src={avatarUrl}
+              alt={profile?.name || 'Foto do perfil'}
+              className="avatar-img-sm"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
           ) : (
-            <span className="avatar-initials">{initials}</span>
+            <span className="avatar-initials-sm">{getUserInitials(profile?.name)}</span>
           )}
-          <span className="avatar-online-dot" title="Sessão Ativa"></span>
+          <span className="avatar-online-badge"></span>
         </div>
+        {!isMobile && (
+          <div className="user-brief-info">
+            <span className="user-brief-name">{profile?.name || 'Demo User'}</span>
+            <span className="user-brief-role">{profile?.email || 'demo@betterdays.com'}</span>
+          </div>
+        )}
+        <i className={`fa-solid fa-chevron-down avatar-chevron ${isOpen ? 'open' : ''}`}></i>
       </button>
 
       {/* Dropdown Menu Flutuante */}
       {isOpen && (
-        <div className={`avatar-dropdown-menu ${isMobile ? 'mobile-dropdown' : ''}`}>
-          {/* Cabeçalho do Dropdown */}
-          <div className="dropdown-user-header">
-            <div className="dropdown-avatar-large">
-              {avatarUrl ? (
-                <img src={avatarUrl} alt={userName} className="avatar-img" />
-              ) : (
-                <span className="avatar-initials-large">{initials}</span>
-              )}
+        <div className="user-avatar-dropdown animate-pop">
+          {/* Cabeçalho do Dropdown com Foto e Status */}
+          <div className="dropdown-user-card">
+            <div className="dropdown-avatar-wrapper">
+              <div className="dropdown-avatar-lg">
+                {avatarUrl ? (
+                  <img
+                    src={avatarUrl}
+                    alt={profile?.name || 'Foto do perfil'}
+                    className="dropdown-avatar-img"
+                  />
+                ) : (
+                  <span className="dropdown-avatar-initials">{getUserInitials(profile?.name)}</span>
+                )}
+              </div>
             </div>
-            <div className="dropdown-user-info">
-              <h4 className="dropdown-name">{userName}</h4>
-              <p className="dropdown-email">{userEmail}</p>
-              <span className="dropdown-badge">
-                <i className="fa-solid fa-shield-heart"></i> Cuidador Autorizado
-              </span>
+
+            <div className="dropdown-user-details">
+              <h4 className="dropdown-user-name">{profile?.name || 'Demo User'}</h4>
+              <span className="dropdown-user-email">{profile?.email || 'demo@betterdays.com'}</span>
+              <span className="dropdown-user-phone">{profile?.phone || '(11) 98765-4321'}</span>
+            </div>
+
+            {/* Status Médicos / Resumo Rápido */}
+            <div className="dropdown-status-tags">
+              <div className="dropdown-tag gps-ok">
+                <i className="fa-solid fa-circle-check"></i> {t('tracking.gpsConnected')}
+              </div>
+              <div className="dropdown-tag geofences">
+                <i className="fa-solid fa-draw-polygon"></i> {t('tracking.geofencesCount', { count: areasCount })}
+              </div>
+              <div className="dropdown-tag trackers">
+                <i className="fa-solid fa-user-check"></i> {t('dashboard.stats.trackersOnline')}
+              </div>
             </div>
           </div>
+
+          <div className="dropdown-divider"></div>
+
+          {/* Seletor de Idioma */}
+          <div style={{ padding: '10px 14px 6px' }}>
+            <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--color-text-muted, #64748b)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <i className="fa-solid fa-globe" style={{ color: 'var(--color-primary)' }}></i>
+              {t('common.language')}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
+              {supportedLanguages.map((lang) => {
+                const isSelected = language === lang;
+                const meta = languageMeta[lang];
+                return (
+                  <button
+                    key={lang}
+                    type="button"
+                    onClick={() => {
+                      changeLanguage(lang);
+                      if (showToast) showToast(`${meta.flag} ${meta.name} (${meta.region})`);
+                    }}
+                    style={{
+                      padding: '6px 4px',
+                      border: isSelected ? '2px solid var(--color-primary, #0D9488)' : '1px solid var(--color-border, #e2e8f0)',
+                      borderRadius: '8px',
+                      background: isSelected ? 'var(--color-primary-light, rgba(13, 148, 136, 0.12))' : 'transparent',
+                      color: isSelected ? 'var(--color-primary, #0D9488)' : 'var(--color-text, #1e293b)',
+                      fontSize: '11px',
+                      fontWeight: isSelected ? 700 : 500,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '2px',
+                      transition: 'all 0.2s ease',
+                    }}
+                    title={`${meta.name} (${meta.region})`}
+                  >
+                    <span style={{ fontSize: '15px' }}>{meta.flag}</span>
+                    <span style={{ fontSize: '10px', letterSpacing: '0.5px' }}>{meta.code.toUpperCase()}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="dropdown-divider"></div>
 
           {/* Botão de Emergência Rápida SOS dentro do Menu */}
           {onEmergencySOS && (
@@ -135,33 +210,11 @@ export default function UserAvatarMenu({
                 }}
               >
                 <i className="fa-solid fa-crosshairs"></i>
-                <span>Disparar Protocolo SOS</span>
+                <span>{t('dashboard.emergencyProtocol')}</span>
               </button>
             </div>
           )}
 
-          {/* Seção de Status do Sistema & Satélite (Visível no Mobile e Desktop) */}
-          <div className="dropdown-telemetry-box">
-            <div className="dropdown-telemetry-title">
-              <i className="fa-solid fa-satellite-dish" style={{ color: 'var(--color-primary)' }}></i>
-              <span>Status do Satélite & Cercas</span>
-            </div>
-            <div className="dropdown-telemetry-tags">
-              <div className="dropdown-tag gps-ok">
-                <i className="fa-solid fa-circle-check"></i> GPS: Conectado (Leaflet)
-              </div>
-              <div className="dropdown-tag geofences">
-                <i className="fa-solid fa-draw-polygon"></i> {areasCount} Cercas Ativas (InCor, Casa, Parque)
-              </div>
-              <div className="dropdown-tag trackers">
-                <i className="fa-solid fa-user-check"></i> {devicesCount} Rastreadores no Radar
-              </div>
-            </div>
-          </div>
-
-          <div className="dropdown-divider"></div>
-
-          {/* Opções do Menu */}
           <div className="dropdown-actions-list">
             {/* Opção Tema: Alternar Modo Escuro / Claro */}
             {onToggleTheme && (
@@ -177,7 +230,7 @@ export default function UserAvatarMenu({
                 </div>
                 <div className="action-text">
                   <span className="action-title">
-                    {theme === 'dark' ? 'Claro' : 'Escuro'}
+                    {theme === 'dark' ? t('common.themeLight') : t('common.themeDark')}
                   </span>
                   <span className="action-subtitle">Alternar tema visual</span>
                 </div>
@@ -197,8 +250,8 @@ export default function UserAvatarMenu({
                 <i className="fa-solid fa-gear"></i>
               </div>
               <div className="action-text">
-                <span className="action-title">Configurar</span>
-                <span className="action-subtitle">Perfil e dados médicos</span>
+                <span className="action-title">{t('nav.profile')}</span>
+                <span className="action-subtitle">{t('profile.personalSection')}</span>
               </div>
             </button>
 
@@ -216,53 +269,15 @@ export default function UserAvatarMenu({
                   <i className="fa-solid fa-download"></i>
                 </div>
                 <div className="action-text">
-                  <span className="action-title">Instalar</span>
-                  <span className="action-subtitle">Adicionar à tela de início</span>
+                  <span className="action-title">{t('pwa.installApp')}</span>
+                  <span className="action-subtitle">PWA Standalone</span>
                 </div>
               </button>
             )}
 
-            {/* Opção PWA: Notificações do Sistema */}
-            <button
-              type="button"
-              className="dropdown-action-item"
-              onClick={async () => {
-                if ('Notification' in window) {
-                  if (Notification.permission === 'granted') {
-                    if (showToast) showToast('🔔 Notificações do sistema ativas para alertas e SOS!');
-                  } else {
-                    const perm = await Notification.requestPermission();
-                    if (perm === 'granted') {
-                      if (showToast) showToast('✅ Notificações nativas ativadas com sucesso!');
-                    } else {
-                      if (showToast) showToast('⚠️ Permissão de notificação recusada no navegador.');
-                    }
-                  }
-                } else {
-                  if (showToast) showToast('Navegador não suporta notificações nativas.');
-                }
-                setIsOpen(false);
-              }}
-            >
-              <div
-                className="action-icon-circle"
-                style={{ backgroundColor: 'rgba(59, 130, 246, 0.12)', color: '#3B82F6' }}
-              >
-                <i className="fa-solid fa-bell"></i>
-              </div>
-              <div className="action-text">
-                <span className="action-title">Notificações</span>
-                <span className="action-subtitle">
-                  {typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
-                    ? 'Ativas para alertas SOS'
-                    : 'Ativar alertas no sistema'}
-                </span>
-              </div>
-            </button>
-
             <div className="dropdown-divider"></div>
 
-            {/* Opção 3: Sair */}
+            {/* Opção Sair */}
             <button
               type="button"
               className="dropdown-action-item logout"
@@ -275,8 +290,8 @@ export default function UserAvatarMenu({
                 <i className="fa-solid fa-right-from-bracket"></i>
               </div>
               <div className="action-text">
-                <span className="action-title">Sair</span>
-                <span className="action-subtitle">Encerrar sessão na central</span>
+                <span className="action-title">{t('nav.logout')}</span>
+                <span className="action-subtitle">Encerrar sessão</span>
               </div>
             </button>
           </div>

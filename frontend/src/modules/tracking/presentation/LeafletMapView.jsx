@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import RouteDrawer, { PRESET_LOCATIONS } from './RouteDrawer.jsx';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 // Coordenadas padrão de referência (Região dos Hospitais / Av. Paulista / InCor - São Paulo)
 const DEFAULT_CENTER = [-23.5614, -46.6560];
@@ -49,6 +50,7 @@ export default function LeafletMapView({
   showToast,
   theme = 'light',
 }) {
+  const { t } = useI18n();
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const tileLayerRef = useRef(null);
@@ -505,10 +507,10 @@ export default function LeafletMapView({
                 });
               }
             }}
-            title="Abrir Painel de Traçado de Rota de Apoio"
+            title={t('tracking.routesBtn')}
           >
             <i className="fa-solid fa-route"></i>
-            <span>Traçar Rota de Apoio</span>
+            <span>{t('tracking.routesBtn')}</span>
             {activeRoute && <span className="route-active-dot" title="Traçado Ativo"></span>}
           </button>
         </div>
@@ -519,10 +521,10 @@ export default function LeafletMapView({
             type="button"
             className={`btn-map-locate-me ${isLocating ? 'locating' : ''} ${userLocation ? 'located' : ''}`}
             onClick={handleLocateUser}
-            title="Localizar Minha Posição no Navegador (GPS)"
+            title={t('tracking.locateMe')}
           >
             <i className={`fa-solid ${isLocating ? 'fa-spinner fa-spin' : userLocation ? 'fa-location-crosshairs' : 'fa-crosshairs'}`}></i>
-            <span>{isLocating ? 'Obtendo GPS...' : userLocation ? 'GPS Ativo' : 'Minha Localização'}</span>
+            <span>{isLocating ? t('common.loading') : userLocation ? t('common.online') : t('tracking.locateMe')}</span>
           </button>
         </div>
 
@@ -532,19 +534,19 @@ export default function LeafletMapView({
             type="button"
             className={`btn-map-layer ${currentLayerType === 'carto' ? 'active' : ''}`}
             onClick={() => setCurrentLayerType('carto')}
-            title="Mapa CartoDB Positron (Pastel)"
+            title={t('tracking.layerCarto')}
           >
             <i className="fa-solid fa-map"></i>
-            <span>Mapa Pastel</span>
+            <span>{t('tracking.layerCarto')}</span>
           </button>
           <button
             type="button"
             className={`btn-map-layer ${currentLayerType === 'satellite' ? 'active' : ''}`}
             onClick={() => setCurrentLayerType('satellite')}
-            title="Satélite Esri Alta Resolução"
+            title={t('tracking.layerSatellite')}
           >
             <i className="fa-solid fa-satellite"></i>
-            <span>Satélite Real</span>
+            <span>{t('tracking.layerSatellite')}</span>
           </button>
         </div>
 

@@ -1,51 +1,56 @@
 import React, { useState, useEffect, useRef } from 'react';
 import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 // Ambientes monitorados (Residência / Clínica / Suíte Hospitalar)
 const DEFAULT_ROOMS = [
   {
     id: 'bedroom',
-    name: 'Quarto Principal (Suíte)',
+    nameKey: 'indoor.bedroom',
+    defaultName: 'Quarto Principal (Suíte)',
     icon: 'fa-solid fa-bed',
-    sensorType: 'Radar Doppler de Presença & Micro-movimentos',
+    sensorType: 'Radar Doppler UWB',
     sensorModel: 'UWB-Sens-204',
     hasCamera: true,
-    cameraName: 'Câmera Noturna Quarto (HD)',
-    cameraSnapshot: 'Quarto em repouso • Leito hospitalar com oxímetro ao lado',
+    cameraName: 'Câmera HD',
+    cameraSnapshot: 'Quarto em repouso • Leito com oxímetro',
     maxSafeMinutes: 480, // 8 horas
     riskLevel: 'low',
     gridArea: 'bedroom',
   },
   {
     id: 'bathroom',
-    name: 'Banheiro Adaptado',
+    nameKey: 'indoor.bathroom',
+    defaultName: 'Banheiro Adaptado',
     icon: 'fa-solid fa-shower',
-    sensorType: 'Sensor Térmico & Radar Anti-Queda',
+    sensorType: 'PIR-Thermal & Anti-Queda',
     sensorModel: 'PIR-Thermal-Safe',
     hasCamera: false, // Privacidade estrita
-    cameraName: 'Sem Câmera (Privacidade Total)',
+    cameraName: 'Sem Câmera',
     maxSafeMinutes: 15, // Alerta crítico se passar de 15 min
     riskLevel: 'high',
     gridArea: 'bathroom',
   },
   {
     id: 'living',
-    name: 'Sala de Estar & Convivência',
+    nameKey: 'indoor.livingRoom',
+    defaultName: 'Sala de Estar',
     icon: 'fa-solid fa-couch',
-    sensorType: 'Sensor Óptico de Movimento & Presença',
+    sensorType: 'Sensor Óptico PIR',
     sensorModel: 'PIR-Optic-102',
     hasCamera: true,
     cameraName: 'Câmera Panorâmica Sala',
-    cameraSnapshot: 'Sala de estar iluminada • Poltrona reclinável de repouso',
+    cameraSnapshot: 'Sala de estar iluminada • Poltrona reclinável',
     maxSafeMinutes: 180,
     riskLevel: 'low',
     gridArea: 'living',
   },
   {
     id: 'kitchen',
-    name: 'Cozinha / Copa',
+    nameKey: 'indoor.kitchen',
+    defaultName: 'Cozinha',
     icon: 'fa-solid fa-kitchen-set',
-    sensorType: 'Sensor Magnético de Porta & Presença',
+    sensorType: 'Sensor Magnético & Presença',
     sensorModel: 'Door-PIR-Combo',
     hasCamera: false,
     cameraName: 'Sem Câmera',
@@ -55,9 +60,10 @@ const DEFAULT_ROOMS = [
   },
   {
     id: 'balcony',
-    name: 'Varanda / Área Externa',
+    nameKey: 'indoor.balcony',
+    defaultName: 'Varanda / Área Externa',
     icon: 'fa-solid fa-tree',
-    sensorType: 'Sensor de Presença Perimetral',
+    sensorType: 'Sensor Perimetral UWB',
     sensorModel: 'UWB-Out-401',
     hasCamera: true,
     cameraName: 'Câmera Externa Jardim',
@@ -79,8 +85,9 @@ export default function IndoorMonitoringView({
   areasCount,
   onEmergencySOS,
   theme,
-  onToggleTheme,
+  toggleTheme,
 }) {
+  const { t, locale } = useI18n();
   const [currentRoomId, setCurrentRoomId] = useState('bathroom'); // Inicia simulando o banheiro para demonstrar o cronômetro e alerta
   const [secondsInRoom, setSecondsInRoom] = useState(874); // ~14 minutos e 34 segundos
   const [isCameraActive, setIsCameraActive] = useState(false);
@@ -93,9 +100,9 @@ export default function IndoorMonitoringView({
 
   // Histórico recente de movimentação pelos cômodos
   const [roomHistory, setRoomHistory] = useState([
-    { roomId: 'bedroom', duration: '1h 45m', timeRange: '08:30 - 10:15', date: 'Hoje' },
-    { roomId: 'kitchen', duration: '25m', timeRange: '08:05 - 08:30', date: 'Hoje' },
-    { roomId: 'bedroom', duration: '7h 35m', timeRange: '00:30 - 08:05', date: 'Hoje' },
+    { roomId: 'bedroom', duration: '1h 45m', timeRange: '08:30 - 10:15', dateKey: 'indoor.now' },
+    { roomId: 'kitchen', duration: '25m', timeRange: '08:05 - 08:30', dateKey: 'indoor.now' },
+    { roomId: 'bedroom', duration: '7h 35m', timeRange: '00:30 - 08:05', dateKey: 'indoor.now' },
   ]);
 
   // Cronômetro em tempo real do tempo de permanência no cômodo atual
@@ -117,7 +124,12 @@ export default function IndoorMonitoringView({
     return `${mins}m ${secs.toString().padStart(2, '0')}s`;
   };
 
+  const getRoomName = (room) => {
+    return t(room.nameKey) || room.defaultName;
+  };
+
   const currentRoom = DEFAULT_ROOMS.find((r) => r.id === currentRoomId) || DEFAULT_ROOMS[0];
+  const currentRoomName = getRoomName(currentRoom);
   const minutesInCurrentRoom = Math.floor(secondsInRoom / 60);
   const isTimeExceeded = minutesInCurrentRoom >= currentRoom.maxSafeMinutes;
 
@@ -142,8 +154,8 @@ export default function IndoorMonitoringView({
       {
         roomId: previousRoom.id,
         duration: durationFormatted,
-        timeRange: `Últimos ${durationFormatted}`,
-        date: 'Agora',
+        timeRange: `${durationFormatted}`,
+        dateKey: 'indoor.now',
       },
       ...prev.slice(0, 5),
     ]);
@@ -157,8 +169,9 @@ export default function IndoorMonitoringView({
     setIsAlertCardDismissed(false);
 
     const targetRoom = DEFAULT_ROOMS.find((r) => r.id === newRoomId);
+    const targetName = targetRoom ? getRoomName(targetRoom) : '';
     if (showToast) {
-      showToast(`Sensor detectou paciente em: ${targetRoom?.name}`);
+      showToast(t('indoor.sensorDetectedToast', { room: targetName }));
     }
   };
 
@@ -172,13 +185,13 @@ export default function IndoorMonitoringView({
               type="button"
               className="breadcrumb-home-btn"
               onClick={() => onNavigateTab && onNavigateTab('dashboard')}
-              title="Voltar ao Dashboard"
+              title={t('common.back')}
             >
-              <i className="fa-solid fa-house"></i> Dashboard
+              <i className="fa-solid fa-house"></i> {t('nav.dashboard')}
             </button>
             <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
             <span className="breadcrumb-current">
-              <i className="fa-solid fa-house-signal" style={{ color: 'var(--color-primary)' }}></i> Monitoramento Interno
+              <i className="fa-solid fa-house-signal" style={{ color: 'var(--color-primary)' }}></i> {t('indoor.breadcrumb')}
             </span>
           </div>
         </div>
@@ -191,21 +204,21 @@ export default function IndoorMonitoringView({
               className={`btn-facility ${facilityType === 'residence' ? 'active' : ''}`}
               onClick={() => setFacilityType('residence')}
             >
-              <i className="fa-solid fa-house-user"></i> Residência
+              <i className="fa-solid fa-house-user"></i> {t('indoor.facilityResidence')}
             </button>
             <button
               type="button"
               className={`btn-facility ${facilityType === 'clinic' ? 'active' : ''}`}
               onClick={() => setFacilityType('clinic')}
             >
-              <i className="fa-solid fa-hospital-user"></i> Clínica
+              <i className="fa-solid fa-hospital-user"></i> {t('indoor.facilityClinic')}
             </button>
             <button
               type="button"
               className={`btn-facility ${facilityType === 'hospital' ? 'active' : ''}`}
               onClick={() => setFacilityType('hospital')}
             >
-              <i className="fa-solid fa-bed-pulse"></i> Suíte InCor
+              <i className="fa-solid fa-bed-pulse"></i> {t('indoor.facilityHospital')}
             </button>
           </div>
 
@@ -233,8 +246,8 @@ export default function IndoorMonitoringView({
               type="button"
               className="btn-card-dismiss"
               onClick={() => setIsStatusCardDismissed(true)}
-              title="Fechar card (Reaparecerá ao mudar de cômodo)"
-              aria-label="Fechar card de presença"
+              title={t('common.close')}
+              aria-label={t('common.close')}
             >
               <i className="fa-solid fa-xmark"></i>
             </button>
@@ -248,50 +261,49 @@ export default function IndoorMonitoringView({
               <div className="status-text-block">
                 <div className="patient-location-badge">
                   <span className="live-dot"></span>
-                  <span>PRESENÇA DETECTADA VIA SENSOR</span>
+                  <span>{t('indoor.presenceDetected')}</span>
                 </div>
                 <h2 className="current-room-heading">
-                  Paciente está no(a) <strong>{currentRoom.name}</strong>
+                  {t('indoor.patientInRoom')} <strong>{currentRoomName}</strong>
                 </h2>
                 <p className="sensor-tech-desc">
                   <i className="fa-solid fa-microchip" style={{ color: 'var(--color-primary)' }}></i>
-                  Dispositivo: <code>{currentRoom.sensorModel}</code> &bull; Tecnologia: {currentRoom.sensorType}
+                  {t('indoor.device')} <code>{currentRoom.sensorModel}</code> &bull; {t('indoor.technology')} {currentRoom.sensorType}
                 </p>
               </div>
             </div>
 
             <div className="dwell-timer-box">
-              <span className="timer-label">TEMPO DE PERMANÊNCIA:</span>
+              <span className="timer-label">{t('indoor.dwellTimeLabel')}</span>
               <div className="timer-display">
                 <i className="fa-solid fa-stopwatch" style={{ color: isTimeExceeded ? 'var(--color-danger)' : 'var(--color-primary)' }}></i>
                 <span>{formatDwellTime(secondsInRoom)}</span>
               </div>
               <span className="timer-threshold">
-                Limite seguro sugerido: <strong>{currentRoom.maxSafeMinutes} min</strong>
+                {t('indoor.safeLimit')} <strong>{currentRoom.maxSafeMinutes} min</strong>
               </span>
             </div>
           </div>
         )}
 
-        {/* Alerta de Tempo Prolongado / Ação do Cuidador (Fechável via 'X' e reaparece quando nova ação for exigida) */}
+        {/* Alerta de Tempo Prolongado / Ação do Cuidador */}
         {isTimeExceeded && !isAlertCardDismissed && (
           <div className="indoor-critical-alert">
             <button
               type="button"
               className="btn-card-dismiss alert-dismiss"
               onClick={() => setIsAlertCardDismissed(true)}
-              title="Fechar alerta do cuidador"
-              aria-label="Fechar alerta do cuidador"
+              title={t('common.close')}
+              aria-label={t('common.close')}
             >
               <i className="fa-solid fa-xmark"></i>
             </button>
 
             <i className="fa-solid fa-triangle-exclamation"></i>
             <div className="alert-content">
-              <strong>Atenção do Cuidador: Tempo Elevado no {currentRoom.name}!</strong>
+              <strong>{t('indoor.caregiverAttention', { room: currentRoomName })}</strong>
               <p>
-                O paciente com Síndrome de Eisenmenger está há mais de {currentRoom.maxSafeMinutes} minutos neste cômodo.
-                Recomenda-se checar se houve síncope, mal-estar respiratório ou necessidade de apoio.
+                {t('indoor.caregiverWarningDesc', { minutes: currentRoom.maxSafeMinutes })}
               </p>
             </div>
             <button
@@ -299,10 +311,10 @@ export default function IndoorMonitoringView({
               className="btn-alert-ack"
               onClick={() => {
                 setIsAlertCardDismissed(true);
-                if (showToast) showToast('Ação do cuidador confirmada.');
+                if (showToast) showToast(t('indoor.actionConfirmed'));
               }}
             >
-              Verificar Paciente
+              {t('indoor.verifyPatient')}
             </button>
           </div>
         )}
@@ -314,10 +326,10 @@ export default function IndoorMonitoringView({
             <div className="floorplan-header">
               <div className="floorplan-title">
                 <i className="fa-solid fa-draw-polygon" style={{ color: 'var(--color-primary)' }}></i>
-                <span>Planta Baixa Interativa do Imóvel</span>
+                <span>{t('indoor.floorplanTitle')}</span>
               </div>
               <span className="floorplan-hint">
-                <i className="fa-solid fa-hand-pointer"></i> Clique em um cômodo para simular movimentação
+                <i className="fa-solid fa-hand-pointer"></i> {t('indoor.floorplanHint')}
               </span>
             </div>
 
@@ -325,6 +337,7 @@ export default function IndoorMonitoringView({
               <div className="blueprint-grid">
                 {DEFAULT_ROOMS.map((room) => {
                   const isPatientHere = room.id === currentRoomId;
+                  const name = getRoomName(room);
                   return (
                     <div
                       key={room.id}
@@ -334,15 +347,15 @@ export default function IndoorMonitoringView({
                       <div className="room-zone-header">
                         <div className="room-icon-title">
                           <i className={room.icon}></i>
-                          <span className="room-name">{room.name}</span>
+                          <span className="room-name">{name}</span>
                         </div>
                         {room.hasCamera && (
-                          <span className="camera-pill" title="Câmera de Apoio Disponível">
+                          <span className="camera-pill" title={t('indoor.cameraAvailable')}>
                             <i className="fa-solid fa-video"></i>
                           </span>
                         )}
                         {!room.hasCamera && (
-                          <span className="privacy-pill" title="100% Privado (Sem Câmera)">
+                          <span className="privacy-pill" title={t('indoor.privacyGuaranteed')}>
                             <i className="fa-solid fa-user-shield"></i>
                           </span>
                         )}
@@ -355,7 +368,7 @@ export default function IndoorMonitoringView({
                             <i className="fa-solid fa-person-walking"></i>
                           </div>
                           <span className="presence-tag">
-                            Paciente Aqui ({formatDwellTime(secondsInRoom)})
+                            {t('indoor.patientHere', { time: formatDwellTime(secondsInRoom) })}
                           </span>
                         </div>
                       )}
@@ -380,11 +393,11 @@ export default function IndoorMonitoringView({
               <div className="card-header-camera">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <i className="fa-solid fa-video" style={{ color: currentRoom.hasCamera ? 'var(--color-primary)' : 'var(--text-muted)' }}></i>
-                  <h3>Câmera de Apoio sob Demanda</h3>
+                  <h3>{t('indoor.cameraTitle')}</h3>
                 </div>
                 {currentRoom.hasCamera && (
                   <span className={`cam-status-badge ${isCameraActive ? 'active' : 'idle'}`}>
-                    {isCameraActive ? 'TRANSMISSÃO AO VIVO' : 'STANDBY'}
+                    {isCameraActive ? t('indoor.liveStream') : t('indoor.standby')}
                   </span>
                 )}
               </div>
@@ -395,10 +408,10 @@ export default function IndoorMonitoringView({
                     <div className="camera-live-stream">
                       <div className="stream-header-overlay">
                         <span className="rec-dot">
-                          <i className="fa-solid fa-circle"></i> AO VIVO
+                          <i className="fa-solid fa-circle"></i> {t('indoor.liveBadge')}
                         </span>
                         <span className="stream-cam-name">{currentRoom.cameraName}</span>
-                        <span className="stream-timestamp">{new Date().toLocaleTimeString('pt-BR')}</span>
+                        <span className="stream-timestamp">{new Date().toLocaleTimeString(locale === 'en' ? 'en-US' : locale === 'es' ? 'es-ES' : 'pt-BR')}</span>
                       </div>
 
                       <div className="stream-visual-placeholder">
@@ -426,14 +439,14 @@ export default function IndoorMonitoringView({
                           onClick={() => setAudioActive(!audioActive)}
                         >
                           <i className={`fa-solid ${audioActive ? 'fa-volume-high' : 'fa-volume-xmark'}`}></i>
-                          <span>{audioActive ? 'Áudio Ativo' : 'Ouvir Ambiente'}</span>
+                          <span>{audioActive ? t('indoor.audioActive') : t('indoor.listenRoom')}</span>
                         </button>
                         <button
                           type="button"
                           className="btn-stream-stop"
                           onClick={() => setIsCameraActive(false)}
                         >
-                          <i className="fa-solid fa-power-off"></i> Desativar Câmera
+                          <i className="fa-solid fa-power-off"></i> {t('indoor.turnOffCamera')}
                         </button>
                       </div>
                     </div>
@@ -442,14 +455,14 @@ export default function IndoorMonitoringView({
                       <div className="cam-offline-icon">
                         <i className="fa-solid fa-video-slash"></i>
                       </div>
-                      <h4>Câmera Desativada por Padrão</h4>
-                      <p>Para preservar a privacidade, a câmera só é ativada quando você autorizar expressamente.</p>
+                      <h4>{t('indoor.cameraOffTitle')}</h4>
+                      <p>{t('indoor.cameraOffDesc')}</p>
                       <button
                         type="button"
                         className="btn-activate-camera"
                         onClick={() => setIsCameraActive(true)}
                       >
-                        <i className="fa-solid fa-play"></i> Acionar Câmera do Cômodo
+                        <i className="fa-solid fa-play"></i> {t('indoor.activateCamera')}
                       </button>
                     </div>
                   )}
@@ -459,12 +472,12 @@ export default function IndoorMonitoringView({
                   <div className="privacy-shield-icon">
                     <i className="fa-solid fa-shield-halved"></i>
                   </div>
-                  <h4>Área com Privacidade 100% Protegida</h4>
+                  <h4>{t('indoor.privacyAreaTitle')}</h4>
                   <p>
-                    O <strong>{currentRoom.name}</strong> não possui câmera. O monitoramento de segurança é realizado exclusivamente via <strong>Radar Térmico e Sensor Anti-Queda</strong>.
+                    {t('indoor.privacyAreaDesc')}
                   </p>
                   <span className="privacy-certified-badge">
-                    <i className="fa-solid fa-lock"></i> Protocolo de Dignidade Médica
+                    <i className="fa-solid fa-lock"></i> {t('indoor.dignityProtocol')}
                   </span>
                 </div>
               )}
@@ -474,7 +487,7 @@ export default function IndoorMonitoringView({
             <div className="room-history-card">
               <div className="card-header-history">
                 <i className="fa-solid fa-clock-rotate-left" style={{ color: 'var(--color-primary)' }}></i>
-                <h3>Histórico de Permanência Recente</h3>
+                <h3>{t('indoor.recentHistory')}</h3>
               </div>
 
               <div className="history-timeline">
@@ -483,11 +496,11 @@ export default function IndoorMonitoringView({
                   <div className="history-bullet active"></div>
                   <div className="history-info">
                     <div className="history-room-name">
-                      <strong>{currentRoom.name}</strong>
-                      <span className="tag-current">Agora</span>
+                      <strong>{currentRoomName}</strong>
+                      <span className="tag-current">{t('indoor.now')}</span>
                     </div>
                     <span className="history-time-spent">
-                      <i className="fa-solid fa-stopwatch"></i> {formatDwellTime(secondsInRoom)} em andamento
+                      <i className="fa-solid fa-stopwatch"></i> {formatDwellTime(secondsInRoom)} {t('indoor.inProgress')}
                     </span>
                   </div>
                 </div>
@@ -495,16 +508,17 @@ export default function IndoorMonitoringView({
                 {/* Itens Anteriores */}
                 {roomHistory.map((item, idx) => {
                   const roomMeta = DEFAULT_ROOMS.find((r) => r.id === item.roomId) || DEFAULT_ROOMS[0];
+                  const roomTitle = getRoomName(roomMeta);
                   return (
                     <div key={idx} className="history-item">
                       <div className="history-bullet"></div>
                       <div className="history-info">
                         <div className="history-room-name">
-                          <span>{roomMeta.name}</span>
+                          <span>{roomTitle}</span>
                           <span className="history-time-range">{item.timeRange}</span>
                         </div>
                         <span className="history-time-spent">
-                          Permanência: <strong>{item.duration}</strong>
+                          {t('indoor.dwellDuration')} <strong>{item.duration}</strong>
                         </span>
                       </div>
                     </div>

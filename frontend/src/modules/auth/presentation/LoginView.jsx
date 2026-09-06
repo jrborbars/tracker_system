@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import authRepository from '../infrastructure/authRepository.js';
 import logoIconSvg from '../../../assets/logo-icon.svg';
 import logoTextSvg from '../../../assets/logo-text.svg';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 import './LoginView.css';
 
 export default function LoginView({ onLoginSuccess }) {
+  const { t, language, changeLanguage, supportedLanguages, languageMeta } = useI18n();
   const [theme, setTheme] = useState(() => localStorage.getItem('betterdays_theme') || 'light');
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
@@ -65,24 +67,56 @@ export default function LoginView({ onLoginSuccess }) {
         }
       }
     } catch (err) {
-      setErrorMessage(err.message || 'Ocorreu um erro ao processar a requisição.');
+      setErrorMessage(err.message || t('auth.errorLogin'));
     } finally {
       setLoading(false);
     }
   };
 
-
-
   return (
     <div className="login-screen-wrapper">
-      {/* Botão de alternar tema no topo superior à direita */}
-      <div className="login-top-actions">
+      {/* Ações no topo superior à direita (Tema + Idioma) */}
+      <div className="login-top-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {/* Seletor rápido de idioma */}
+        <div style={{ display: 'flex', gap: '4px', background: 'var(--color-bg-card, rgba(255,255,255,0.8))', padding: '3px 4px', borderRadius: '20px', border: '1px solid var(--color-border, #e2e8f0)' }}>
+          {supportedLanguages.map((lang) => {
+            const isSelected = language === lang;
+            const meta = languageMeta[lang];
+            return (
+              <button
+                key={lang}
+                type="button"
+                onClick={() => changeLanguage(lang)}
+                style={{
+                  background: isSelected ? 'var(--color-primary, #0D9488)' : 'transparent',
+                  color: isSelected ? '#ffffff' : 'var(--color-text-muted, #64748b)',
+                  border: 'none',
+                  borderRadius: '16px',
+                  padding: '2px 8px',
+                  fontSize: '11px',
+                  fontWeight: isSelected ? 700 : 500,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '3px',
+                  transition: 'all 0.2s ease',
+                }}
+                title={`${meta.name} (${meta.region})`}
+              >
+                <span>{meta.flag}</span>
+                <span>{meta.code.toUpperCase()}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Botão de alternar tema */}
         <button
           type="button"
           className="login-theme-toggle"
           onClick={toggleTheme}
-          title={theme === 'dark' ? 'Alternar para Modo Claro' : 'Alternar para Modo Escuro'}
-          aria-label={theme === 'dark' ? 'Alternar para Modo Claro' : 'Alternar para Modo Escuro'}
+          title={theme === 'dark' ? t('common.themeLight') : t('common.themeDark')}
+          aria-label={theme === 'dark' ? t('common.themeLight') : t('common.themeDark')}
         >
           <i
             className={`fa-solid ${theme === 'dark' ? 'fa-sun' : 'fa-moon'}`}
@@ -109,7 +143,7 @@ export default function LoginView({ onLoginSuccess }) {
               onClick={() => { setIsRegister(false); setErrorMessage(''); }}
             >
               <i className="fa-solid fa-right-to-bracket"></i>
-              Entrar
+              {t('auth.loginTab')}
             </button>
             <button
               type="button"
@@ -117,16 +151,16 @@ export default function LoginView({ onLoginSuccess }) {
               onClick={() => { setIsRegister(true); setErrorMessage(''); }}
             >
               <i className="fa-solid fa-user-plus"></i>
-              Cadastrar Familiar
+              {t('auth.registerTab')}
             </button>
           </div>
 
           <div className="auth-header">
-            <h2>{isRegister ? 'Criar Conta de Familiar' : 'Acesse o Monitoramento'}</h2>
+            <h2>{isRegister ? t('auth.title') : t('auth.loginButton')}</h2>
             <p>
               {isRegister
-                ? 'Cadastre-se para conectar rastreadores e gerenciar zonas seguras.'
-                : 'Insira suas credenciais para acessar a localização em tempo real.'}
+                ? t('auth.subtitle')
+                : t('auth.subtitle')}
             </p>
           </div>
 
@@ -134,11 +168,11 @@ export default function LoginView({ onLoginSuccess }) {
           {!isRegister && (
             <div className="demo-quickfill">
               <div className="demo-text">
-                <strong>Conta de Demonstração</strong>
-                <span>demo@betterdays.com</span>
+                <strong>{t('auth.demoShortcut')}</strong>
+                <span>{t('auth.demoDesc')}</span>
               </div>
               <button type="button" className="btn-quickfill" onClick={handleQuickFill}>
-                <i className="fa-solid fa-bolt"></i> Preencher Demo
+                <i className="fa-solid fa-bolt"></i> {t('auth.demoButton')}
               </button>
             </div>
           )}
@@ -177,7 +211,7 @@ export default function LoginView({ onLoginSuccess }) {
                       required
                     />
                     <label htmlFor="input-name" className="floating-label">
-                      Nome Completo
+                      {t('auth.nameLabel')}
                     </label>
                   </div>
                 </div>
@@ -197,7 +231,7 @@ export default function LoginView({ onLoginSuccess }) {
                       required
                     />
                     <label htmlFor="input-phone" className="floating-label">
-                      Telefone / WhatsApp de Emergência
+                      {t('auth.phoneLabel')}
                     </label>
                   </div>
                 </div>
@@ -219,7 +253,7 @@ export default function LoginView({ onLoginSuccess }) {
                   required
                 />
                 <label htmlFor="input-email" className="floating-label">
-                  E-mail
+                  {t('auth.emailLabel')}
                 </label>
               </div>
             </div>
@@ -240,7 +274,7 @@ export default function LoginView({ onLoginSuccess }) {
                   required
                 />
                 <label htmlFor="input-password" className="floating-label">
-                  Senha
+                  {t('auth.passwordLabel')}
                 </label>
                 <button
                   type="button"
@@ -254,24 +288,22 @@ export default function LoginView({ onLoginSuccess }) {
               </div>
             </div>
 
-
-
             {/* Botão de Envio */}
             <button type="submit" className="btn-submit" disabled={loading}>
               {loading ? (
                 <>
                   <i className="fa-solid fa-spinner fa-spin"></i>
-                  <span>Processando...</span>
+                  <span>{t('auth.loadingButton')}</span>
                 </>
               ) : isRegister ? (
                 <>
                   <i className="fa-solid fa-user-check"></i>
-                  <span>Concluir Cadastro</span>
+                  <span>{t('auth.registerButton')}</span>
                 </>
               ) : (
                 <>
                   <i className="fa-solid fa-arrow-right-to-bracket"></i>
-                  <span>Entrar no Sistema</span>
+                  <span>{t('auth.loginButton')}</span>
                 </>
               )}
             </button>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import useCareSocket from './useCareSocket.js';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 // Dados iniciais pré-configurados de grupos de cuidado inspirados no caso de uso Eisenmenger
 const INITIAL_CARE_GROUPS = [
@@ -185,12 +186,12 @@ const INITIAL_CARE_GROUPS = [
 ];
 
 export default function CareGroupsChatView({
-  profile,
   devices = [],
   onNavigateTab,
   showToast,
   onQuickLocate,
 }) {
+  const { t } = useI18n();
   const {
     isConnected,
     groups,
@@ -368,23 +369,23 @@ export default function CareGroupsChatView({
         <div className="chat-sidebar-header">
           <div className="chat-sidebar-title">
             <i className="fa-solid fa-comments" style={{ color: 'var(--color-primary)' }}></i>
-            <h2>Grupos de Cuidado</h2>
+            <h2>{t('chat.title')}</h2>
             <span
               className={`ws-live-badge ${isConnected ? 'connected' : 'connecting'}`}
               title={isConnected ? 'Conectado em tempo real via WebSocket' : 'Tentando conectar ao servidor WebSocket...'}
             >
               <span className="ws-dot"></span>
-              {isConnected ? 'Ao Vivo' : 'Conectando'}
+              {isConnected ? t('common.online') : t('common.loading')}
             </span>
           </div>
           <button
             type="button"
             className="btn-create-group"
             onClick={() => setIsNewGroupModalOpen(true)}
-            title="Criar Novo Grupo de Acompanhamento"
+            title="Criar Novo Grupo"
           >
             <i className="fa-solid fa-plus"></i>
-            <span>Novo Grupo</span>
+            <span>{t('common.actions')}</span>
           </button>
         </div>
 
@@ -393,7 +394,7 @@ export default function CareGroupsChatView({
           <i className="fa-solid fa-magnifying-glass"></i>
           <input
             type="text"
-            placeholder="Pesquisar grupos ou paciente..."
+            placeholder={t('common.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -411,28 +412,28 @@ export default function CareGroupsChatView({
             className={`category-chip ${categoryFilter === 'all' ? 'active' : ''}`}
             onClick={() => setCategoryFilter('all')}
           >
-            Todos
+            {t('chat.filterAll')}
           </button>
           <button
             type="button"
             className={`category-chip ${categoryFilter === 'family' ? 'active' : ''}`}
             onClick={() => setCategoryFilter('family')}
           >
-            👨‍👩‍👦 Família
+            👨‍👩‍👦 {t('chat.filterFamily')}
           </button>
           <button
             type="button"
             className={`category-chip ${categoryFilter === 'medical' ? 'active' : ''}`}
             onClick={() => setCategoryFilter('medical')}
           >
-            🩺 Médicos
+            🩺 {t('chat.filterMedical')}
           </button>
           <button
             type="button"
             className={`category-chip ${categoryFilter === 'alerts' ? 'active' : ''}`}
             onClick={() => setCategoryFilter('alerts')}
           >
-            🚨 Alertas SOS
+            🚨 {t('chat.filterAlerts')}
           </button>
         </div>
 
@@ -441,7 +442,7 @@ export default function CareGroupsChatView({
           {filteredGroups.length === 0 ? (
             <div className="chat-empty-list">
               <i className="fa-solid fa-comment-slash"></i>
-              <p>Nenhum grupo encontrado com este filtro.</p>
+              <p>{t('common.emptyList')}</p>
             </div>
           ) : (
             filteredGroups.map((grp) => {
@@ -478,14 +479,14 @@ export default function CareGroupsChatView({
                           </span>
                         ) : lastMsg ? (
                           lastMsg.type === 'gps_card' ? (
-                            <span><i className="fa-solid fa-location-dot" style={{ color: 'var(--color-primary)' }}></i> Compartilhou localização</span>
+                            <span><i className="fa-solid fa-location-dot" style={{ color: 'var(--color-primary)' }}></i> GPS</span>
                           ) : lastMsg.type === 'alert_card' ? (
-                            <span style={{ color: 'var(--color-danger)' }}><i className="fa-solid fa-triangle-exclamation"></i> Alerta de Emergência</span>
+                            <span style={{ color: 'var(--color-danger)' }}><i className="fa-solid fa-triangle-exclamation"></i> SOS</span>
                           ) : (
                             `${lastMsg.sender}: ${lastMsg.text}`
                           )
                         ) : (
-                          'Nenhuma mensagem ainda.'
+                          t('common.emptyList')
                         )}
                       </p>
 
@@ -510,7 +511,7 @@ export default function CareGroupsChatView({
             type="button"
             className="btn-chat-back-mobile"
             onClick={() => setIsMobileChatOpen(false)}
-            title="Voltar para a Lista de Grupos"
+            title={t('common.back')}
           >
             <i className="fa-solid fa-arrow-left"></i>
           </button>
@@ -539,14 +540,14 @@ export default function CareGroupsChatView({
               type="button"
               className="btn-chat-header-action"
               title="Teleconsulta / Chamada Rápida"
-              onClick={() => showToast && showToast('Iniciando sala segura de áudio/vídeo com a equipe médica...')}
+              onClick={() => showToast && showToast('Iniciando sala segura de áudio/vídeo...')}
             >
               <i className="fa-solid fa-phone"></i>
             </button>
             <button
               type="button"
               className="btn-chat-header-action"
-              title="Informações do Grupo e Paciente"
+              title="Informações do Grupo"
               onClick={() => setIsGroupInfoOpen(!isGroupInfoOpen)}
             >
               <i className="fa-solid fa-circle-info"></i>
@@ -557,7 +558,7 @@ export default function CareGroupsChatView({
         {/* Feed de Mensagens com Balões */}
         <div className="chat-messages-body">
           <div className="chat-date-divider">
-            <span>Hoje • Monitoramento Ativo em Tempo Real</span>
+            <span>{t('chat.subtitle')}</span>
           </div>
 
           {selectedGroup.messages.map((msg) => {
@@ -575,7 +576,7 @@ export default function CareGroupsChatView({
                       className="btn-system-card-action"
                       onClick={() => onNavigateTab && onNavigateTab('map')}
                     >
-                      <i className="fa-solid fa-map-location-dot"></i> Abrir no Mapa Satelital
+                      <i className="fa-solid fa-map-location-dot"></i> {t('tracking.breadcrumb')}
                     </button>
                   </div>
                   <span className="system-card-time">{msg.timestamp}</span>
@@ -622,7 +623,7 @@ export default function CareGroupsChatView({
                   <div className="bubble-footer">
                     <span className="bubble-time">{msg.timestamp}</span>
                     {msg.isMe && (
-                      <span className="bubble-check" title="Transmitido via WebSocket">
+                      <span className="bubble-check" title="WebSocket">
                         <i className="fa-solid fa-check-double" style={{ color: '#0284C7' }}></i>
                       </span>
                     )}
@@ -657,7 +658,7 @@ export default function CareGroupsChatView({
             onClick={() => handleQuickAction('gps')}
           >
             <i className="fa-solid fa-location-dot" style={{ color: 'var(--color-primary)' }}></i>
-            <span>Compartilhar GPS</span>
+            <span>GPS</span>
           </button>
           <button
             type="button"
@@ -665,7 +666,7 @@ export default function CareGroupsChatView({
             onClick={() => handleQuickAction('meds')}
           >
             <i className="fa-solid fa-pills" style={{ color: 'var(--color-success)' }}></i>
-            <span>Confirmar Medicação</span>
+            <span>Medicação</span>
           </button>
           <button
             type="button"
@@ -673,7 +674,7 @@ export default function CareGroupsChatView({
             onClick={() => handleQuickAction('sos')}
           >
             <i className="fa-solid fa-crosshairs"></i>
-            <span>Disparo SOS</span>
+            <span>{t('chat.quickAlert')}</span>
           </button>
         </div>
 
@@ -682,8 +683,8 @@ export default function CareGroupsChatView({
           <button
             type="button"
             className="btn-chat-attach"
-            title="Anexar Exame / Foto / Prontuário"
-            onClick={() => showToast && showToast('Anexo de exames médicos selecionado.')}
+            title="Anexo"
+            onClick={() => showToast && showToast('Anexo selecionado.')}
           >
             <i className="fa-solid fa-paperclip"></i>
           </button>
@@ -691,7 +692,7 @@ export default function CareGroupsChatView({
           <input
             type="text"
             className="chat-text-input"
-            placeholder="Digite uma mensagem para o grupo de cuidado..."
+            placeholder={t('chat.inputPlaceholder')}
             value={inputText}
             onChange={handleInputChange}
           />
@@ -699,7 +700,7 @@ export default function CareGroupsChatView({
           <button
             type="submit"
             className={`btn-chat-send ${inputText.trim() ? 'active' : ''}`}
-            title="Enviar Mensagem"
+            title={t('chat.send')}
           >
             <i className="fa-solid fa-paper-plane"></i>
           </button>
@@ -713,7 +714,7 @@ export default function CareGroupsChatView({
             <div className="chat-modal-header">
               <h3>
                 <i className="fa-solid fa-users-medical" style={{ color: 'var(--color-primary)' }}></i>
-                Criar Novo Grupo de Cuidado
+                Criar Novo Grupo
               </h3>
               <button
                 type="button"
@@ -726,7 +727,7 @@ export default function CareGroupsChatView({
 
             <form onSubmit={handleCreateGroup}>
               <div className="form-field">
-                <label>Nome do Grupo de Cuidado *</label>
+                <label>Nome do Grupo *</label>
                 <input
                   type="text"
                   placeholder="Ex: 🩺 Dra. Helena - Pneumologista"
@@ -737,19 +738,19 @@ export default function CareGroupsChatView({
               </div>
 
               <div className="form-field">
-                <label>Categoria do Grupo</label>
+                <label>Categoria</label>
                 <select
                   value={newGroupCategory}
                   onChange={(e) => setNewGroupCategory(e.target.value)}
                 >
-                  <option value="family">👨‍👩‍👧‍👦 Familiar & Apoio Diário</option>
-                  <option value="medical">🩺 Médicos & Especialistas Cardiológicos</option>
-                  <option value="alerts">🚨 Plantão & Emergências</option>
+                  <option value="family">👨‍👩‍👧‍👦 Familiar</option>
+                  <option value="medical">🩺 Médicos</option>
+                  <option value="alerts">🚨 Emergências</option>
                 </select>
               </div>
 
               <div className="form-field">
-                <label>Paciente Associado</label>
+                <label>Paciente</label>
                 <input
                   type="text"
                   value={newGroupPatient}
@@ -758,10 +759,10 @@ export default function CareGroupsChatView({
               </div>
 
               <div className="form-field">
-                <label>Membros (Separados por vírgula)</label>
+                <label>Membros</label>
                 <input
                   type="text"
-                  placeholder="Você, Dr. Silva, Enfermeira Ana"
+                  placeholder="Você, Dr. Silva, Enfermeira"
                   value={newGroupMembers}
                   onChange={(e) => setNewGroupMembers(e.target.value)}
                 />
@@ -773,10 +774,10 @@ export default function CareGroupsChatView({
                   className="btn-modal-cancel"
                   onClick={() => setIsNewGroupModalOpen(false)}
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="btn-modal-submit">
-                  <i className="fa-solid fa-check"></i> Criar Grupo
+                  <i className="fa-solid fa-check"></i> {t('common.confirm')}
                 </button>
               </div>
             </form>

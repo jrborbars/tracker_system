@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import UserAvatarMenu from '../../../core/components/UserAvatarMenu.jsx';
 import profileRepository from '../infrastructure/profileRepository.js';
 import { getUserInitials, getAbsolutePhotoUrl } from '../domain/profileModel.js';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 export default function ProfileView({
   profile,
@@ -16,6 +17,7 @@ export default function ProfileView({
   theme,
   toggleTheme,
 }) {
+  const { t } = useI18n();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -54,13 +56,13 @@ export default function ProfileView({
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      if (showToast) showToast('Por favor, selecione uma imagem válida (PNG, JPG, WEBP).');
+      if (showToast) showToast(t('profile.validImageRequired'));
       return;
     }
 
     try {
       setIsUploadingPhoto(true);
-      if (showToast) showToast('Enviando nova foto...');
+      if (showToast) showToast(t('profile.uploadingPhoto'));
       const uploadRes = await profileRepository.uploadPhoto(token, file);
       const newPhotoUrl = uploadRes.url;
 
@@ -75,9 +77,9 @@ export default function ProfileView({
       });
 
       setProfile(updated);
-      if (showToast) showToast('Foto de perfil atualizada com sucesso!');
+      if (showToast) showToast(t('profile.photoSuccess'));
     } catch (err) {
-      if (showToast) showToast(`Erro ao enviar foto: ${err.message}`);
+      if (showToast) showToast(`${t('common.error')}: ${err.message}`);
     } finally {
       setIsUploadingPhoto(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
@@ -89,12 +91,12 @@ export default function ProfileView({
     e.preventDefault();
 
     if (password && password !== confirmPassword) {
-      if (showToast) showToast('A nova senha e a confirmação de senha não coincidem.');
+      if (showToast) showToast(t('profile.passwordMismatch'));
       return;
     }
 
     if (password && password.length < 6) {
-      if (showToast) showToast('A nova senha deve conter no mínimo 6 caracteres.');
+      if (showToast) showToast(t('profile.passwordMinLength'));
       return;
     }
 
@@ -117,9 +119,9 @@ export default function ProfileView({
       setProfile(updated);
       setPassword('');
       setConfirmPassword('');
-      if (showToast) showToast('Perfil e configurações salvos com sucesso!');
+      if (showToast) showToast(t('profile.saveSuccess'));
     } catch (err) {
-      if (showToast) showToast(`Erro ao salvar perfil: ${err.message}`);
+      if (showToast) showToast(`${t('common.error')}: ${err.message}`);
     } finally {
       setIsSaving(false);
     }
@@ -135,13 +137,13 @@ export default function ProfileView({
               type="button"
               className="breadcrumb-home-btn"
               onClick={() => onNavigateTab('dashboard')}
-              title="Voltar ao Dashboard"
+              title={t('common.back')}
             >
-              <i className="fa-solid fa-house"></i> Dashboard
+              <i className="fa-solid fa-house"></i> {t('nav.dashboard')}
             </button>
             <i className="fa-solid fa-chevron-right breadcrumb-sep"></i>
             <span className="breadcrumb-current">
-              <i className="fa-solid fa-user-gear" style={{ color: 'var(--color-primary)' }}></i> Perfil do Cuidador
+              <i className="fa-solid fa-user-gear" style={{ color: 'var(--color-primary)' }}></i> {t('profile.caregiverProfile')}
             </span>
           </div>
         </div>
@@ -190,7 +192,7 @@ export default function ProfileView({
                 type="button"
                 className="btn-upload-overlay"
                 onClick={() => fileInputRef.current?.click()}
-                title="Alterar foto de perfil"
+                title={t('profile.changePhoto')}
                 disabled={isUploadingPhoto}
               >
                 <i className={`fa-solid ${isUploadingPhoto ? 'fa-spinner fa-spin' : 'fa-camera'}`}></i>
@@ -204,14 +206,14 @@ export default function ProfileView({
               disabled={isUploadingPhoto}
             >
               <i className="fa-solid fa-cloud-arrow-up"></i>
-              <span>{isUploadingPhoto ? 'Enviando foto...' : 'Alterar Foto'}</span>
+              <span>{isUploadingPhoto ? t('profile.uploadingPhoto') : t('profile.changePhoto')}</span>
             </button>
 
-            <h3 className="profile-card-name">{name || 'Cuidador'}</h3>
+            <h3 className="profile-card-name">{name || t('profile.caregiverProfile')}</h3>
             <p className="profile-card-email">{email}</p>
             
             <span className="profile-role-badge">
-              <i className="fa-solid fa-shield-heart"></i> Cuidador Principal
+              <i className="fa-solid fa-shield-heart"></i> {t('chat.caregiverBadge')}
             </span>
 
             <div className="profile-quick-stats">
@@ -219,14 +221,14 @@ export default function ProfileView({
                 <i className="fa-solid fa-clock"></i>
                 <div>
                   <strong>{devicesCount}</strong>
-                  <span>Relógios</span>
+                  <span>{t('nav.tracker')}</span>
                 </div>
               </div>
               <div className="profile-stat-box">
                 <i className="fa-solid fa-draw-polygon"></i>
                 <div>
                   <strong>{areasCount}</strong>
-                  <span>Cercas</span>
+                  <span>{t('nav.map')}</span>
                 </div>
               </div>
             </div>
@@ -237,9 +239,9 @@ export default function ProfileView({
             <div className="profile-section-header">
               <h3>
                 <i className="fa-solid fa-user-pen" style={{ color: 'var(--color-primary)' }}></i>
-                Dados Pessoais & Acesso
+                {t('profile.personalSection')}
               </h3>
-              <p>Mantenha seus dados e credenciais atualizados para receber notificações críticas.</p>
+              <p>{t('profile.subtitle')}</p>
             </div>
 
             <form onSubmit={handleSaveProfile} className="profile-form">
@@ -247,7 +249,7 @@ export default function ProfileView({
               {/* Grid: Nome e E-mail */}
               <div className="form-grid-2">
                 <div className="form-group">
-                  <label htmlFor="prof-name">Nome Completo</label>
+                  <label htmlFor="prof-name">{t('profile.fullName')}</label>
                   <input
                     id="prof-name"
                     type="text"
@@ -260,7 +262,7 @@ export default function ProfileView({
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="prof-email">E-mail de Login</label>
+                  <label htmlFor="prof-email">{t('profile.email')}</label>
                   <input
                     id="prof-email"
                     type="email"
@@ -277,7 +279,7 @@ export default function ProfileView({
               <div className="form-group">
                 <label htmlFor="prof-phone">
                   <i className="fa-brands fa-whatsapp" style={{ color: '#25D366', marginRight: '6px' }}></i>
-                  WhatsApp / Telefone de Emergência
+                  {t('profile.phone')}
                 </label>
                 <input
                   id="prof-phone"
@@ -296,10 +298,10 @@ export default function ProfileView({
                   <div>
                     <strong>
                       <i className="fa-solid fa-lock" style={{ color: 'var(--color-primary)', marginRight: '6px' }}></i>
-                      Segurança da Conta (Trocar Senha)
+                      {t('profile.securitySection')}
                     </strong>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                      Deixe em branco se não desejar alterar sua senha atual
+                      {t('profile.newPassword')}
                     </p>
                   </div>
                   <button
@@ -314,7 +316,7 @@ export default function ProfileView({
 
                 <div className="form-grid-2">
                   <div className="form-group">
-                    <label htmlFor="prof-pass">Nova Senha</label>
+                    <label htmlFor="prof-pass">{t('profile.newPassword')}</label>
                     <input
                       id="prof-pass"
                       type={showPassword ? 'text' : 'password'}
@@ -327,7 +329,7 @@ export default function ProfileView({
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="prof-pass-confirm">Confirmar Nova Senha</label>
+                    <label htmlFor="prof-pass-confirm">{t('profile.confirmPassword')}</label>
                     <input
                       id="prof-pass-confirm"
                       type={showPassword ? 'text' : 'password'}
@@ -345,12 +347,12 @@ export default function ProfileView({
               <div className="profile-medical-section">
                 <h4>
                   <i className="fa-solid fa-heart-pulse" style={{ color: 'var(--color-danger)' }}></i>
-                  Protocolo Médico & Emergência Familiar
+                  {t('profile.medicalSection')}
                 </h4>
 
                 <div className="form-grid-2">
                   <div className="form-group">
-                    <label htmlFor="prof-doc">Médico / Cardiologista de Referência</label>
+                    <label htmlFor="prof-doc">{t('profile.doctorContact')}</label>
                     <input
                       id="prof-doc"
                       type="text"
@@ -362,7 +364,7 @@ export default function ProfileView({
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="prof-hosp">Hospital / Pronto-Socorro 24h</label>
+                    <label htmlFor="prof-hosp">{t('profile.hospitalRef')}</label>
                     <input
                       id="prof-hosp"
                       type="text"
@@ -375,7 +377,7 @@ export default function ProfileView({
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="prof-diag">Observações Clínicas / Conduta em Emergência</label>
+                  <label htmlFor="prof-diag">{t('profile.diagnosis')}</label>
                   <textarea
                     id="prof-diag"
                     className="input-control"
@@ -397,12 +399,12 @@ export default function ProfileView({
                   {isSaving ? (
                     <>
                       <i className="fa-solid fa-spinner fa-spin"></i>
-                      <span>Salvando Alterações...</span>
+                      <span>{t('common.saving')}</span>
                     </>
                   ) : (
                     <>
-                      <i className="fa-solid fa-check"></i>
-                      <span>Salvar Alterações do Perfil</span>
+                  <i className="fa-solid fa-check"></i>
+                  <span>{t('common.save')}</span>
                     </>
                   )}
                 </button>

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
+import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
+  const { t } = useI18n();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [pairingToken, setPairingToken] = useState('');
   const [wearMode, setWearMode] = useState('pulso'); // 'pulso' | 'roupa'
-  const [deviceModel, setDeviceModel] = useState('android-wear'); // 'android-wear' | 'clip-sensor' | 'smartband'
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [step, setStep] = useState(1); // 1: Instruções e Código, 2: Dados do Paciente
 
   if (!isOpen) return null;
 
@@ -42,10 +42,9 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
       setDescription('');
       setPairingToken('');
       setWearMode('pulso');
-      setStep(1);
       onClose();
     } catch (err) {
-      setError(err.message || 'Erro ao parear relógio');
+      setError(err.message || t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -61,9 +60,9 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
               <i className="fa-solid fa-clock"></i>
             </div>
             <div>
-              <h3>Parear Relógio / Dispositivo Wearable</h3>
+              <h3>{t('tracker.modal.title')}</h3>
               <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
-                Conecte o aplicativo Android do relógio à central familiar
+                {t('tracker.modal.subtitle')}
               </p>
             </div>
           </div>
@@ -84,7 +83,7 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
           {/* Seletor de Modo de Uso do Paciente */}
           <div className="form-group">
             <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '8px', display: 'block' }}>
-              Modo de Uso no Paciente
+              {t('tracker.modal.wearModeLabel')}
             </label>
             <div className="wear-mode-selector">
               <button
@@ -96,8 +95,8 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
                   <i className="fa-solid fa-hand-holding-hand"></i>
                 </div>
                 <div className="wear-mode-details">
-                  <strong>No Pulso (Pulseira)</strong>
-                  <span>Smartwatch Android / WearOS com sensor de batimentos e SOS</span>
+                  <strong>{t('tracker.modal.wristModeTitle')}</strong>
+                  <span>{t('tracker.modal.wristModeDesc')}</span>
                 </div>
                 {wearMode === 'pulso' && <i className="fa-solid fa-circle-check check-icon"></i>}
               </button>
@@ -111,8 +110,8 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
                   <i className="fa-solid fa-shirt"></i>
                 </div>
                 <div className="wear-mode-details">
-                  <strong>Na Roupa (Clip Sensorial)</strong>
-                  <span>Preso ao cinto ou gola com detector de quedas e localização</span>
+                  <strong>{t('tracker.modal.clothingModeTitle')}</strong>
+                  <span>{t('tracker.modal.clothingModeDesc')}</span>
                 </div>
                 {wearMode === 'roupa' && <i className="fa-solid fa-circle-check check-icon"></i>}
               </button>
@@ -125,19 +124,19 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
               <div>
                 <strong style={{ fontSize: '13px', color: 'var(--text-main)' }}>
                   <i className="fa-brands fa-android" style={{ color: '#3DDC84', marginRight: '6px' }}></i>
-                  Código de Pareamento (Token Android)
+                  {t('tracker.modal.tokenHeader')}
                 </strong>
                 <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                  Digite o código exibido na tela do relógio ou gere um novo
+                  {t('tracker.modal.tokenDesc')}
                 </p>
               </div>
               <button
                 type="button"
                 className="btn-generate-token"
                 onClick={handleGenerateCode}
-                title="Gerar código aleatório"
+                title={t('tracker.modal.generateToken')}
               >
-                <i className="fa-solid fa-arrows-rotate"></i> Gerar Código
+                <i className="fa-solid fa-arrows-rotate"></i> {t('tracker.modal.generateToken')}
               </button>
             </div>
 
@@ -153,7 +152,7 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
               />
               <div className="pairing-badge-ready">
                 <i className="fa-solid fa-wifi"></i>
-                <span>Pronto p/ Parear</span>
+                <span>{t('tracker.modal.readyToPair')}</span>
               </div>
             </div>
           </div>
@@ -161,13 +160,13 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
           {/* Nome do Paciente / Dispositivo */}
           <div className="form-group">
             <label htmlFor="wearable-name" style={{ fontSize: '12px', fontWeight: 600 }}>
-              Identificação do Paciente / Relógio
+              {t('tracker.modal.patientNameLabel')}
             </label>
             <input
               id="wearable-name"
               type="text"
               className="input-control"
-              placeholder={wearMode === 'pulso' ? 'Ex: Relógio do Vô João' : 'Ex: Clip da Dona Maria'}
+              placeholder={wearMode === 'pulso' ? t('tracker.modal.patientNameWristPlaceholder') : t('tracker.modal.patientNameClipPlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -177,13 +176,13 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
           {/* Observações Clínicas / Cuidados */}
           <div className="form-group">
             <label htmlFor="wearable-desc" style={{ fontSize: '12px', fontWeight: 600 }}>
-              Instruções de Monitoramento & Cuidados
+              {t('tracker.modal.notesLabel')}
             </label>
             <textarea
               id="wearable-desc"
               className="input-control"
               style={{ minHeight: '60px' }}
-              placeholder="Ex: Paciente com diagnóstico de Eisenmenger, alertar em caso de batimentos fora de 60-100 BPM ou queda."
+              placeholder={t('tracker.modal.notesPlaceholder')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
@@ -198,7 +197,7 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
               style={{ flex: 1, justifyContent: 'center' }}
               onClick={onClose}
             >
-              Cancelar
+              {t('common.cancel')}
             </button>
             <button
               type="submit"
@@ -208,11 +207,11 @@ export default function AddDeviceModal({ isOpen, onClose, onAddDevice }) {
             >
               {loading ? (
                 <>
-                  <i className="fa-solid fa-spinner fa-spin"></i> Pareando...
+                  <i className="fa-solid fa-spinner fa-spin"></i> {t('tracker.modal.submittingBtn')}
                 </>
               ) : (
                 <>
-                  <i className="fa-solid fa-link"></i> Concluir Pareamento
+                  <i className="fa-solid fa-link"></i> {t('tracker.modal.submitBtn')}
                 </>
               )}
             </button>
