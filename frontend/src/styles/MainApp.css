@@ -2111,6 +2111,98 @@
   font-size: 11px;
 }
 
+/* Cartão de Arquivo Transferido via P2P Direto (Zero Nuvem) */
+.p2p-file-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin: 4px 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.p2p-file-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.p2p-file-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.p2p-file-meta .p2p-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  word-break: break-all;
+}
+
+.p2p-file-meta .p2p-size {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.p2p-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Banner de Progresso de Envio P2P */
+.p2p-transfer-banner {
+  background-color: var(--color-primary-light);
+  border-top: 1px solid var(--color-primary-subtle);
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.p2p-transfer-info {
+  flex: 1;
+}
+
+.p2p-progress-track {
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-primary-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.p2p-progress-fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  transition: width 0.2s ease;
+}
+
+.p2p-progress-pct {
+  font-size: 11px;
+  font-weight: 700;
+}
+
 /* Cards Especiais de Telemetria e Alertas no Chat */
 .chat-system-card {
   background-color: #FFFFFF;

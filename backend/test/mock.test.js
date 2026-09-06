@@ -388,3 +388,12 @@ test('GET /geofencing/data with key returns devices+areas', async () => {
   assert.ok(res.body.devices.length >= 1);
   assert.ok('areas' in res.body.devices[0]);
 });
+
+// ---- WebRTC & Care Groups Store ------------------------------------------
+test('careGroupsStore contains initialized groups for WebRTC signaling', async () => {
+  const { careGroupsStore } = await import('../src/socket.js');
+  assert.ok(Array.isArray(careGroupsStore));
+  assert.ok(careGroupsStore.length >= 3);
+  assert.ok(careGroupsStore[0].id.startsWith('grp-'));
+  assert.ok(careGroupsStore[0].messages.length > 0);
+});

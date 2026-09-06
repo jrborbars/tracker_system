@@ -334,6 +334,70 @@ export function initSocketServer(httpServer) {
       }
     });
 
+    // 7. SINALIZAÇÃO WEBRTC P2P (Áudio, Vídeo e DataChannels Diretos)
+    // 7.1. Iniciar chamada (Offer SDP)
+    socket.on('webrtc_call_initiate', (payload) => {
+      const { groupId, callType = 'video', callerName = 'Cuidador', offerSDP, targetUserId } = payload;
+      console.log(`[WebRTC] Chamada ${callType} iniciada por ${callerName} no grupo ${groupId}`);
+      
+      // Enviar convite de chamada para os outros membros do grupo
+      socket.to(`group:${groupId}`).emit('webrtc_call_incoming', {
+        groupId,
+        callerSocketId: socket.id,
+        callerName,
+        callType,
+        offerSDP,
+        timestamp: new Date().toISOString(),
+      });
+    });
+
+    // 7.2. Responder chamada (Answer SDP)
+    socket.on('webrtc_call_answer', (payload) => {
+      const { groupId, answerSDP, responderName = 'Equipe Médica' } = payload;
+      console.log(`[WebRTC] Chamada atendida por ${responderName} no grupo ${groupId}`);
+      
+      socket.to(`group:${groupId}`).emit('webrtc_call_answered', {
+        groupId,
+        responderSocketId: socket.id,
+        responderName,
+        answerSDP,
+      });
+    });
+
+    // 7.3. Troca de Candidatos ICE (NAT Traversal)
+    socket.on('webrtc_ice_candidate', (payload) => {
+      const { groupId, candidate } = payload;
+      socket.to(`group:${groupId}`).emit('webrtc_ice_candidate', {
+        groupId,
+        candidate,
+        fromSocketId: socket.id,
+      });
+    });
+
+    // 7.4. Encerramento / Recusa de Chamada
+    socket.on('webrtc_call_hangup', (payload) => {
+      const { groupId, reason = 'user_hangup' } = payload;
+      console.log(`[WebRTC] Chamada encerrada no grupo ${groupId} (Motivo: ${reason})`);
+      socket.to(`group:${groupId}`).emit('webrtc_call_ended', {
+        groupId,
+        reason,
+        endedBySocketId: socket.id,
+      });
+    });
+
+    // 7.5. Notificação de Transferência de Arquivo P2P Direta (Metadados)
+    socket.on('webrtc_p2p_file_notify', (payload) => {
+      const { groupId, fileName, fileSize, mimeType, senderName } = payload;
+      socket.to(`group:${groupId}`).emit('webrtc_p2p_file_incoming', {
+        groupId,
+        fileName,
+        fileSize,
+        mimeType,
+        senderName,
+        timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      });
+    });
+
     socket.on('disconnect', (reason) => {
       console.log(`[Socket.io] Client disconnected: ${socket.id} (Reason: ${reason})`);
     });

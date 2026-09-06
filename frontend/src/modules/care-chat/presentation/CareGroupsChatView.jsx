@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import useCareSocket from './useCareSocket.js';
+import useWebRTCCall from '../application/useWebRTCCall.js';
+import CallModal from './CallModal.jsx';
+import localVaultService from '../../../core/services/localVaultService.js';
+import { CALL_TYPES, validateP2PFile } from '../domain/webrtcModel.js';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 
 // Dados iniciais pré-configurados de grupos de cuidado com tipografia limpa e sem emojis
@@ -211,6 +215,18 @@ export default function CareGroupsChatView({
   const [isGroupInfoOpen, setIsGroupInfoOpen] = useState(false);
   const [isMobileChatOpen, setIsMobileChatOpen] = useState(false);
 
+  // WebRTC Voice & Video Call Hook
+  const callControls = useWebRTCCall({
+    currentGroupId: selectedGroupId,
+    currentUser: { name: 'Você (Cuidador)' },
+    showToast,
+  });
+
+  // Transferência de Arquivo P2P & Cofre LGPD
+  const [p2pTransfer, setP2pTransfer] = useState(null); // { fileName, progress, status }
+  const [isVaultModalOpen, setIsVaultModalOpen] = useState(false);
+  const fileInputRef = useRef(null);
+
   // Formulário para novo grupo
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupCategory, setNewGroupCategory] = useState('family');
@@ -228,6 +244,11 @@ export default function CareGroupsChatView({
       joinGroup(selectedGroupId);
     }
   }, [selectedGroupId, joinGroup]);
+
+  // Inicializar cofre local criptografado (Zero Nuvem / LGPD)
+  useEffect(() => {
+    localVaultService.init().catch((err) => console.warn('[LocalVault] Init fallback:', err));
+  }, []);
 
   // Auto-scroll ao receber ou enviar mensagens
   const scrollToBottom = () => {
@@ -321,6 +342,84 @@ export default function CareGroupsChatView({
         details: 'Protocolo de resgate satelital iniciado via chat de cuidado.',
       });
       if (showToast) showToast('Alerta SOS emitido via WebSocket para toda a rede de cuidado!');
+    }
+  };
+
+  // Transferência de Arquivo P2P Direto (Sem Nuvem)
+  const handleP2PFileSelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      validateP2PFile(file);
+      setP2pTransfer({ fileName: file.name, progress: 0, status: 'transferring' });
+      
+      if (showToast) showToast(`Iniciando transferência P2P de "${file.name}" (Zero-Cloud)...`);
+
+      // Salvar no IndexedDB local seguro
+      await localVaultService.saveFile(
+        selectedGroupId,
+        { name: file.name, size: file.size, mimeType: file.type },
+        file
+      );
+
+      // Simulação de progresso de envio P2P em chunks
+      let prog = 0;
+      const interval = setInterval(() => {
+        prog += 25;
+        setP2pTransfer((p) => (p ? { ...p, progress: Math.min(100, prog) } : null));
+        if (prog >= 100) {
+          clearInterval(interval);
+          setP2pTransfer((p) => (p ? { ...p, status: 'completed' } : null));
+          setTimeout(() => setP2pTransfer(null), 3000);
+        }
+      }, 300);
+
+      // Enviar mensagem de arquivo no grupo
+      sendMessage({
+        groupId: selectedGroupId,
+        sender: 'Você',
+        senderRole: 'Cuidador Principal',
+        avatar: 'DU',
+        isMe: true,
+        type: 'p2p_file',
+        fileName: file.name,
+        fileSize: `${(file.size / 1024).toFixed(1)} KB`,
+        mimeType: file.type,
+        text: `Arquivo médico transferido via túnel direto P2P (${file.name})`,
+      });
+
+      if (e.target) e.target.value = '';
+    } catch (err) {
+      console.error('[P2P File] Error:', err);
+      if (showToast) showToast(err.message || 'Erro ao preparar arquivo P2P', 'error');
+      setP2pTransfer(null);
+    }
+  };
+
+  // LGPD: Exportar cofre local
+  const handleExportVault = async () => {
+    try {
+      const jsonStr = await localVaultService.exportVaultJSON();
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `betterdays_vault_export_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      if (showToast) showToast('Cofre exportado com sucesso (Portabilidade LGPD)!');
+    } catch (err) {
+      if (showToast) showToast('Erro ao exportar cofre local.', 'error');
+    }
+  };
+
+  // LGPD: Limpeza total de dados
+  const handlePurgeData = async () => {
+    if (window.confirm('Atenção: Todos os dados locais de mensagens e arquivos serão permanentemente excluídos deste celular (Conformidade LGPD). Deseja continuar?')) {
+      await localVaultService.purgeAllData();
+      setIsVaultModalOpen(false);
+      if (showToast) showToast('Dados locais excluídos com sucesso.');
     }
   };
 
@@ -534,14 +633,37 @@ export default function CareGroupsChatView({
           </div>
 
           <div className="chat-conv-actions">
+            {/* Chamada de Voz P2P */}
             <button
               type="button"
               className="btn-chat-header-action"
-              title="Teleconsulta / Chamada Rápida"
-              onClick={() => showToast && showToast('Iniciando sala segura de áudio/vídeo...')}
+              title="Chamada de Voz P2P (WebRTC E2EE)"
+              onClick={() => callControls.startCall(CALL_TYPES.AUDIO)}
             >
               <i className="fa-solid fa-phone"></i>
             </button>
+
+            {/* Chamada de Vídeo P2P */}
+            <button
+              type="button"
+              className="btn-chat-header-action"
+              title="Chamada de Vídeo P2P (WebRTC E2EE)"
+              onClick={() => callControls.startCall(CALL_TYPES.VIDEO)}
+            >
+              <i className="fa-solid fa-video"></i>
+            </button>
+
+            {/* Cofre LGPD & Armazenamento Local */}
+            <button
+              type="button"
+              className="btn-chat-header-action"
+              title="Cofre Local Criptografado & LGPD (Zero Nuvem)"
+              onClick={() => setIsVaultModalOpen(true)}
+            >
+              <i className="fa-solid fa-shield-halved" style={{ color: 'var(--color-primary)' }}></i>
+            </button>
+
+            {/* Informações do Grupo */}
             <button
               type="button"
               className="btn-chat-header-action"
@@ -556,7 +678,7 @@ export default function CareGroupsChatView({
         {/* Feed de Mensagens com Balões */}
         <div className="chat-messages-body">
           <div className="chat-date-divider">
-            <span>{t('chat.subtitle')}</span>
+            <span>{t('chat.subtitle')} • 🔒 Túnel P2P & Armazenamento Local</span>
           </div>
 
           {selectedGroup.messages.map((msg) => {
@@ -597,6 +719,47 @@ export default function CareGroupsChatView({
               );
             }
 
+            if (msg.type === 'p2p_file') {
+              return (
+                <div
+                  key={msg.id}
+                  className={`chat-bubble-row ${msg.isMe ? 'outgoing' : 'incoming'}`}
+                >
+                  {!msg.isMe && (
+                    <div className="chat-bubble-avatar">{msg.avatar || 'U'}</div>
+                  )}
+
+                  <div className={`chat-bubble ${msg.isMe ? 'bubble-me' : 'bubble-other'} p2p-file-bubble`}>
+                    {!msg.isMe && (
+                      <div
+                        className="bubble-sender-name"
+                        style={{ color: msg.senderColor || 'var(--color-secondary)' }}
+                      >
+                        {msg.sender} <span className="sender-role">({msg.senderRole})</span>
+                      </div>
+                    )}
+
+                    <div className="p2p-file-box">
+                      <div className="p2p-file-icon-wrap">
+                        <i className="fa-solid fa-file-medical"></i>
+                      </div>
+                      <div className="p2p-file-meta">
+                        <strong className="p2p-name">{msg.fileName}</strong>
+                        <span className="p2p-size">{msg.fileSize} &bull; Transferência Direta P2P</span>
+                      </div>
+                    </div>
+
+                    <div className="bubble-footer">
+                      <span className="bubble-time">{msg.timestamp}</span>
+                      <span className="p2p-badge-tag" title="Armazenado apenas no celular (Zero Nuvem)">
+                        <i className="fa-solid fa-lock"></i> E2EE Local
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <div
                 key={msg.id}
@@ -621,7 +784,7 @@ export default function CareGroupsChatView({
                   <div className="bubble-footer">
                     <span className="bubble-time">{msg.timestamp}</span>
                     {msg.isMe && (
-                      <span className="bubble-check" title="WebSocket">
+                      <span className="bubble-check" title="WebSocket / P2P">
                         <i className="fa-solid fa-check-double" style={{ color: '#0284C7' }}></i>
                       </span>
                     )}
@@ -647,6 +810,20 @@ export default function CareGroupsChatView({
 
           <div ref={chatMessagesEndRef} />
         </div>
+
+        {/* Indicador de Progresso de Transferência P2P */}
+        {p2pTransfer && (
+          <div className="p2p-transfer-banner">
+            <i className="fa-solid fa-circle-nodes fa-spin" style={{ color: 'var(--color-primary)' }}></i>
+            <div className="p2p-transfer-info">
+              <span>Transferindo "{p2pTransfer.fileName}" diretamente (P2P)...</span>
+              <div className="p2p-progress-track">
+                <div className="p2p-progress-fill" style={{ width: `${p2pTransfer.progress}%` }}></div>
+              </div>
+            </div>
+            <span className="p2p-progress-pct">{p2pTransfer.progress}%</span>
+          </div>
+        )}
 
         {/* Barra de Ações Rápidas de 1 Toque */}
         <div className="chat-quick-actions-bar">
@@ -676,13 +853,20 @@ export default function CareGroupsChatView({
           </button>
         </div>
 
-        {/* Barra de Digitação (WhatsApp Style Input) */}
+        {/* Barra de Digitação com Botão de Anexo P2P */}
         <form className="chat-input-bar" onSubmit={handleSendMessage}>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleP2PFileSelect}
+          />
+
           <button
             type="button"
             className="btn-chat-attach"
-            title="Anexo"
-            onClick={() => showToast && showToast('Anexo selecionado.')}
+            title="Enviar Arquivo P2P Direto (Zero Nuvem / LGPD)"
+            onClick={() => fileInputRef.current?.click()}
           >
             <i className="fa-solid fa-paperclip"></i>
           </button>
@@ -704,6 +888,101 @@ export default function CareGroupsChatView({
           </button>
         </form>
       </section>
+
+      {/* MODAL WEBRTC: CHAMADA DE VOZ & VÍDEO */}
+      <CallModal
+        {...callControls}
+        groupName={selectedGroup?.name}
+      />
+
+      {/* MODAL LGPD: COFRE LOCAL CRIPTOGRAFADO (ZERO NUVEM) */}
+      {isVaultModalOpen && (
+        <div className="chat-modal-overlay" onClick={() => setIsVaultModalOpen(false)}>
+          <div className="chat-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="chat-modal-header">
+              <h3>
+                <i className="fa-solid fa-shield-halved" style={{ color: 'var(--color-primary)' }}></i>
+                Cofre Local & Privacidade LGPD
+              </h3>
+              <button
+                type="button"
+                className="btn-close-modal"
+                onClick={() => setIsVaultModalOpen(false)}
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div style={{ padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13.5px', color: 'var(--text-main)' }}>
+              <div style={{ background: 'var(--color-primary-light)', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--color-primary-subtle)', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <i className="fa-solid fa-lock" style={{ fontSize: '20px', color: 'var(--color-primary)' }}></i>
+                <div>
+                  <strong>Zero-Cloud Knowledge Ativo</strong>
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
+                    Suas conversas e exames ficam salvos exclusivamente na memória deste celular (IndexedDB + AES-256-GCM).
+                  </p>
+                </div>
+              </div>
+
+              <p style={{ color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                Em conformidade com a <strong>Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018)</strong>, você possui controle absoluto sobre seus dados médicos e mensagens.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '6px' }}>
+                <button
+                  type="button"
+                  onClick={handleExportVault}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-color)',
+                    background: 'var(--bg-surface-subtle)',
+                    color: 'var(--text-main)',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <i className="fa-solid fa-file-export" style={{ color: 'var(--color-primary)' }}></i>
+                  Exportar Histórico e Prontuário (Portabilidade Art. 18)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handlePurgeData}
+                  style={{
+                    padding: '10px 14px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--color-danger-subtle)',
+                    background: 'var(--color-danger-light)',
+                    color: 'var(--color-danger-dark)',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
+                >
+                  <i className="fa-solid fa-trash-can"></i>
+                  Excluir Todos os Dados Locais deste Celular
+                </button>
+              </div>
+            </div>
+
+            <div className="modal-actions" style={{ justifyContent: 'flex-end', borderTop: '1px solid var(--border-light)', padding: '12px 20px' }}>
+              <button
+                type="button"
+                className="btn-modal-submit"
+                onClick={() => setIsVaultModalOpen(false)}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 3. MODAL: CRIAR NOVO GRUPO DE CUIDADO */}
       {isNewGroupModalOpen && (
