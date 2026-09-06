@@ -12,12 +12,21 @@ export default function CallModal({
   localVideoRef,
   remoteVideoRef,
   onAnswer,
+  answerCall,
   onEndCall,
+  endCall,
   onToggleMute,
+  toggleMute,
   onToggleVideo,
+  toggleVideo,
   groupName,
 }) {
   if (callState === CALL_STATES.IDLE) return null;
+
+  const handleEnd = onEndCall || endCall;
+  const handleAnswer = onAnswer || answerCall;
+  const handleToggleMute = onToggleMute || toggleMute;
+  const handleToggleVideo = onToggleVideo || toggleVideo;
 
   const isIncoming = callState === CALL_STATES.INCOMING;
   const isDialing = callState === CALL_STATES.DIALING;
@@ -45,7 +54,7 @@ export default function CallModal({
             <button
               type="button"
               className="btn-modal-close"
-              onClick={() => onEndCall('user_hangup')}
+              onClick={() => handleEnd && handleEnd('user_hangup')}
               title="Fechar Chamada"
               style={{
                 background: 'transparent',
@@ -90,6 +99,7 @@ export default function CallModal({
                   playsInline
                   muted
                   className="local-video-element"
+                  style={{ display: isVideoDisabled ? 'none' : 'block' }}
                 />
                 {isVideoDisabled && (
                   <div className="pip-avatar-placeholder">
@@ -145,7 +155,7 @@ export default function CallModal({
               <button
                 type="button"
                 className="btn-call-action btn-reject"
-                onClick={() => onEndCall('rejected')}
+                onClick={() => handleEnd && handleEnd('rejected')}
                 title="Recusar"
               >
                 <i className="fa-solid fa-phone-slash"></i>
@@ -155,7 +165,7 @@ export default function CallModal({
               <button
                 type="button"
                 className="btn-call-action btn-accept"
-                onClick={onAnswer}
+                onClick={() => handleAnswer && handleAnswer()}
                 title="Atender"
               >
                 <i className={`fa-solid ${isVideo ? 'fa-video' : 'fa-phone'}`}></i>
@@ -168,7 +178,7 @@ export default function CallModal({
               <button
                 type="button"
                 className={`btn-control-circle ${isMuted ? 'active-mute' : ''}`}
-                onClick={onToggleMute}
+                onClick={() => handleToggleMute && handleToggleMute()}
                 title={isMuted ? 'Ativar Microfone' : 'Silenciar Microfone'}
                 disabled={isEnded}
               >
@@ -179,7 +189,7 @@ export default function CallModal({
                 <button
                   type="button"
                   className={`btn-control-circle ${isVideoDisabled ? 'active-mute' : ''}`}
-                  onClick={onToggleVideo}
+                  onClick={() => handleToggleVideo && handleToggleVideo()}
                   title={isVideoDisabled ? 'Ligar Câmera' : 'Desligar Câmera'}
                   disabled={isEnded}
                 >
@@ -190,7 +200,7 @@ export default function CallModal({
               <button
                 type="button"
                 className="btn-control-circle btn-hangup"
-                onClick={() => onEndCall('user_hangup')}
+                onClick={() => handleEnd && handleEnd('user_hangup')}
                 title="Encerrar Chamada"
               >
                 <i className="fa-solid fa-phone-slash"></i>

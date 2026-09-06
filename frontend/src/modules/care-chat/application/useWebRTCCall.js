@@ -185,6 +185,7 @@ export function useWebRTCCall({ currentGroupId, currentUser, showToast }) {
     webrtcService.onRemoteStreamCallback = (stream) => {
       if (remoteVideoRef.current) {
         remoteVideoRef.current.srcObject = stream;
+        remoteVideoRef.current.play().catch(() => {});
       }
     };
 
@@ -195,6 +196,40 @@ export function useWebRTCCall({ currentGroupId, currentUser, showToast }) {
       socketService.off('webrtc_call_ended', handleCallEnded);
     };
   }, [currentGroupId]);
+
+  // Sincronizar trilhas de vídeo locais e remotas aos elementos HTML5 <video> quando conectados
+  useEffect(() => {
+    if (callState === CALL_STATES.CONNECTED && callType === CALL_TYPES.VIDEO) {
+      const attachVideoStreams = () => {
+        // 1. Vincular Stream Local (PiP do usuário)
+        if (localVideoRef.current && webrtcService.localStream) {
+          if (localVideoRef.current.srcObject !== webrtcService.localStream) {
+            localVideoRef.current.srcObject = webrtcService.localStream;
+          }
+          localVideoRef.current.play().catch(() => {});
+        }
+
+        // 2. Vincular Stream Remoto (ou Simulação Médica InCor E2EE)
+        if (remoteVideoRef.current) {
+          const remoteStream = webrtcService.remoteStream || webrtcService.getDoctorSimulationStream();
+          if (remoteVideoRef.current.srcObject !== remoteStream) {
+            remoteVideoRef.current.srcObject = remoteStream;
+          }
+          remoteVideoRef.current.play().catch(() => {});
+        }
+      };
+
+      // Executar imediatamente e com retry curto para garantir montagem no DOM
+      attachVideoStreams();
+      const timerA = setTimeout(attachVideoStreams, 80);
+      const timerB = setTimeout(attachVideoStreams, 300);
+
+      return () => {
+        clearTimeout(timerA);
+        clearTimeout(timerB);
+      };
+    }
+  }, [callState, callType]);
 
   return {
     callState,

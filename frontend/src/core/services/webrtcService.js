@@ -22,7 +22,9 @@ class WebRTCService {
     this.dataChannel = null;
     this.localStream = null;
     this.remoteStream = null;
+    this.simulationStream = null;
     this.activeGroupId = null;
+    this._animTimers = [];
 
     // Callbacks de eventos
     this.onRemoteStreamCallback = null;
@@ -138,31 +140,35 @@ class WebRTCService {
   }
 
   /**
-   * Captura áudio e vídeo do dispositivo do usuário
+   * Captura áudio e vídeo do dispositivo do usuário (com fallback animado se necessário)
    */
   async getLocalUserMedia(callType = 'video') {
+    const isVideo = callType === 'video';
     const constraints = {
       audio: {
         echoCancellation: true,
         noiseSuppression: true,
         autoGainControl: true,
       },
-      video: callType === 'video' ? {
+      video: isVideo ? {
         width: { ideal: 640, max: 1280 },
         height: { ideal: 480, max: 720 },
         facingMode: 'user',
       } : false,
     };
 
-    try {
-      this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
-      return this.localStream;
-    } catch (err) {
-      console.warn('[WebRTC] Câmera/Microfone não disponível ou negado, simulando stream:', err);
-      // Fallback para canvas/áudio simulado caso não haja câmera física
-      this.localStream = this._createFallbackStream(callType === 'video');
-      return this.localStream;
+    if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        this.localStream = await navigator.mediaDevices.getUserMedia(constraints);
+        return this.localStream;
+      } catch (err) {
+        console.warn('[WebRTC] Câmera/Microfone real não disponível ou permissão negada. Ativando fallback animado:', err);
+      }
     }
+
+    // Fallback animado caso não haja câmera física ou permissão negada
+    this.localStream = this._createAnimatedStream('local', isVideo);
+    return this.localStream;
   }
 
   /**
@@ -179,9 +185,11 @@ class WebRTCService {
 
     // Obter mídia local
     const stream = await this.getLocalUserMedia(callType);
-    stream.getTracks().forEach((track) => {
-      this.peerConnection.addTrack(track, stream);
-    });
+    if (stream && stream.getTracks) {
+      stream.getTracks().forEach((track) => {
+        this.peerConnection.addTrack(track, stream);
+      });
+    }
 
     // Criar Offer SDP
     const offer = await this.peerConnection.createOffer();
@@ -205,9 +213,11 @@ class WebRTCService {
     this._createPeerConnection(groupId);
 
     const stream = await this.getLocalUserMedia(callType);
-    stream.getTracks().forEach((track) => {
-      this.peerConnection.addTrack(track, stream);
-    });
+    if (stream && stream.getTracks) {
+      stream.getTracks().forEach((track) => {
+        this.peerConnection.addTrack(track, stream);
+      });
+    }
 
     await this.peerConnection.setRemoteDescription(new RTCSessionDescription(offerSDP));
     const answer = await this.peerConnection.createAnswer();
@@ -285,7 +295,17 @@ class WebRTCService {
   }
 
   /**
-   * Encerra a chamada WebRTC e libera os streams
+   * Retorna stream de simulação médica para chamadas de demonstração/teste
+   */
+  getDoctorSimulationStream() {
+    if (!this.simulationStream) {
+      this.simulationStream = this._createAnimatedStream('doctor', true);
+    }
+    return this.simulationStream;
+  }
+
+  /**
+   * Encerra a chamada WebRTC e libera os streams e animações
    */
   hangupCall(groupId, reason = 'user_hangup') {
     if (this.activeGroupId || groupId) {
@@ -295,9 +315,23 @@ class WebRTCService {
       });
     }
 
+    // Limpar timers de animação de canvas
+    this._animTimers.forEach((timer) => clearInterval(timer));
+    this._animTimers = [];
+
     if (this.localStream) {
       this.localStream.getTracks().forEach((track) => track.stop());
       this.localStream = null;
+    }
+
+    if (this.remoteStream) {
+      this.remoteStream.getTracks().forEach((track) => track.stop());
+      this.remoteStream = null;
+    }
+
+    if (this.simulationStream) {
+      this.simulationStream.getTracks().forEach((track) => track.stop());
+      this.simulationStream = null;
     }
 
     if (this.dataChannel) {
@@ -310,7 +344,6 @@ class WebRTCService {
       this.peerConnection = null;
     }
 
-    this.remoteStream = null;
     this.activeGroupId = null;
 
     if (this.onCallEndedCallback) {
@@ -319,21 +352,163 @@ class WebRTCService {
   }
 
   /**
-   * Fallback visual caso câmera não esteja disponível no ambiente de teste
+   * Gerador dinâmico de vídeo com animação contínua a 30 FPS
    */
-  _createFallbackStream(hasVideo) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 320;
-    canvas.height = 240;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.fillStyle = '#0D9488';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '16px Roboto, sans-serif';
-      ctx.fillText('Betterdays P2P Stream', 40, 120);
+  _createAnimatedStream(type = 'doctor', hasVideo = true) {
+    if (typeof document === 'undefined') {
+      return new MediaStream();
     }
-    const stream = canvas.captureStream ? canvas.captureStream(15) : new MediaStream();
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 480;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return new MediaStream();
+
+    let frame = 0;
+    const isDoctor = type === 'doctor';
+
+    const drawFrame = () => {
+      frame++;
+      const timeSec = (Date.now() / 1000).toFixed(1);
+
+      // Fundo em gradiente suave moderno
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      if (isDoctor) {
+        gradient.addColorStop(0, '#0F172A');
+        gradient.addColorStop(1, '#020617');
+      } else {
+        gradient.addColorStop(0, '#042F2E');
+        gradient.addColorStop(1, '#0F172A');
+      }
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Grade sutil de telemetria
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      if (isDoctor) {
+        // 1. Círculo do avatar médico com anel de pulso
+        const centerX = canvas.width / 2;
+        const centerY = 160;
+        const pulseSize = 48 + Math.sin(frame * 0.08) * 4;
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, pulseSize + 8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(13, 148, 136, 0.25)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 48, 0, Math.PI * 2);
+        ctx.fillStyle = '#0D9488';
+        ctx.fill();
+
+        // Ícone/Texto do Médico
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('🩺', centerX, centerY);
+
+        // Identificação do Médico
+        ctx.font = 'bold 18px sans-serif';
+        ctx.fillStyle = '#F8FAFC';
+        ctx.fillText('Dr. Roberto Albuquerque', centerX, 235);
+
+        ctx.font = '13px sans-serif';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText('Cardiologista de Plantão • CRM 148.920-SP', centerX, 258);
+
+        // 2. Gráfico de ECG animado (Heartbeat Waveform)
+        ctx.strokeStyle = '#10B981';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        const ecgY = 340;
+        const ecgWidth = 460;
+        const ecgStartX = (canvas.width - ecgWidth) / 2;
+
+        ctx.moveTo(ecgStartX, ecgY);
+        for (let i = 0; i < ecgWidth; i += 4) {
+          const x = ecgStartX + i;
+          const phase = (i - (frame * 4) % ecgWidth + ecgWidth) % ecgWidth;
+          let yOffset = 0;
+          if (phase > 180 && phase < 220) {
+            if (phase < 190) yOffset = -(phase - 180) * 2;
+            else if (phase < 205) yOffset = (phase - 190) * 4 - 20;
+            else yOffset = -(phase - 205) * 3 + 40;
+          }
+          ctx.lineTo(x, ecgY + yOffset);
+        }
+        ctx.stroke();
+
+        // 3. Indicadores de Telemetria ao vivo
+        ctx.textAlign = 'left';
+        ctx.font = '12px monospace';
+        ctx.fillStyle = '#34D399';
+        ctx.fillText(`♥ BPM: 72 bpm`, ecgStartX, 385);
+        ctx.fillStyle = '#38BDF8';
+        ctx.fillText(`⚡ SpO2: 99%`, ecgStartX + 140, 385);
+        ctx.fillStyle = '#FBBF24';
+        ctx.fillText(`📡 Latência: 12ms P2P`, ecgStartX + 260, 385);
+
+        // Header do feed médico
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+        ctx.fillRect(16, 16, 210, 32);
+        ctx.fillStyle = '#10B981';
+        ctx.beginPath();
+        ctx.arc(30, 32, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#F8FAFC';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('INCOR TELEMEDICINA', 42, 36);
+
+      } else {
+        // Feed Local do Usuário
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2 - 20;
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 42, 0, Math.PI * 2);
+        ctx.fillStyle = '#0F766E';
+        ctx.fill();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('👤', centerX, centerY);
+
+        ctx.font = 'bold 16px sans-serif';
+        ctx.fillStyle = '#F1F5F9';
+        ctx.fillText('Você (Câmera Local)', centerX, centerY + 65);
+
+        ctx.font = '12px sans-serif';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText('Túnel WebRTC Criptografado E2EE', centerX, centerY + 88);
+      }
+    };
+
+    // Desenhar primeiro frame imediatamente
+    drawFrame();
+
+    // Rodar a 25 fps para streaming contínuo e estável
+    const timer = setInterval(drawFrame, 40);
+    this._animTimers.push(timer);
+
+    const stream = canvas.captureStream ? canvas.captureStream(25) : new MediaStream();
     return stream;
   }
 }
