@@ -3,6 +3,7 @@ import LoginView from './modules/auth/presentation/LoginView.jsx';
 import MainApp from './modules/dashboard/presentation/MainApp.jsx';
 import { I18nProvider } from './core/i18n/presentation/I18nContext.jsx';
 import TopProgressBar from './core/components/TopProgressBar.jsx';
+import ErrorBoundary from './core/components/ErrorBoundary.jsx';
 
 const AUTH_TOKEN_KEY = 'betterdays_auth_token';
 
@@ -38,12 +39,14 @@ export default function App() {
 
   return (
     <I18nProvider>
-      <TopProgressBar />
-      {!token ? (
-        <LoginView onLoginSuccess={handleLoginSuccess} />
-      ) : (
-        <MainApp token={token} onLogout={handleLogout} />
-      )}
+      <ErrorBoundary>
+        <TopProgressBar />
+        {!token ? (
+          <LoginView onLoginSuccess={handleLoginSuccess} />
+        ) : (
+          <MainApp token={token} onLogout={handleLogout} />
+        )}
+      </ErrorBoundary>
     </I18nProvider>
   );
 }

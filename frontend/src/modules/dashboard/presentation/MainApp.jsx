@@ -13,6 +13,7 @@ import { canAddDevice } from '../../subscription/domain/subscriptionModel.js';
 import socketService from '../../../core/services/socketService.js';
 import notificationService from '../../../core/services/notificationService.js';
 import loadingService from '../../../core/services/loadingService.js';
+import ErrorBoundary from '../../../core/components/ErrorBoundary.jsx';
 import { useI18n } from '../../../core/i18n/presentation/useI18n.js';
 import '../../../styles/MainApp.css';
 
@@ -552,14 +553,16 @@ export default function MainApp({ token, onLogout }) {
                 </div>
 
                 <div className="map-viewport">
-                  <Suspense fallback={<TabLoadingFallback />}>
-                    <LeafletMapView
-                      devices={devices}
-                      areas={areas}
-                      showToast={showToast}
-                      theme={theme}
-                    />
-                  </Suspense>
+                  <ErrorBoundary isEmbedded={true}>
+                    <Suspense fallback={<TabLoadingFallback />}>
+                      <LeafletMapView
+                        devices={devices}
+                        areas={areas}
+                        showToast={showToast}
+                        theme={theme}
+                      />
+                    </Suspense>
+                  </ErrorBoundary>
                 </div>
 
               </div>
@@ -572,24 +575,26 @@ export default function MainApp({ token, onLogout }) {
             ABA INTERMEDIÁRIA: MONITORAMENTO INTERNO (SENSORES & CÔMODOS)
            ------------------------------------------------------------- */}
         {activeTab === 'indoor' && (
-          <Suspense fallback={<TabLoadingFallback />}>
-            <IndoorMonitoringView
-              showToast={showToast}
-              profile={profile}
-              onNavigateTab={handleNavigateTab}
-              onLogout={onLogout}
-              onProfileUpdated={setProfile}
-              token={token}
-              devicesCount={devices.length}
-              areasCount={areas.length || 3}
-              onEmergencySOS={handleQuickLocate}
-              theme={theme}
-              onToggleTheme={toggleTheme}
-              subscription={subscription}
-              onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
-              messages={messages}
-            />
-          </Suspense>
+          <ErrorBoundary isEmbedded={true}>
+            <Suspense fallback={<TabLoadingFallback />}>
+              <IndoorMonitoringView
+                showToast={showToast}
+                profile={profile}
+                onNavigateTab={handleNavigateTab}
+                onLogout={onLogout}
+                onProfileUpdated={setProfile}
+                token={token}
+                devicesCount={devices.length}
+                areasCount={areas.length || 3}
+                onEmergencySOS={handleQuickLocate}
+                theme={theme}
+                onToggleTheme={toggleTheme}
+                subscription={subscription}
+                onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+                messages={messages}
+              />
+            </Suspense>
+          </ErrorBoundary>
         )}
 
         {/* -------------------------------------------------------------
@@ -635,15 +640,17 @@ export default function MainApp({ token, onLogout }) {
             </div>
 
             <main className="tab-content-wrapper messages-tab-wrapper">
-              <Suspense fallback={<TabLoadingFallback />}>
-                <CareGroupsChatView
-                  profile={profile}
-                  devices={devices}
-                  onNavigateTab={handleNavigateTab}
-                  showToast={showToast}
-                  onQuickLocate={handleQuickLocate}
-                />
-              </Suspense>
+              <ErrorBoundary isEmbedded={true}>
+                <Suspense fallback={<TabLoadingFallback />}>
+                  <CareGroupsChatView
+                    profile={profile}
+                    devices={devices}
+                    onNavigateTab={handleNavigateTab}
+                    showToast={showToast}
+                    onQuickLocate={handleQuickLocate}
+                  />
+                </Suspense>
+              </ErrorBoundary>
             </main>
           </>
         )}
@@ -652,51 +659,55 @@ export default function MainApp({ token, onLogout }) {
             ABA: RASTREADOR (GERENCIAMENTO DE DISPOSITIVOS GPS)
            ------------------------------------------------------------- */}
         {activeTab === 'tracker' && (
-          <Suspense fallback={<TabLoadingFallback />}>
-            <TrackerManagementView
-              devices={devices}
-              onNavigateTab={handleNavigateTab}
-              onOpenAddDevice={handleOpenAddDevice}
-              onDeleteDevice={handleDeleteDevice}
-              onSelectDeviceForMap={(dev) => setSelectedDevice(dev)}
-              showToast={showToast}
-              profile={profile}
-              onLogout={onLogout}
-              setProfile={setProfile}
-              token={token}
-              areas={areas}
-              handleQuickLocate={handleQuickLocate}
-              theme={theme}
-              toggleTheme={toggleTheme}
-              subscription={subscription}
-              onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
-              messages={messages}
-            />
-          </Suspense>
+          <ErrorBoundary isEmbedded={true}>
+            <Suspense fallback={<TabLoadingFallback />}>
+              <TrackerManagementView
+                devices={devices}
+                onNavigateTab={handleNavigateTab}
+                onOpenAddDevice={handleOpenAddDevice}
+                onDeleteDevice={handleDeleteDevice}
+                onSelectDeviceForMap={(dev) => setSelectedDevice(dev)}
+                showToast={showToast}
+                profile={profile}
+                onLogout={onLogout}
+                setProfile={setProfile}
+                token={token}
+                areas={areas}
+                handleQuickLocate={handleQuickLocate}
+                theme={theme}
+                toggleTheme={toggleTheme}
+                subscription={subscription}
+                onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+                messages={messages}
+              />
+            </Suspense>
+          </ErrorBoundary>
         )}
 
         {/* -------------------------------------------------------------
             ABA 5: PERFIL FAMILIAR (EDITÁVEL & UPLOAD DE FOTO)
            ------------------------------------------------------------- */}
         {activeTab === 'profile' && (
-          <Suspense fallback={<TabLoadingFallback />}>
-            <ProfileView
-              profile={profile}
-              setProfile={setProfile}
-              token={token}
-              onNavigateTab={handleNavigateTab}
-              onLogout={onLogout}
-              showToast={showToast}
-              devicesCount={devices.length}
-              areasCount={areas.length || 3}
-              handleQuickLocate={handleQuickLocate}
-              theme={theme}
-              toggleTheme={toggleTheme}
-              subscription={subscription}
-              onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
-              messages={messages}
-            />
-          </Suspense>
+          <ErrorBoundary isEmbedded={true}>
+            <Suspense fallback={<TabLoadingFallback />}>
+              <ProfileView
+                profile={profile}
+                setProfile={setProfile}
+                token={token}
+                onNavigateTab={handleNavigateTab}
+                onLogout={onLogout}
+                showToast={showToast}
+                devicesCount={devices.length}
+                areasCount={areas.length || 3}
+                handleQuickLocate={handleQuickLocate}
+                theme={theme}
+                toggleTheme={toggleTheme}
+                subscription={subscription}
+                onOpenSubscription={() => setIsSubscriptionModalOpen(true)}
+                messages={messages}
+              />
+            </Suspense>
+          </ErrorBoundary>
         )}
 
       </div>
